@@ -161,7 +161,7 @@
 | Compile | ✅ **0 errors** (`compile_check.sh` exit 0) | | |
 
 ### ⚠️ พบเพิ่ม (บันทึก ไม่แก้)
-- `CueStrikeVRStartup.cs` มี default `"Main"`/`"Boot"` เก่า (ไม่มีฉากนี้) — **ไม่ถูกใส่ใน scene ไหน (dead)** — ควรลบ/ปรับเมื่อแตะไฟล์นี้ หรือเมื่อทำ VR startup จริง (มี `VR/VRStartup.cs` อีกตัว)
+- ~~`CueStrikeVRStartup.cs` มี default `"Main"`/`"Boot"` เก่า~~ → **✅ แก้แล้ว Round 10 (2026-08-09):** ตรวจแล้วเป็น duplicate ของ `VR/VRStartup.cs` (ตัวจริง) — ถูกลบแล้ว
 
 ---
 
@@ -181,6 +181,22 @@
 - งานใหม่ → สร้าง branch (`git checkout -b feature/xxx`) → commit → push → เปิด PR ผ่าน GitHub → merge
 - ตั้งค่าหลัง clone: `git config core.hooksPath .githooks` (compile gate)
 - ถัดไปแนะนำ: GitHub Actions CI รัน compile gate อัตโนมัติทุก PR
+
+---
+
+## 🎮 VR STARTUP CLEANUP — Round 10 (2026-08-09, per implementation_plan_vr_startup_cleanup.md)
+
+> ตรวจ VR startup 2 ตัวที่ซ้ำกัน (ต่อจาก note R8) — หาตัวจริง + ลบตัวซ้ำ | Unity ปิดก่อนแก้ (Iron Rule 4)
+
+### ✅ ทำแล้ว
+| รายการ | รายละเอียด |
+|--------|-----------|
+| เก็บ | `VR/VRStartup.cs` (`VRStartup`) — **ตัวจริง**: Quest optimization ครบ (auto 72/90Hz, CPU/GPU, FFR, OpenXR Meta features) |
+| ลบ | `Scripts/CueStrikeVRStartup.cs` + `.meta` — duplicate ที่เก่ากว่า, scene names พัง (`"Main"`/`"Boot"` ไม่มีฉากนี้) — GUID 0 ref, ไม่มี code ref |
+| Verify | GUID `59437c5c…` = 0 ref ทั่ว Assets; compile **0 errors** (`compile_check.sh` exit 0) |
+
+### ⏳ งานถัดไป
+- `VRStartup.cs` ยังไม่ได้ถูกใส่ในฉากใด — ตอนทำ Boot scene จริงต้องสร้าง editor tool ผูก component นี้ + Vision audit (กฎข้อ 4)
 
 ---
 
