@@ -2,7 +2,7 @@
 > **Project:** CueStrike VR Billiards (AAA Unity, Meta Quest 2/3)
 > **Last Updated:** 2026-08-09
 > **Coach:** Strategist/Director | **Dev Agent:** (AI Assistant) | **User:** โม่ง (Mong)
-> **Status:** P8 = 100% | P9 = 100% (IK Assist + Shader Fix Complete) | 🧹 House Cleaning R2 done (2026-08-06): 6 junk targets removed + 7 ghost-file refs fixed | ✅ **Compile = 0 Errors REAL (2026-08-06): MCP migrated System.Text.Json → Newtonsoft (UPM) + Rule 6 added** | 🔧 **VCS Setup R3 (2026-08-09): git init + .gitignore + Git LFS — baseline commit `8f7b347`** | 🎬 **Scene Loading Fix R4 (2026-08-09): 11 scenes ใน Build Settings + Practice "hub"→`Snooker_Demo`** | 🧹 **Duplicate Cleanup R5 (2026-08-09): ลบ 4 ไฟล์ที่ไม่มี ref (XR Hands stub, CrowdSystem-Chars, BallSync/GameSync-Normcore) — เก็บ 2 คู่ที่ใช้จริง** | Ready for Next Phase
+> **Status:** P8 = 100% | P9 = 100% (IK Assist + Shader Fix Complete) | 🧹 House Cleaning R2 done (2026-08-06): 6 junk targets removed + 7 ghost-file refs fixed | ✅ **Compile = 0 Errors REAL (2026-08-06): MCP migrated System.Text.Json → Newtonsoft (UPM) + Rule 6 added** | 🔧 **VCS Setup R3 (2026-08-09): git init + .gitignore + Git LFS — baseline commit `8f7b347`** | 🎬 **Scene Loading Fix R4 (2026-08-09): 11 scenes ใน Build Settings + Practice "hub"→`Snooker_Demo`** | 🧹 **Duplicate Cleanup R5 (2026-08-09): ลบ 4 ไฟล์ที่ไม่มี ref (XR Hands stub, CrowdSystem-Chars, BallSync/GameSync-Normcore) — เก็บ 2 คู่ที่ใช้จริง** | 🚦 **Compile Gate R6 (2026-08-09): `tools/compile_check.sh` + pre-commit hook อัตโนมัติ** | Ready for Next Phase
 
 > ## ⚠️ MANDATORY: อ่านก่อนทำงานทุกครั้ง
 > **AI ทุกตัวต้องอ่าน [`AI_TOOLS_MANDATE.md`](AI_TOOLS_MANDATE.md) ก่อนเริ่มงาน**
@@ -147,6 +147,13 @@ CueStrike.<Module>.<Submodule>
 - ⚠️ self-test menus `Tools/CueStrike/Debug/Test Ball Sync` + `Test Game Sync` ถูกลบตามไฟล์ — ทดแทนด้วย `MultiplayerSelfTest.cs`/`IntegrationSelfTest.cs`
 - ⚠️ Note: `ChinesePoolGameManager.FindFirstObjectByType<ChinesePoolCallShotUI>()` (ns Gameplay) จะหาเวอร์ชัน UI ในฉากไม่เจอ — รอ unified UI เป็นงานต่อไป
 - ✅ **Compile batchmode: 0 errors** (`compile_check_buffy.log`)
+
+### 🚦 Automated Compile Gate (2026-08-09, by Buffy/Freebuff — per implementation_plan_compile_gate.md)
+- ✅ **`tools/compile_check.sh`** — รัน Unity batchmode compile check (auto-detect Unity 6000.4.4f1, `UNITY_PATH` override ได้, exit 0 = 0 errors)
+- ✅ **`.githooks/pre-commit`** — บล็อก commit ที่ stage ไฟล์ `.cs` ถ้า compile ไม่ผ่าน (ข้ามได้ `git commit --no-verify`); ข้ามอัตโนมัติเมื่อไม่มี `.cs` staged หรือ Unity Editor เปิดอยู่
+- ✅ **`.githooks/` versioned** — คัดลอก LFS hooks (post-checkout/commit/merge) เข้าไว้ด้วย + `git config core.hooksPath .githooks`
+- ✅ **ทดสอบจริง 3 ทาง**: (a) สคริปต์ตรงๆ exit 0, (b) ไฟล์ .cs พัง → hook บล็อก (exit 1, โชว์ error CS0029), (c) ไฟล์ .cs ดี → hook ผ่าน (exit 0)
+- 📝 Plan: `implementation_plan_compile_gate.md` | เป้า: ตัดวงจร compile-fix ซ้ำๆ (เคย ~40 รอบ/2 วัน จาก compile_fix_errors1-18.log)
 
 ### PlayMode & Runtime Fixes (by Dev Agent)
 - ✅ EditorSceneManager guards ครบทุกไฟล์ (9 ไฟล์) — ไม่มี unguarded calls

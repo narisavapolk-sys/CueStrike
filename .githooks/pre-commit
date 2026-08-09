@@ -1,0 +1,35 @@
+#!/bin/sh
+# =============================================================================
+# CueStrike compile gate (pre-commit)
+#
+# บล็อก commit ที่ stage ไฟล์ .cs ถ้า Unity compile ไม่ผ่าน
+# ข้ามได้: git commit --no-verify
+# ตั้งค่า: git config core.hooksPath .githooks
+# =============================================================================
+set -u
+
+# 1) ข้ามถ้าไม่มีไฟล์ .cs ใน staged (commit เอกสาร/asset ไม่ต้องรอ compile)
+if ! git diff --cached --name-only | grep -q '\.cs$'; then
+  exit 0
+fi
+
+ROOT="$(git rev-parse --show-toplevel)"
+
+# 2) ข้ามถ้า Unity Editor กำลังเปิด (batchmode จะชนกับ Editor — ตามกฎข้อ 4 ต้องปิด Unity)
+if tasklist 2>/dev/null | grep -qiE 'unity\.exe'; then
+  echo "⚠️ [compile-gate] Unity Editor กำลังเปิดอยู่ — ข้าม compile check"
+  echo "   (ปิด Unity Editor แล้ว commit อีกครั้งเพื่อให้ gate ทำงาน)"
+  exit 0
+fi
+
+# 3) รัน compile gate — พัง = บล็อก commit
+echo "🔍 [compile-gate] มีไฟล์ .cs ถูก stage — ตรวจ compile (อาจใช้เวลา ~1-2 นาที)..."
+if "$ROOT/tools/compile_check.sh"; then
+  echo "✅ [compile-gate] Commit ผ่าน"
+  exit 0
+else
+  echo ""
+  echo "❌ [compile-gate] Compile ไม่ผ่าน — บล็อก commit"
+  echo "   แก้ error ข้างบนแล้ว stage ใหม่ หรือข้ามด้วย: git commit --no-verify"
+  exit 1
+fi

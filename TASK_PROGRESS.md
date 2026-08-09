@@ -111,6 +111,24 @@
 
 ---
 
+## 🚦 COMPILE GATE — Round 6 (2026-08-09, per implementation_plan_compile_gate.md)
+
+> ตัดวงจร compile-fix ซ้ำๆ (หลักฐาน: `compile_fix_errors1-18.log` ~40 รอบ) ด้วย gate อัตโนมัติ | Unity ปิดก่อนตั้งค่า (Iron Rule 4)
+
+### ✅ ทำแล้ว
+| รายการ | รายละเอียด |
+|--------|-----------|
+| `tools/compile_check.sh` | batchmode compile check — auto-detect Unity (`6000.4.4f1` ก่อน), `UNITY_PATH` override ได้, exit 0 = 0 errors, log = `compile_gate.log` (gitignored) |
+| `.githooks/pre-commit` | บล็อก commit ที่ stage `.cs` ถ้า compile พัง; ข้ามถ้าไม่มี `.cs` staged หรือ Unity Editor เปิดอยู่; escape: `git commit --no-verify` |
+| LFS hooks | คัดลอก `post-checkout/post-commit/post-merge` เข้า `.githooks/` + `git config core.hooksPath .githooks` — LFS ไม่พัง |
+| ทดสอบ | ✅ (a) สคริปต์ exit 0 | ✅ (b) `.cs` พัง → hook บล็อก exit 1 + โชว์ error | ✅ (c) `.cs` ดี → hook ผ่าน exit 0 |
+
+### 📌 วิธีใช้ / ตั้งค่าในเครื่องใหม่
+- รันด้วยมือ: `tools/compile_check.sh`
+- clone ใหม่ ต้องตั้ง: `git config core.hooksPath .githooks` (hook อยู่ใน repo แล้ว)
+
+---
+
 ## 🎯 PHASE A AUDIO - DETAILED CHECKLIST
 
 ### ✅ COMPLETED (Architecture & Setup)
