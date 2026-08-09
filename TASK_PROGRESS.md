@@ -129,6 +129,24 @@
 
 ---
 
+## 🎯 CALLSHOT UI MERGE — Round 7 (2026-08-09, per implementation_plan_merge_callshot_ui.md)
+
+> รวม `ChinesePoolCallShotUI` 2 เวอร์ชัน → 1 — แก้บั๊ก GameManager หา UI ไม่เจอ (FindFirstObjectByType) | Unity ปิดก่อนแก้ (Iron Rule 4)
+
+### ✅ ทำแล้ว
+| รายการ | รายละเอียด |
+|--------|-----------|
+| เก็บ | `Scripts/UI/ChinesePool/ChinesePoolCallShotUI.cs` (ns `CueStrike.UI.ChinesePool`) — GUID `0d69029a…` ผูกกับ 2 scenes (`AAA_RoomDAY`, `Title_NoksGrandHall`) — scene data ปลอดภัย |
+| ลบ | `Scripts/ChinesePool/ChinesePoolCallShotUI.cs` (ns Gameplay, 280L) + `.meta` — dead code: API ไม่มี caller, `GetBallIdFromButtonIndex`=-1 (highlight พัง), GUID `c743997f…` = 0 ref |
+| แก้ | `ChinesePoolGameManager.cs` + `using CueStrike.UI.ChinesePool;` → `FindFirstObjectByType` เจอ class ในฉากจริง (บั๊กหาย) |
+| Compile | ✅ **0 errors** (`compile_check.sh` exit 0) |
+
+### ⏳ ยังเหลือ (งานถัดไป)
+- ผูก `callShotUI.OnShotCalled += GameManager.SetCallShot` + `OnCallShotCancelled → ClearCallShot` (Ruleset เรียก `SetCallShot` อยู่แล้ว แต่ UI event ยังไม่ต่อ)
+- UI ในฉากบาง instance มี field ว่าง (`_callShotPanel: {fileID: 0}` ฯลฯ) — ต้อง assign ใน Editor + Vision audit (กฎข้อ 4)
+
+---
+
 ## 🎯 PHASE A AUDIO - DETAILED CHECKLIST
 
 ### ✅ COMPLETED (Architecture & Setup)

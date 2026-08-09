@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using CueStrike.UI.ChinesePool;
 
 namespace CueStrike.Gameplay.ChinesePool
 {

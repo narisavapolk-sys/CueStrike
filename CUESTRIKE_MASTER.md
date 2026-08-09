@@ -2,7 +2,7 @@
 > **Project:** CueStrike VR Billiards (AAA Unity, Meta Quest 2/3)
 > **Last Updated:** 2026-08-09
 > **Coach:** Strategist/Director | **Dev Agent:** (AI Assistant) | **User:** โม่ง (Mong)
-> **Status:** P8 = 100% | P9 = 100% (IK Assist + Shader Fix Complete) | 🧹 House Cleaning R2 done (2026-08-06): 6 junk targets removed + 7 ghost-file refs fixed | ✅ **Compile = 0 Errors REAL (2026-08-06): MCP migrated System.Text.Json → Newtonsoft (UPM) + Rule 6 added** | 🔧 **VCS Setup R3 (2026-08-09): git init + .gitignore + Git LFS — baseline commit `8f7b347`** | 🎬 **Scene Loading Fix R4 (2026-08-09): 11 scenes ใน Build Settings + Practice "hub"→`Snooker_Demo`** | 🧹 **Duplicate Cleanup R5 (2026-08-09): ลบ 4 ไฟล์ที่ไม่มี ref (XR Hands stub, CrowdSystem-Chars, BallSync/GameSync-Normcore) — เก็บ 2 คู่ที่ใช้จริง** | 🚦 **Compile Gate R6 (2026-08-09): `tools/compile_check.sh` + pre-commit hook อัตโนมัติ** | Ready for Next Phase
+> **Status:** P8 = 100% | P9 = 100% (IK Assist + Shader Fix Complete) | 🧹 House Cleaning R2 done (2026-08-06): 6 junk targets removed + 7 ghost-file refs fixed | ✅ **Compile = 0 Errors REAL (2026-08-06): MCP migrated System.Text.Json → Newtonsoft (UPM) + Rule 6 added** | 🔧 **VCS Setup R3 (2026-08-09): git init + .gitignore + Git LFS — baseline commit `8f7b347`** | 🎬 **Scene Loading Fix R4 (2026-08-09): 11 scenes ใน Build Settings + Practice "hub"→`Snooker_Demo`** | 🧹 **Duplicate Cleanup R5 (2026-08-09): ลบ 4 ไฟล์ที่ไม่มี ref (XR Hands stub, CrowdSystem-Chars, BallSync/GameSync-Normcore) — เก็บ 2 คู่ที่ใช้จริง** | 🚦 **Compile Gate R6 (2026-08-09): `tools/compile_check.sh` + pre-commit hook อัตโนมัติ** | 🎯 **CallShotUI Merge R7 (2026-08-09): 2 เวอร์ชัน → 1 (`CueStrike.UI.ChinesePool`) — GameManager หาเจอจริง** | Ready for Next Phase
 
 > ## ⚠️ MANDATORY: อ่านก่อนทำงานทุกครั้ง
 > **AI ทุกตัวต้องอ่าน [`AI_TOOLS_MANDATE.md`](AI_TOOLS_MANDATE.md) ก่อนเริ่มงาน**
@@ -154,6 +154,14 @@ CueStrike.<Module>.<Submodule>
 - ✅ **`.githooks/` versioned** — คัดลอก LFS hooks (post-checkout/commit/merge) เข้าไว้ด้วย + `git config core.hooksPath .githooks`
 - ✅ **ทดสอบจริง 3 ทาง**: (a) สคริปต์ตรงๆ exit 0, (b) ไฟล์ .cs พัง → hook บล็อก (exit 1, โชว์ error CS0029), (c) ไฟล์ .cs ดี → hook ผ่าน (exit 0)
 - 📝 Plan: `implementation_plan_compile_gate.md` | เป้า: ตัดวงจร compile-fix ซ้ำๆ (เคย ~40 รอบ/2 วัน จาก compile_fix_errors1-18.log)
+
+### 🎯 ChinesePoolCallShotUI Merge (2026-08-09, by Buffy/Freebuff — per implementation_plan_merge_callshot_ui.md)
+- ✅ **รวม 2 เวอร์ชัน → 1**: เก็บ `Scripts/UI/ChinesePool/ChinesePoolCallShotUI.cs` (ns `CueStrike.UI.ChinesePool`, GUID `0d69029a…` — ผูกกับ 2 scenes อยู่แล้ว); ลบ `Scripts/ChinesePool/ChinesePoolCallShotUI.cs` (ns Gameplay, 280L — **dead code**: API `ShowCallShotUI` ไม่มี caller, highlight พัง `GetBallIdFromButtonIndex`=-1, GUID ไม่มี ref)
+- ✅ **แก้บั๊ก `FindFirstObjectByType` หาไม่เจอ**: `ChinesePoolGameManager.cs` เพิ่ม `using CueStrike.UI.ChinesePool;` → ค้นหา class เดียวที่เหลือ (อยู่ในฉาก) → เจอจริง (เดิมหาเวอร์ชัน Gameplay ที่ไม่มีในฉาก → null)
+- ✅ GameManager + UIManager ใช้ class เดียวกันแล้ว; `CueStrikeChinesePoolRuleset.cs:266` เรียก `SetCallShot` ผ่าน GameManager — ไม่กระทบ
+- ✅ **Compile batchmode: 0 errors** (`compile_check.sh` exit 0)
+- ⚠️ **งานถัดไป:** `OnShotCalled` event ยังไม่มี subscriber — ควรผูก `callShotUI.OnShotCalled += SetCallShot` (+ `OnCallShotCancelled → ClearCallShot`) และ UI ในฉากบาง instance ยังมี field ว่าง (ต้อง assign + Vision audit)
+- 📝 Plan: `implementation_plan_merge_callshot_ui.md`
 
 ### PlayMode & Runtime Fixes (by Dev Agent)
 - ✅ EditorSceneManager guards ครบทุกไฟล์ (9 ไฟล์) — ไม่มี unguarded calls
