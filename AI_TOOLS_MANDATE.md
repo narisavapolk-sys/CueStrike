@@ -53,7 +53,7 @@
 |---|------|-----------|-------|
 | 1 | **MCP Unity Server** (custom ในโปรเจกต์) | AI คุยกับ Unity Editor โดยตรง: execute_code, read/write/list/search files | ✅ มีแล้ว (`Assets/CueStrike/Editor/MCP/`) |
 | 2 | **Vision AI** (Claude 3.5 Sonnet / GPT-4o) | ดู screenshot จริง → แก้บัคจากภาพ ไม่หลอนรายงานทิพย์ | ⚙️ พี่โม่งตั้งค่า model ใน Cline Settings |
-| 3 | **Unity Test Runner / Batchmode Compile** | ตรวจ compile 0 errors ก่อนส่งงานทุกครั้ง — **มี compile gate อัตโนมัติแล้ว (2026-08-09): `tools/compile_check.sh` + pre-commit hook บล็อก commit ที่ .cs พัง** | ✅ ใช้ได้ทันที |
+| 3 | **Unity Test Runner / Batchmode Compile** | ตรวจ compile 0 errors ก่อนส่งงานทุกครั้ง — **compile gate 2 ชั้น: (1) local `tools/compile_check.sh` + pre-commit hook (2) GitHub Actions `compile-gate.yml` ทุก PR (รอ secret `UNITY_LICENSE`)** | ✅ ใช้ได้ทันที |
 | 4 | **Unity Muse** (Texture/Sprite/Sound) | เจน Texture/เสียงใน Editor โดยตรง | ⏳ รอพี่โม่งติดตั้งผ่าน Package Manager |
 | 5 | **Stable Audio / ElevenLabs** | สร้างเสียง SFX + เสียงพากย์ลุงโน๊กจริง (~50 คลิปที่ขาด) | ⏳ รอ API Key จากพี่โม่ง |
 | 6 | **Animation Rigging / VRIK** | Procedural animation ตัวละคร (ก้มแทง, หันมองลูก) | ⏳ รอติดตั้งผ่าน Package Manager |

@@ -47,6 +47,10 @@ filelist.txt
 filelist2.txt
 all_scripts.txt
 
+# ===== Unity test runner results =====
+test-results.xml
+*_results.xml
+
 # ===== SECRETS — NEVER COMMIT =====
 api  key  ai audio/
 

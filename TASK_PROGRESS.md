@@ -218,6 +218,26 @@
 
 ---
 
+## 🚦 GITHUB ACTIONS CI — Round 12 (2026-08-09, per implementation_plan_github_ci.md)
+
+> ต่อยอด compile gate (R6) ขึ้น CI: ทุก PR/push → Unity batchmode compile check บน GitHub | Unity ปิดก่อนแก้ (Iron Rule 4)
+
+### ✅ ทำแล้ว
+| รายการ | รายละเอียด |
+|--------|-----------|
+| `.github/workflows/compile-gate.yml` | trigger `pull_request` + `push` ไป main → `game-ci/unity-test-runner@v4` (editmode: compile ก่อนรัน test; พัง = fail job) + checkout `lfs: true` + cache Library |
+| `.github/workflows/unity-activate.yml` | helper รันครั้งเดียว สร้าง `.alf` → ตั้ง secret `UNITY_LICENSE` |
+| YAML | ✅ valid (python yaml) |
+| `.gitignore` | เพิ่ม `test-results.xml` + `*_results.xml` |
+
+### ⏳ พี่โม่งต้องทำ 1 ครั้ง (เปิดใช้งาน CI)
+1. GitHub repo → Actions → รัน **Acquire Unity Activation File** → ดาวน์โหลด artifact `Unity_v6000.x.alf`
+2. https://license.unity3d.com/manual → อัปโหลด `.alf` → ได้ไฟล์ `.ulf`
+3. Repo → Settings → Secrets and variables → Actions → New secret: ชื่อ `UNITY_LICENSE` = เนื้อหา `.ulf` ทั้งหมด
+4. ครั้งแรก workflow จะ fail เพราะยังไม่มี secret (คาดหมายได้) — ตั้ง secret แล้ว rerun
+
+---
+
 ## 🎯 PHASE A AUDIO - DETAILED CHECKLIST
 
 ### ✅ COMPLETED (Architecture & Setup)

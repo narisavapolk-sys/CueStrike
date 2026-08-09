@@ -1,0 +1,24 @@
+# Acquire Unity Activation File
+# One-time helper (workflow_dispatch) that produces the Unity activation file
+# (.alf) needed to enable the CI compile gate.
+#
+# Steps:
+#   1. Click "Run workflow" on this action.
+#   2. Download the Unity_v6000.x.alf artifact.
+#   3. Open https://license.unity3d.com/manual, upload the .alf, and get a .ulf file.
+#   4. Copy the whole .ulf content and save it as the UNITY_LICENSE repo secret.
+
+name: Acquire Unity Activation File
+
+on:
+  workflow_dispatch:
+
+jobs:
+  activation:
+    name: Create Unity activation file
+    runs-on: ubuntu-latest
+    steps:
+      - name: Unity activation
+        uses: game-ci/unity-activate@v3
+        with:
+          unityVersion: 6000.4.4f1
