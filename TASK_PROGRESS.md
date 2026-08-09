@@ -165,6 +165,25 @@
 
 ---
 
+## 🚀 REMOTE + PUSH — Round 9 (2026-08-09)
+
+> push โปรเจกต์ขึ้น GitHub ครั้งแรก — เริ่ม PR workflow ได้แล้ว
+
+### ✅ ทำแล้ว
+| รายการ | รายละเอียด |
+|--------|-----------|
+| Remote | `origin` → `https://github.com/narisavapolk-sys/CueStrike.git` |
+| Push | `main` (7 commits, HEAD `85e6e6b`) — `git push -u origin main` exit 0 |
+| LFS | 274 files / 250MB ส่งครบ (`git lfs push --dry-run` ว่าง) |
+| Auth | Git Credential Manager (ระบบของ Git for Windows) |
+
+### 📌 วิธีทำงานต่อจากนี้ (PR workflow)
+- งานใหม่ → สร้าง branch (`git checkout -b feature/xxx`) → commit → push → เปิด PR ผ่าน GitHub → merge
+- ตั้งค่าหลัง clone: `git config core.hooksPath .githooks` (compile gate)
+- ถัดไปแนะนำ: GitHub Actions CI รัน compile gate อัตโนมัติทุก PR
+
+---
+
 ## 🎯 PHASE A AUDIO - DETAILED CHECKLIST
 
 ### ✅ COMPLETED (Architecture & Setup)
