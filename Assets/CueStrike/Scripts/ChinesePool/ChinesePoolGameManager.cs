@@ -85,6 +85,12 @@ namespace CueStrike.Gameplay.ChinesePool
 
         void OnDestroy()
         {
+            if (callShotUI != null)
+            {
+                callShotUI.OnShotCalled -= SetCallShot;
+                callShotUI.OnCallShotCancelled -= ClearCallShot;
+            }
+
             if (Instance == this) Instance = null;
         }
 
@@ -108,6 +114,12 @@ namespace CueStrike.Gameplay.ChinesePool
                 callShotUI = FindFirstObjectByType<ChinesePoolCallShotUI>();
                 if (callShotUI == null)
                     Debug.LogWarning("[CueStrike] ChinesePoolCallShotUI not found in scene. Assign manually in Inspector.");
+            }
+
+            if (callShotUI != null)
+            {
+                callShotUI.OnShotCalled += SetCallShot;
+                callShotUI.OnCallShotCancelled += ClearCallShot;
             }
 
             if (aiModifier == null)

@@ -200,6 +200,24 @@
 
 ---
 
+## 🔗 CALL-SHOT WIRING — Round 11 (2026-08-09, per implementation_plan_callshot_wiring.md)
+
+> ต่อวงจร call-shot ให้ครบ (ต่อจาก R7): UI event → GameManager | Unity ปิดก่อนแก้ (Iron Rule 4)
+
+### ✅ ทำแล้ว
+| รายการ | รายละเอียด |
+|--------|-----------|
+| `OnShotCalled` → `SetCallShot` | subscribe ใน `AutoWireReferences()` (หลังหา `callShotUI`) — `GameManager.cs:121` |
+| `OnCallShotCancelled` → `ClearCallShot` | subscribe — `GameManager.cs:122` |
+| Unsubscribe | ใน `OnDestroy()` — `:90-91` (event hygiene) |
+| Compile | ✅ **0 errors** (`compile_check.sh` exit 0) |
+
+### ⏳ ยังเหลือ (งานถัดไป)
+- **ฝั่งแสดง UI ยังไม่มี trigger** — ไม่มีใครเรียก `ShowCallShot` — ต้องออกแบบเกมโฟลว์ (ถึงตาที่ต้องเรียก → โชว์ panel)
+- UI ในฉากบาง instance field ว่าง (`_callShotPanel: {fileID: 0}` ฯลฯ) — assign ใน Editor + Vision audit (กฎข้อ 4) ก่อนเล่นจริง
+
+---
+
 ## 🎯 PHASE A AUDIO - DETAILED CHECKLIST
 
 ### ✅ COMPLETED (Architecture & Setup)
