@@ -18,7 +18,16 @@ jobs:
     name: Create Unity activation file
     runs-on: ubuntu-latest
     steps:
-      - name: Unity activation
-        uses: game-ci/unity-activate@v3
+      # 1. ขอไฟล์ Activation (.alf) จาก Unity
+      - name: Request manual activation file
+        id: get_alf
+        uses: game-ci/unity-request-activation-file@v2
         with:
           unityVersion: 6000.4.4f1
+
+      # 2. อัปโหลดไฟล์ .alf ขึ้น Artifact ให้ดาวน์โหลดได้
+      - name: Upload activation file
+        uses: actions/upload-artifact@v4
+        with:
+          name: Unity_v6000.4.4f1.alf
+          path: ${{ steps.get_alf.outputs.filePath }}
