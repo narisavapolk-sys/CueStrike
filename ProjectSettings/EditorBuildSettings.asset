@@ -6,7 +6,37 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/CueStrike/Scenes/AAA DAY/AAA_RoomDAY.unity
+    guid: 7e71f528c8e120345ae8764536972e5a
+  - enabled: 1
+    path: Assets/CueStrike/Scenes/Cyberpunk/Cyberpunk_Room.unity
+    guid: a8216b7443f657344881924487ef08dd
+  - enabled: 1
+    path: Assets/CueStrike/Scenes/GrandArena/GrandArena_Room.unity
+    guid: 69e59e0fae95db34a8969f6a2cea9c47
+  - enabled: 1
+    path: Assets/CueStrike/Scenes/Industrial/Industrial_Room.unity
+    guid: 13a2fec92b1f16a498158506947485c2
+  - enabled: 1
+    path: Assets/CueStrike/Scenes/Luxury/Luxury_Room.unity
+    guid: ab1c98f2b831d47488bc2930f9996e91
+  - enabled: 1
+    path: Assets/CueStrike/Scenes/MainMenu.unity
+    guid: da0e097f4e05efa4f8b918be2954aa0a
+  - enabled: 1
+    path: Assets/CueStrike/Scenes/Snooker_Demo.unity
+    guid: 4c8d2da74ada2604190ca821730e5c33
+  - enabled: 1
+    path: Assets/CueStrike/Scenes/SpaceNebula/SpaceNebula_Room.unity
+    guid: 3ad04cd6d2da3b540986417b7243327d
+  - enabled: 1
     path: Assets/CueStrike/Scenes/Title_NoksGrandHall.unity
     guid: 9b4ce1f23fdc46241b4628271c83627d
+  - enabled: 1
+    path: Assets/CueStrike/Scenes/WarpFantasy/WarpFantasy_Room.unity
+    guid: 1a2b3c4d5e6f708192a3b4c5d6e7f801
+  - enabled: 1
+    path: Assets/CueStrike/Scenes/ZenDojo/ZenDojo_Room.unity
+    guid: cfc1a194e95edee4092d45f18869abc8
   m_configObjects:
     com.unity.xr.openxr.settings4: {fileID: 11400000, guid: bf096d1aca0129b49a41b000ca3f6f7a, type: 2}

@@ -86,6 +86,25 @@
 
 ---
 
+## 🎬 SCENE LOADING FIX — Round 4 (2026-08-09, per implementation_plan_scene_fix.md)
+
+> พบบั๊กจริงจากการตรวจ compile + scene flow (กฎข้อ 1): build settings มี scene แค่ 1/11 และ MainMenu โหลด scene "hub" ที่ไม่มีอยู่จริง | Unity ปิดอยู่ก่อนแก้ (Iron Rule 4) | แก้ผ่าน batchmode `-executeMethod` (กฎข้อ 4)
+
+### ✅ ทำแล้ว
+| รายการ | รายละเอียด |
+|--------|-----------|
+| Build Settings | เพิ่มครบ **11 scenes** (`Assets/CueStrike/Scenes/**`) ผ่าน `SceneBuildSettingsFixer.cs` — `EditorBuildSettings.scenes` ตั้งด้วย API ไม่ใช่แก้มือ |
+| `MainMenuUIController.cs:125` | `LoadScene("hub")` → `LoadScene("Snooker_Demo")` (scene `hub` ไม่มีจริง) |
+| Editor Tool ใหม่ | `Tools → CueStrike → Fix → Add All Scenes to Build Settings` — guard 3 ชั้น, batchmode-safe |
+| Compile | ✅ **0 errors** (batchmode exit 0) |
+
+### ⏳ ยังเหลือ / Note
+- `Audio/Clips/**/*.meta` เดิมใน baseline ไม่สมบูรณ์ (มีแค่ guid) — Unity เติม `AudioImporter` ให้อัตโนมัติเวลาเปิด; revert ไว้ใน commit นี้ — รอ decision พี่โม่ง
+- เป้า Practice = `Snooker_Demo` (ฉากเล่นได้จริงนอกเหนือจากห้อง) — พี่โม่งเปลี่ยนเป็นฉากอื่นได้ที่ `MainMenuUIController.cs:125`
+- `TitleSceneManager.mainSceneName` ยังค่า default `"MainScene"` (ไม่มีฉากนี้) — ยังไม่ได้ใช้เพราะ component ไม่ได้อยู่ใน Title scene — ควรล้างค่า default ทิ้งเมื่อแตะไฟล์นี้ครั้งหน้า
+
+---
+
 ## 🎯 PHASE A AUDIO - DETAILED CHECKLIST
 
 ### ✅ COMPLETED (Architecture & Setup)

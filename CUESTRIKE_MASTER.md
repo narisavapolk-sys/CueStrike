@@ -2,7 +2,7 @@
 > **Project:** CueStrike VR Billiards (AAA Unity, Meta Quest 2/3)
 > **Last Updated:** 2026-08-09
 > **Coach:** Strategist/Director | **Dev Agent:** (AI Assistant) | **User:** โม่ง (Mong)
-> **Status:** P8 = 100% | P9 = 100% (IK Assist + Shader Fix Complete) | 🧹 House Cleaning R2 done (2026-08-06): 6 junk targets removed + 7 ghost-file refs fixed | ✅ **Compile = 0 Errors REAL (2026-08-06): MCP migrated System.Text.Json → Newtonsoft (UPM) + Rule 6 added** | 🔧 **VCS Setup R3 (2026-08-09): git init + .gitignore + Git LFS — baseline commit `8f7b347`** | Ready for Next Phase
+> **Status:** P8 = 100% | P9 = 100% (IK Assist + Shader Fix Complete) | 🧹 House Cleaning R2 done (2026-08-06): 6 junk targets removed + 7 ghost-file refs fixed | ✅ **Compile = 0 Errors REAL (2026-08-06): MCP migrated System.Text.Json → Newtonsoft (UPM) + Rule 6 added** | 🔧 **VCS Setup R3 (2026-08-09): git init + .gitignore + Git LFS — baseline commit `8f7b347`** | 🎬 **Scene Loading Fix R4 (2026-08-09): 11 scenes ใน Build Settings + Practice "hub"→`Snooker_Demo`** | Ready for Next Phase
 
 > ## ⚠️ MANDATORY: อ่านก่อนทำงานทุกครั้ง
 > **AI ทุกตัวต้องอ่าน [`AI_TOOLS_MANDATE.md`](AI_TOOLS_MANDATE.md) ก่อนเริ่มงาน**
@@ -128,6 +128,14 @@ CueStrike.<Module>.<Submodule>
 - ✅ **Baseline commit `8f7b347`** — 8,309 files (284 C# scripts, editor tooling, Blender scripts, docs)
 - ⚠️ **ยังไม่ทำ:** nested `CueStrike_Project/` skeleton (โฟลเดอร์ว่าง 0 ไฟล์ — git ไม่ track), parent `UnityProjects/CueStrike/` = สำเนาเก่า (มีโฟลเดอร์ซ้ำ `Assets/ Library/ ProjectSettings/`) รอการรวมเป็น root เดียว
 - 📝 Plan: `implementation_plan_git_setup.md` | ✅ ไม่แตะโค้ด C# — compile ไม่กระทบ
+
+### 🎬 Scene Loading Fix (2026-08-09, by Buffy/Freebuff)
+- ✅ **`EditorBuildSettings.asset` มีครบ 11 scenes** (เดิมมีแค่ `Title_NoksGrandHall` — การโหลด MainMenu/ห้อง/demo ในบิลด์จะพัง) — ผ่าน `SceneBuildSettingsFixer.cs` (Editor Tool + batchmode `-executeMethod` ตามกฎข้อ 4)
+- ✅ **`MainMenuUIController.cs:125` แก้ `LoadScene("hub")` → `LoadScene("Snooker_Demo")`** — scene `hub` ไม่มีอยู่จริง (ROADMAP เคยสั่งลบ/ทำใหม่) → กด Practice ใน Main Menu เดิมจะ error ทันที
+- ✅ **Compile batchmode: 0 errors** (exit 0, `compile_check_buffy.log`)
+- ✅ Editor Tool ใหม่: `Tools → CueStrike → Fix → Add All Scenes to Build Settings` (guard 3 ชั้น + ใช้งาน batchmode ได้)
+- 📝 Plan: `implementation_plan_scene_fix.md`
+- ⚠️ Note: Unity เติม `AudioImporter` block ให้ .meta ไฟล์เสียง (baseline เดิมไม่สมบูรณ์) — revert ไว้ รอ decision พี่โม่งว่าจะ commit หรือไม่
 
 ### PlayMode & Runtime Fixes (by Dev Agent)
 - ✅ EditorSceneManager guards ครบทุกไฟล์ (9 ไฟล์) — ไม่มี unguarded calls

@@ -121,8 +121,8 @@ public class MainMenuUIController : MonoBehaviour
     private void OnPracticeClicked()
     {
         CueStrikeAudioManager.Instance?.PlayMenuClick();
-        Debug.Log("MainMenu: Loading offline practice hub scene asynchronously.");
-        CueStrike.VR.CueStrikeLoadingScreen.LoadScene("hub");
+        Debug.Log("MainMenu: Loading offline practice scene (Snooker_Demo) asynchronously.");
+        CueStrike.VR.CueStrikeLoadingScreen.LoadScene("Snooker_Demo");
     }
 
     // Add interactive micro-scale transitions on mouse hover
