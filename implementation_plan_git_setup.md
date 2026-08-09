@@ -32,16 +32,13 @@
 ## 📋 ขั้นตอน
 
 - [x] **ขั้น 0 — สำรวจสถานะ** (ทำแล้ว ข้างบน)
-- [ ] **ขั้น 1 — เขียน plan นี้** (ไฟล์นี้) + update todos
-- [ ] **ขั้น 2 — สร้าง `.gitignore`**: Unity standard + `*.log` + `err*.txt` + `%f` + `gold_hex.txt` + `filelist*.txt` + `all_scripts.txt` + `api  key  ai audio/` + `*.tar`/`*.tar.xz`/`ffmpeg-9.0/` + `__pycache__/` + `.freebuff/` + `[Ll]ibrary/` + `[Tt]emp/` + `[Ll]ogs/` + `[Uu]serSettings/`
-- [ ] **ขั้น 3 — สร้าง `.gitattributes` + Git LFS**: `*.fbx *.obj *.png *.webm *.dll *.wav *.mp4` → LFS
-- [ ] **ขั้น 4 — `git init -b main` + `git lfs install --local`**
-- [ ] **ขั้น 5 — `git add` + ตรวจสอบก่อน commit**:
-  - `git status` ดูว่าไม่มี `Library/`, `Temp/`, secrets, junk
-  - `git ls-files | grep -i -E "key|secret|token"` ต้องว่าง
-  - ตรวจ LFS: `git lfs ls-files` หลัง commit
-- [ ] **ขั้น 6 — Commit ครั้งแรก** (baseline) message อธิบายชัด
-- [ ] **ขั้น 7 — อัปเดตเอกสาร (กฎข้อ 2)**: `CUESTRIKE_MASTER.md` (header + COMPLETED WORK) + `TASK_PROGRESS.md` (section ใหม่ + Last Updated)
+- [x] **ขั้น 1 — เขียน plan นี้** (ไฟล์นี้) + update todos
+- [x] **ขั้น 2 — สร้าง `.gitignore`**: Unity standard + `*.log` + `err*.txt` + `%f` + `gold_hex*.txt` + `filelist*.txt` + `all_scripts.txt` + `api  key  ai audio/` + `*.tar`/`*.tar.xz`/`ffmpeg-9.0/` + `__pycache__/` + `.freebuff/` + `.agents/` + `[Ll]ibrary/` + `[Tt]emp/` + `[Ll]ogs/` + `[Uu]serSettings/`
+- [x] **ขั้น 3 — สร้าง `.gitattributes` + Git LFS**: `*.fbx *.obj *.png *.webm *.dll *.wav *.mp3 *.mp4 *.jpg *.jpeg` → LFS (274 files)
+- [x] **ขั้น 4 — `git init -b main` + `git lfs install --local`**
+- [x] **ขั้น 5 — `git add` + ตรวจสอบก่อน commit**: ผ่านทั้ง 3 ข้อ (secrets scan ว่าง, junk/cache scan ว่าง, LFS 274 files)
+- [x] **ขั้น 6 — Commit ครั้งแรก** (baseline `8f7b347`, 8,309 files)
+- [x] **ขั้น 7 — อัปเดตเอกสาร (กฎข้อ 2)**: `CUESTRIKE_MASTER.md` (header + §5) + `TASK_PROGRESS.md` (§VCS Setup) + commit `5a86f18`
 
 ## ⚠️ ความเสี่ยง & มาตรการ
 
@@ -54,10 +51,10 @@
 
 ## ✅ Definition of Done (กฎข้อ 4)
 
-- [ ] `git status` สะอาด, มี commit แรก
-- [ ] `git ls-files` ไม่มี secrets / caches / junk
-- [ ] เอกสารอัปเดตครบในรอบเดียวกัน (CUESTRIKE_MASTER + TASK_PROGRESS)
-- [ ] ไม่แตะโค้ด C# — compile ไม่กระทบ (ไม่ต้องรัน Unity compile เพราะไม่มีการแก้ code)
+- [x] `git status` สะอาด, มี commit แรก (`8f7b347` + docs `5a86f18`)
+- [x] `git ls-files` ไม่มี secrets / caches / junk (scan ผ่าน)
+- [x] เอกสารอัปเดตครบในรอบเดียวกัน (CUESTRIKE_MASTER + TASK_PROGRESS)
+- [x] ไม่แตะโค้ด C# — compile ไม่กระทบ (ไม่ต้องรัน Unity compile เพราะไม่มีการแก้ code)
 
 ---
 *Plan นี้เขียนก่อนลงมือตามกฎข้อ 5 — 2026-08-09*

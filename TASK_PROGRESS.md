@@ -1,6 +1,6 @@
 # CueStrike VR - Master Task Progress Tracker
 
-> **Last Updated:** 2026-08-06  
+> **Last Updated:** 2026-08-09  
 > **Current Phase:** Phase A Audio Completion
 
 ---
@@ -60,6 +60,29 @@
 - **สถานะ: ✅ FIXED แล้ว (2026-08-06)** — migrate MCP layer จาก `System.Text.Json` → `Newtonsoft.Json` (UPM `com.unity.nuget.newtonsoft-json` 3.2.1) ตาม Rule 6 (ห้ามฉีด DLL ภายนอก)
 - แก้เพิ่มจาก error ที่เปิดเผยเมื่อ MCP คอมไพล์ผ่าน: เพิ่ม `using CueStrike.MCP.Tools` (McpServer) / `using System.Linq` (ExecuteCodeTool, McpTestClient) / `IMcpTool missing` / `SeasonalEvent.Spring,Winter` / `ModelImporterMaterialLocation.InProject→External` / `LightingSettings.CreateInstance→new LightingSettings()` / `SkinRarity` / `UnityEngine.Object.DestroyImmediate` / `Application.logMessageReceived` event
 - **ผล compile ล่าสุด: 0 errors (log `compile_verify_newtonsoft.log`, return code 0)**
+
+---
+
+## 🔧 VCS SETUP — Round 3 (2026-08-09, per implementation_plan_git_setup.md)
+
+> โปรเจกต์ไม่เคยมี version control มาก่อน — ตั้ง git + .gitignore + Git LFS ตามกฎข้อ 5 (plan ก่อนลงมือ) และกฎข้อ 2 (อัปเดตเอกสารในรอบเดียวกัน) | Unity ปิดอยู่ก่อนแก้ไฟล์ (Iron Rule 4)
+
+### ✅ ทำแล้ว
+| รายการ | รายละเอียด |
+|--------|-----------|
+| `git init` | branch `main` — root commit `8f7b347` (8,309 files, 1,169,767 insertions) |
+| `.gitignore` | Unity caches (`Library/ Temp/ Logs/ UserSettings/`) + `*.log` + `err*.txt` + `%f` + `gold_hex*.txt` + `filelist*.txt` + `all_scripts.txt` + `__pycache__/` + `.freebuff/` + `.agents/` + ffmpeg downloads (`*.tar*`) |
+| Git LFS | 274 binary files (`*.fbx *.obj *.png *.webm *.dll *.wav *.mp3 *.mp4 *.jpg *.jpeg`) — Assets รวม 328MB เก็บเป็น pointer |
+| **SECURITY** | `api  key  ai audio/` (ElevenLabs `ElevenLabs KeY tester  for sound.txt` + `stability.ai.txt` plaintext) **excluded จาก VCS** — ตรวจ `git ls-files` ก่อน commit ไม่พบ secrets ✓ |
+| เอกสาร | `CUESTRIKE_MASTER.md` (header + §5) + `TASK_PROGRESS.md` (ไฟล์นี้) อัปเดตในรอบเดียวกัน ✓ |
+
+### ⏳ ยังเหลือ (งานต่อเนื่อง)
+- ย้าย API keys ออกจากโปรเจกต์จริง (แนะนำ rotate) — ตอนนี้แค่ exclude จาก git
+- nested `CueStrike_Project/` skeleton — โฟลเดอร์ว่าง 0 ไฟล์ (git ไม่ track อยู่แล้ว) — ลบได้
+- parent `UnityProjects/CueStrike/` มีโฟลเดอร์ซ้ำ (`Assets/ Library/ ProjectSettings/` ฯลฯ) = สำเนาเก่า — รอรวมเป็น root เดียว (Consolidation)
+- เพิ่ม remote (GitHub/GitLab) + push baseline → เปิด PR workflow ได้จริง
+- `Assets/fix_safemode_v2.py` + `Assets/CueStrike/fix_safemode_v2.py` — สคริปต์ dev อยู่ใน asset DB (ซ้ำกัน 2 ที่) — รอย้ายไป `Tools/` นอก Assets
+
 
 ---
 
