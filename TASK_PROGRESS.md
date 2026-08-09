@@ -147,6 +147,24 @@
 
 ---
 
+## 🧼 SCENE NAME DEFAULTS CLEANUP — Round 8 (2026-08-09, per implementation_plan_clean_scene_names.md)
+
+> ล้างค่า default เก่าใน `TitleSceneManager.cs` ที่ชี้ฉากไม่มีจริง (ชื่อจากยุคเก่า) — preventive เพราะ class ยังไม่ถูกใส่ในฉาก | Unity ปิดก่อนแก้ (Iron Rule 4)
+
+### ✅ ทำแล้ว
+| field | เดิม (พัง) | ใหม่ | หมายเหตุ |
+|-------|-----------|------|----------|
+| `mainSceneName` | `"MainScene"` | `"MainMenu"` | ใช้จริงโดย btnPlay → `LoadScene`; Title → MainMenu |
+| `practiceSceneName` | `"PracticeHub"` | `"Snooker_Demo"` | ตรงกับ MainMenuUIController (R4) |
+| `multiplayerSceneName` | `"MultiplayerLobby"` | `""` | ยังไม่มีฉาก (P7 partial); `LoadScene` guard ค่าว่าง |
+| `settingsSceneName` / `creditsSceneName` | `"Settings"` / `"Credits"` | `""` | เป็น panel ใน Title scene ไม่ใช่ฉาก |
+| Compile | ✅ **0 errors** (`compile_check.sh` exit 0) | | |
+
+### ⚠️ พบเพิ่ม (บันทึก ไม่แก้)
+- `CueStrikeVRStartup.cs` มี default `"Main"`/`"Boot"` เก่า (ไม่มีฉากนี้) — **ไม่ถูกใส่ใน scene ไหน (dead)** — ควรลบ/ปรับเมื่อแตะไฟล์นี้ หรือเมื่อทำ VR startup จริง (มี `VR/VRStartup.cs` อีกตัว)
+
+---
+
 ## 🎯 PHASE A AUDIO - DETAILED CHECKLIST
 
 ### ✅ COMPLETED (Architecture & Setup)

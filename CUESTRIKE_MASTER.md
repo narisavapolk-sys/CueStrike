@@ -2,7 +2,7 @@
 > **Project:** CueStrike VR Billiards (AAA Unity, Meta Quest 2/3)
 > **Last Updated:** 2026-08-09
 > **Coach:** Strategist/Director | **Dev Agent:** (AI Assistant) | **User:** โม่ง (Mong)
-> **Status:** P8 = 100% | P9 = 100% (IK Assist + Shader Fix Complete) | 🧹 House Cleaning R2 done (2026-08-06): 6 junk targets removed + 7 ghost-file refs fixed | ✅ **Compile = 0 Errors REAL (2026-08-06): MCP migrated System.Text.Json → Newtonsoft (UPM) + Rule 6 added** | 🔧 **VCS Setup R3 (2026-08-09): git init + .gitignore + Git LFS — baseline commit `8f7b347`** | 🎬 **Scene Loading Fix R4 (2026-08-09): 11 scenes ใน Build Settings + Practice "hub"→`Snooker_Demo`** | 🧹 **Duplicate Cleanup R5 (2026-08-09): ลบ 4 ไฟล์ที่ไม่มี ref (XR Hands stub, CrowdSystem-Chars, BallSync/GameSync-Normcore) — เก็บ 2 คู่ที่ใช้จริง** | 🚦 **Compile Gate R6 (2026-08-09): `tools/compile_check.sh` + pre-commit hook อัตโนมัติ** | 🎯 **CallShotUI Merge R7 (2026-08-09): 2 เวอร์ชัน → 1 (`CueStrike.UI.ChinesePool`) — GameManager หาเจอจริง** | Ready for Next Phase
+> **Status:** P8 = 100% | P9 = 100% (IK Assist + Shader Fix Complete) | 🧹 House Cleaning R2 done (2026-08-06): 6 junk targets removed + 7 ghost-file refs fixed | ✅ **Compile = 0 Errors REAL (2026-08-06): MCP migrated System.Text.Json → Newtonsoft (UPM) + Rule 6 added** | 🔧 **VCS Setup R3 (2026-08-09): git init + .gitignore + Git LFS — baseline commit `8f7b347`** | 🎬 **Scene Loading Fix R4 (2026-08-09): 11 scenes ใน Build Settings + Practice "hub"→`Snooker_Demo`** | 🧹 **Duplicate Cleanup R5 (2026-08-09): ลบ 4 ไฟล์ที่ไม่มี ref (XR Hands stub, CrowdSystem-Chars, BallSync/GameSync-Normcore) — เก็บ 2 คู่ที่ใช้จริง** | 🚦 **Compile Gate R6 (2026-08-09): `tools/compile_check.sh` + pre-commit hook อัตโนมัติ** | 🎯 **CallShotUI Merge R7 (2026-08-09): 2 เวอร์ชัน → 1 (`CueStrike.UI.ChinesePool`) — GameManager หาเจอจริง** | 🧼 **Scene Name Cleanup R8 (2026-08-09): TitleSceneManager defaults ชี้ฉากจริง/ว่าง** | Ready for Next Phase
 
 > ## ⚠️ MANDATORY: อ่านก่อนทำงานทุกครั้ง
 > **AI ทุกตัวต้องอ่าน [`AI_TOOLS_MANDATE.md`](AI_TOOLS_MANDATE.md) ก่อนเริ่มงาน**
@@ -162,6 +162,13 @@ CueStrike.<Module>.<Submodule>
 - ✅ **Compile batchmode: 0 errors** (`compile_check.sh` exit 0)
 - ⚠️ **งานถัดไป:** `OnShotCalled` event ยังไม่มี subscriber — ควรผูก `callShotUI.OnShotCalled += SetCallShot` (+ `OnCallShotCancelled → ClearCallShot`) และ UI ในฉากบาง instance ยังมี field ว่าง (ต้อง assign + Vision audit)
 - 📝 Plan: `implementation_plan_merge_callshot_ui.md`
+
+### 🧼 Scene Name Defaults Cleanup (2026-08-09, by Buffy/Freebuff — per implementation_plan_clean_scene_names.md)
+- ✅ **`TitleSceneManager.cs`**: `mainSceneName` `"MainScene"`→`"MainMenu"`, `practiceSceneName` `"PracticeHub"`→`"Snooker_Demo"`, `multiplayerSceneName`/`settingsSceneName`/`creditsSceneName` → `""` (ยังไม่มีฉาก / เป็น panel) + tooltips English ตาม convention
+- ✅ Preventive — class ยังไม่ถูกใส่ใน scene ไหน (grep = 0) — ถ้าถูกใส่ในอนาคตจะไม่พัง
+- ✅ **Compile batchmode: 0 errors**
+- ⚠️ **พบเพิ่ม (ไม่แก้):** `CueStrikeVRStartup.cs` default `"Main"`/`"Boot"` เก่า — ไม่ได้อยู่ในฉาก (dead) — ลบ/ปรับเมื่อแตะไฟล์นี้หรือทำ VR startup จริง (`VR/VRStartup.cs` มีอยู่แล้วอีกตัว)
+- 📝 Plan: `implementation_plan_clean_scene_names.md`
 
 ### PlayMode & Runtime Fixes (by Dev Agent)
 - ✅ EditorSceneManager guards ครบทุกไฟล์ (9 ไฟล์) — ไม่มี unguarded calls

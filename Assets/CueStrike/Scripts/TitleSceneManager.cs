@@ -11,20 +11,20 @@ namespace CueStrike.UI
     public class TitleSceneManager : MonoBehaviour
     {
         [Header("Scene Names")]
-        [Tooltip("Main gameplay scene (snooker/pool)")]
-        public string mainSceneName = "MainScene";
+        [Tooltip("Scene loaded when Play is pressed (Title → MainMenu)")]
+        public string mainSceneName = "MainMenu";
 
-        [Tooltip("Practice mode scene")]
-        public string practiceSceneName = "PracticeHub";
+        [Tooltip("Practice mode scene (Snooker_Demo — the only playable scene outside the room scenes)")]
+        public string practiceSceneName = "Snooker_Demo";
 
-        [Tooltip("Multiplayer lobby scene")]
-        public string multiplayerSceneName = "MultiplayerLobby";
+        [Tooltip("No multiplayer scene yet (P7 partial) — leave empty, LoadScene guards empty names")]
+        public string multiplayerSceneName = "";
 
-        [Tooltip("Settings scene")]
-        public string settingsSceneName = "Settings";
+        [Tooltip("Settings is a panel in the Title scene, not a separate scene")]
+        public string settingsSceneName = "";
 
-        [Tooltip("Credits scene")]
-        public string creditsSceneName = "Credits";
+        [Tooltip("Credits is a panel in the Title scene, not a separate scene")]
+        public string creditsSceneName = "";
 
         [Header("Button References")]
         public Button btnPlay;
