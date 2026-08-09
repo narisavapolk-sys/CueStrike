@@ -42,14 +42,20 @@
 | `implementation_plan_mcp_unity.md:96` | `[x]` → `[ ]` NOT YET CREATED |
 | `task_mcp_unity.md:12` | `[x] implemented` → `[ ] NOT yet created` |
 
-### ⏳ ยังเหลือ — ไฟล์ซ้ำ 5 คู (กลุ่ม B/C, นอกขอบเขต Option 1 — รอ verify reference ทีละคู)
-| ไฟล์ | A | B | หมายเหตุ |
-|------|---|---|----------|
-| `CueStrikeCrowdSystem.cs` | `Characters/` (1151L) | `MascotSystem/` (396L) | คนละ namespace ทั้งคู่คอมไพล์ — ต้องเช็ค reference/GUID |
-| `CueStrikeBallSync.cs` | `Multiplayer/` (79L, `#if CUESTRIKE_NORMCORE`) | `Scripts/Multiplayer/Normcore/` (252L, ไม่มี guard) | คนละ namespace — ต้องเช็ค define + caller |
-| `CueStrikeGameSync.cs` | `Multiplayer/` (162L, guard) | `Scripts/Multiplayer/Normcore/` (378L) | คนละ namespace |
-| `CueStrikeNormcoreManager.cs` | `Multiplayer/` (100L, guard) | `Scripts/Multiplayer/Normcore/` (567L) | คนละ namespace |
-| `ChinesePoolCallShotUI.cs` | `Scripts/ChinesePool/` (281L, TMP) | `Scripts/UI/ChinesePool/` (250L, legacy Text) | คนละ namespace |
+### ✅ ไฟล์ซ้ำ 5 คู่ — VERIFIED & RESOLVED (2026-08-09, per implementation_plan_cleanup_duplicates.md)
+
+> ตรวจ reference จริงทีละคู่ (code `.cs` + GUID ใน prefab/scene/asset + namespace ของ caller) — ลบเฉพาะที่พิสูจน์ว่าไม่มีใครใช้ | Compile 0 errors หลังลบ
+
+| ไฟล์ | ผลตรวจ | การตัดสินใจ |
+|------|--------|-------------|
+| `CueStrikeCrowdSystem.cs` | `Characters/` (1150L) **ถูกใช้จริง** โดย `CueStrikeMascotManager.cs` (ns เดียวกัน `CueStrike.Characters` → ชนะ `using CueStrike.MascotSystem`) + มี `enum CrowdReactionType`; `MascotSystem/` (395L) ไม่มี ref ใดๆ (ไม่มี `CrowdReactionType` ด้วยซ้ำ) + GUID=0 | 🗑️ ลบ `MascotSystem/` — เก็บ `Characters/` |
+| `CueStrikeBallSync.cs` | ทั้ง 2 เวอร์ชันไม่มี ref ภายนอก; เวอร์ชัน `Normcore/` ไม่มี guard (ผิดกฎข้อ 4) | 🗑️ ลบ `Scripts/Multiplayer/Normcore/` — เก็บ `Multiplayer/` (guarded, canonical) |
+| `CueStrikeGameSync.cs` | `Multiplayer/` ถูกใช้โดย `Editor/CueStrikeMultiplayerSetup.cs` + `CueStrikeGameSyncModel.cs`; เวอร์ชัน `Normcore/` ไม่มี ref + ไม่มี guard | 🗑️ ลบ `Scripts/Multiplayer/Normcore/` — เก็บ `Multiplayer/` |
+| `CueStrikeNormcoreManager.cs` | **ใช้ทั้งคู่**: `Multiplayer/` ← `MultiplayerSetup.cs`; `Normcore/` ← `CueStrikeNormcoreSetup.cs`, `IntegrationSelfTest.cs`, `MultiplayerSelfTest.cs` | ✅ เก็บทั้งคู่ — ไม่ใช่ duplicate แท้ (คนละ consumer) |
+| `ChinesePoolCallShotUI.cs` | **ใช้ทั้งคู่**: `Scripts/ChinesePool/` ← `ChinesePoolGameManager.cs`; `Scripts/UI/ChinesePool/` ← `ChinesePoolUIManager.cs` + `ChinesePoolUISetup.cs` + **GUID ใน 2 scenes** | ✅ เก็บทั้งคู่ — ไม่ใช่ duplicate แท้ |
+| `RCA/UnityEngine.XR.Hands.cs` (0B) | ไฟล์ว่าง ประกาศอะไรไม่ได้; XR Hands จริง (1.5.0) ใน manifest แล้ว | 🗑️ ลบ |
+
+> ⚠️ Note: `ChinesePoolGameManager` ใช้ `FindFirstObjectByType<ChinesePoolCallShotUI>()` (ns Gameplay) แต่ฉากมีเวอร์ชัน UI ติดอยู่ (ns UI) → ตอน runtime ค้นหาไม่เจอ จะมี warning — **รอ unified เป็นงานต่อไป**
 
 ### ⚠️ ค้นพบ PRE-EXISTING compile blocker (2026-08-06, ระหว่างขั้น 6)
 - **`CueStrike_Project` (โปรเจกต์หลัก) compile ไม่ผ่าน 354 error** — ทั้งหมดมาจาก MCP layer ที่ใช้ `System.Text.Json`:

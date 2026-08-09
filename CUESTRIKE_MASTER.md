@@ -2,7 +2,7 @@
 > **Project:** CueStrike VR Billiards (AAA Unity, Meta Quest 2/3)
 > **Last Updated:** 2026-08-09
 > **Coach:** Strategist/Director | **Dev Agent:** (AI Assistant) | **User:** โม่ง (Mong)
-> **Status:** P8 = 100% | P9 = 100% (IK Assist + Shader Fix Complete) | 🧹 House Cleaning R2 done (2026-08-06): 6 junk targets removed + 7 ghost-file refs fixed | ✅ **Compile = 0 Errors REAL (2026-08-06): MCP migrated System.Text.Json → Newtonsoft (UPM) + Rule 6 added** | 🔧 **VCS Setup R3 (2026-08-09): git init + .gitignore + Git LFS — baseline commit `8f7b347`** | 🎬 **Scene Loading Fix R4 (2026-08-09): 11 scenes ใน Build Settings + Practice "hub"→`Snooker_Demo`** | Ready for Next Phase
+> **Status:** P8 = 100% | P9 = 100% (IK Assist + Shader Fix Complete) | 🧹 House Cleaning R2 done (2026-08-06): 6 junk targets removed + 7 ghost-file refs fixed | ✅ **Compile = 0 Errors REAL (2026-08-06): MCP migrated System.Text.Json → Newtonsoft (UPM) + Rule 6 added** | 🔧 **VCS Setup R3 (2026-08-09): git init + .gitignore + Git LFS — baseline commit `8f7b347`** | 🎬 **Scene Loading Fix R4 (2026-08-09): 11 scenes ใน Build Settings + Practice "hub"→`Snooker_Demo`** | 🧹 **Duplicate Cleanup R5 (2026-08-09): ลบ 4 ไฟล์ที่ไม่มี ref (XR Hands stub, CrowdSystem-Chars, BallSync/GameSync-Normcore) — เก็บ 2 คู่ที่ใช้จริง** | Ready for Next Phase
 
 > ## ⚠️ MANDATORY: อ่านก่อนทำงานทุกครั้ง
 > **AI ทุกตัวต้องอ่าน [`AI_TOOLS_MANDATE.md`](AI_TOOLS_MANDATE.md) ก่อนเริ่มงาน**
@@ -67,7 +67,7 @@ CueStrike.<Module>.<Submodule>
 | **P8** | **Chinese 8-Ball Support & UI** | **✅ 100%** | **ChinesePoolAIStrategy.cs + UI setup + Self-Test passed + duplicate file cleanup** |
 | P9 | AI Referee — ลุงโน๊ก & IK Posture Assist | ✅ 100% | IK Posture Assist (`CueStrikeIKAssist.cs`) with smooth Lerp interpolation, 45° spine bend, `Reduce Motion`/`Sitting Mode` accessibility integration; Editor Tool `Tools/CueStrike/Apply/Fix Shaders and Setup IK` auto-assigns refs (cueTip/cueBall/spineBone); Pink Shader fix complete (0 `Shader.Find("Standard")` in Scripts); Code complete for `CueStrikeMascotUncleNok.cs` (577 lines), `CueStrikeMascotManager.cs`, `UncleNokReferee.cs` |
 | P10 | Mascot — โบ | 🔄 30% | BoPandaBanter referenced in CrowdSystem; core banter code needs review |
-| P11 | Crowd System | 🔄 30% | `CueStrikeCrowdSystem.cs` references Uncle Nok & Bo; base structure ready |
+| P11 | Crowd System | 🔄 30% | `Characters/CueStrikeCrowdSystem.cs` references Uncle Nok & Bo (เวอร์ชัน `MascotSystem/` ถูกลบแล้ว 2026-08-09 — ไม่มี ref); base structure ready |
 | P12 | Stalker Mode | ⏳ Pending | Not started |
 | P13 | MR Passthrough Polish | 🔄 20% | Basic passthrough + `MR_RCAController.cs` ready |
 | P14 | Store Submission Prep | 🔄 In Progress | STORE_SUBMISSION_CHECKLIST.md created |
@@ -136,6 +136,17 @@ CueStrike.<Module>.<Submodule>
 - ✅ Editor Tool ใหม่: `Tools → CueStrike → Fix → Add All Scenes to Build Settings` (guard 3 ชั้น + ใช้งาน batchmode ได้)
 - 📝 Plan: `implementation_plan_scene_fix.md`
 - ⚠️ Note: Unity เติม `AudioImporter` block ให้ .meta ไฟล์เสียง (baseline เดิมไม่สมบูรณ์) — revert ไว้ รอ decision พี่โม่งว่าจะ commit หรือไม่
+
+### 🧹 Duplicate Cleanup (2026-08-09, by Buffy/Freebuff — per implementation_plan_cleanup_duplicates.md)
+- ✅ Verify reference ทุกคู่ (กฎข้อ 1): code refs + GUID ใน prefab/scene/asset + namespace ของ caller
+- ✅ **ลบ 4 ไฟล์ + .meta** (พิสูจน์แล้วว่าไม่มี ref ใดๆ):
+  - `RCA/UnityEngine.XR.Hands.cs` (0 ไบต์ — XR Hands จริง 1.5.0 อยู่ใน manifest แล้ว)
+  - `MascotSystem/CueStrikeCrowdSystem.cs` (395L — MascotManager ใช้เวอร์ชัน `Characters/` แบบ same-namespace; ตัว MascotSystem ไม่มี ref + ไม่มี `CrowdReactionType`)
+  - `Scripts/Multiplayer/Normcore/CueStrikeBallSync.cs` + `CueStrikeGameSync.cs` (ไม่มี ref ภายนอก + ไม่มี `#if CUESTRIKE_NORMCORE` guard — ผิดกฎข้อ 4; เก็บเวอร์ชัน guarded ใน `Multiplayer/` ไว้)
+- ✅ **เก็บ 2 คู่** (พิสูจน์ว่าไม่ใช่ duplicate แท้ — ต่าง namespace, ต่าง consumer, อ้างถึงจริง): `CueStrikeNormcoreManager` (A←MultiplayerSetup, B←NormcoreSetup/SelfTests) + `ChinesePoolCallShotUI` (A←GameManager, B←UIManager+2 scenes)
+- ⚠️ self-test menus `Tools/CueStrike/Debug/Test Ball Sync` + `Test Game Sync` ถูกลบตามไฟล์ — ทดแทนด้วย `MultiplayerSelfTest.cs`/`IntegrationSelfTest.cs`
+- ⚠️ Note: `ChinesePoolGameManager.FindFirstObjectByType<ChinesePoolCallShotUI>()` (ns Gameplay) จะหาเวอร์ชัน UI ในฉากไม่เจอ — รอ unified UI เป็นงานต่อไป
+- ✅ **Compile batchmode: 0 errors** (`compile_check_buffy.log`)
 
 ### PlayMode & Runtime Fixes (by Dev Agent)
 - ✅ EditorSceneManager guards ครบทุกไฟล์ (9 ไฟล์) — ไม่มี unguarded calls
