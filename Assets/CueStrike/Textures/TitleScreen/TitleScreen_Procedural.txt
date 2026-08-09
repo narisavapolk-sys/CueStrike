@@ -1,0 +1,2 @@
+Title Screen uses procedural materials (neon, glass, metal shaders).
+No external texture files needed - all generated in Blender/Unity shaders.

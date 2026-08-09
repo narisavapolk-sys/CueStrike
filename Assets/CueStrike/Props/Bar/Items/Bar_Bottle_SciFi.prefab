@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &100000
+GameObject:
+  m_Name: Bar_Bottle_SciFi
+  m_Component:
+  - component: {fileID: 400000}
+  - component: {fileID: 3300000}
+  - component: {fileID: 2300000}
+--- !u!4 &400000
+Transform:
+  m_GameObject: {fileID: 100000}
+  m_LocalScale: {x: 0.1, y: 0.3, z: 0.1}
+--- !u!33 &3300000
+MeshFilter:
+  m_GameObject: {fileID: 100000}
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &2300000
+MeshRenderer:
+  m_GameObject: {fileID: 100000}
+  m_Materials:
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}

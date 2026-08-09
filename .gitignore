@@ -1,0 +1,57 @@
+# ===== Unity generated =====
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]serSettings/
+MemoryCaptures/
+Recordings/
+
+# ===== IDE / generated project files =====
+.vs/
+.idea/
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ===== Python =====
+__pycache__/
+*.py[cod]
+
+# ===== Freebuff / agent app data (local only) =====
+.freebuff/
+.agents/
+
+# ===== Dev logs & analysis artifacts (never commit) =====
+*.log
+err*.txt
+%f
+gold_hex*.txt
+filelist.txt
+filelist2.txt
+all_scripts.txt
+
+# ===== SECRETS — NEVER COMMIT =====
+api  key  ai audio/
+
+# ===== Downloaded tooling (ffmpeg) — not project assets =====
+*.tar
+*.tar.xz
+ffmpeg-9.0/
+Assets/ffmpeg-9.0.tar.xz*

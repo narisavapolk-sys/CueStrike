@@ -1,0 +1,45 @@
+# Pink Exorcist — report [fix] — 2026-08-07 06:18:09
+# count: 41
+# columns: assetPath | materialName | oldShader -> newShader | applied
+----------------------------------------------------------------------
+Assets/CueStrike/Models/AAA_Characters/Bones_AAA.fbx | Bones_Arm_L_mat | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/AAA_Characters/BoPanda_AAA.fbx | BoPanda_Arm_L_mat | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/AAA_Characters/Cassidy_AAA.fbx | Cassidy_Arm_L_mat | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/AAA_Characters/CueStrike_PoolBalls_AAA.fbx | Ball_01_Mat | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/AAA_Characters/Finn_AAA.fbx | Finn_Arm_L_mat | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/AAA_Characters/Gentleman_AAA.fbx | Gentleman_Ear_L_mat | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/AAA_Characters/KingFlex_AAA.fbx | KingFlex_Arm_L_mat | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/AAA_Characters/MeiLing_AAA.fbx | MeiLing_Arm_L_mat | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/AAA_Characters/PanPan_AAA.fbx | PanPan_Arm_L_mat | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/AAA_Characters/Phantom_AAA.fbx | Phantom_Aura_mat | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/AAA_Characters/Tusker_AAA.fbx | Tusker_Ear_L_mat | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/AAA_Characters/UncleNok_AAA.fbx | UncleNok_BowlerBrim_mat | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/AAA_Props/BarBottleSet.fbx | Gin_Cap | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/AAA_Props/CrowdDummy.fbx | CrowdHair | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/AAA_Props/CueStrike_Cue_AAA.fbx | Cue_Bumper_Material | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/AAA_Props/CueStrike_PoolBalls_AAA.fbx | Ball_01_Mat | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/AAA_Props/HoloScreen.fbx | HoloDisplay | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/AAA_Props/IndustrialLamp.fbx | DarkMetal | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/AAA_Props/LuxuryChandelier.fbx | Bulb | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/AAA_Props/NeonSign_Strike.fbx | NeonBlue | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/AAA_Props/SpaceConsole.fbx | ConsoleButton | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/AAA_Props/WarpPortalArch.fbx | PortalEnergy | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/AAA_Props/ZenLantern.fbx | RicePaper | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/Bones_AAA.fbx | Bones_Arm_L_mat | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/BoPanda_AAA.fbx | BoPanda_Arm_L_mat | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/Cassidy_AAA.fbx | Cassidy_Arm_L_mat | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/Finn_AAA.fbx | Finn_Arm_L_mat | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/Gentleman_AAA.fbx | Gentleman_Ear_L_mat | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/KingFlex_AAA.fbx | KingFlex_Arm_L_mat | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/MeiLing_AAA.fbx | MeiLing_Arm_L_mat | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/PanPan_AAA.fbx | PanPan_Arm_L_mat | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/Phantom_AAA.fbx | Phantom_Aura_mat | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/PoolBalls_AAA.fbx | Ball_01_Mat | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/TitleScreen/TitleScreen_AAA.fbx | Mat_Ball_00 | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/Tusker_AAA.fbx | Tusker_Ear_L_mat | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Models/UncleNok_AAA.fbx | UncleNok_BowlerBrim_mat | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Textures/AAA_FBX/biliardi+Cavicchi+Opera+Pool+Table+9ft.obj | BaseMat | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Textures/AAA_FBX/Cavicchi+Leonardo-Virgilio+pool+table.fbx | Anodized Titanium Polished Champagne | Standard -> Universal Render Pipeline/Lit | applied=True
+Assets/CueStrike/Textures/AAA_FBX/cavicchi+Millennium+pool+table.fbx | Anodized Titanium Polished Champagne | Standard -> Universal Render Pipeline/Lit | applied=True
+Packages/com.unity.render-pipelines.core/Runtime/RenderPipelineResources/Mesh/SamplesFixture.fbx | Emissive | Standard -> Universal Render Pipeline/Lit | applied=True
+Packages/com.unity.render-pipelines.core/Runtime/RenderPipelineResources/Mesh/SamplesFloorSpotlight.fbx | Emissive | Standard -> Universal Render Pipeline/Lit | applied=True

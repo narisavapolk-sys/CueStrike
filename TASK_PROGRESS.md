@@ -1,0 +1,307 @@
+# CueStrike VR - Master Task Progress Tracker
+
+> **Last Updated:** 2026-08-06  
+> **Current Phase:** Phase A Audio Completion
+
+---
+
+## 📋 PHASE OVERVIEW
+
+| Phase | Name | Status | Progress |
+|-------|------|--------|----------|
+| **Phase D** | MCP Infrastructure | ✅ COMPLETE | 100% |
+| **Phase A** | 3D Models (AAA) | ✅ COMPLETE | 100% |
+| **Phase A** | Audio Assets | 🔄 IN PROGRESS | 20% |
+| **Phase B** | P9 Animator + BoPanda Banter | ⏳ PENDING | 0% |
+| **Phase C** | Playability Polish | ⏳ PENDING | 0% |
+
+---
+
+## 🧹 HOUSE CLEANING — Round 2 (2026-08-06, per AI_TOOLS_MANDATE.md)
+
+> ทำตาม "ลำดับงานถัดไป #1: เคลียร์บ้าน" — กลุ่มปลอดภัยสูง (Option 1) | Unity ปิดอยู่ก่อนลบ (Iron Rule 4)
+
+### ✅ ลบไฟล์/โฟลเดอร์ขยะ (6 เป้า + .meta คู่กัน)
+| เป้า | เหตุผล (verify ด้วย tool) |
+|------|--------|
+| `Assets/CueStrike/New folder (2)/` | โฟลเดอร์ว่าง (Count=0) |
+| `Assets/_Recovery/` (มี `0.unity` 206KB) | recovery scene ไม่อยู่ใน EditorBuildSettings |
+| `Assets/CueStrike/Scripts/DrillSettingsData.cs` | ไฟล์เปล่า 0 ไบต์ (ตัวจริงใน `Gameplay/Practice/` + nested class ใน `SaveSystem/CueStrikeSaveData.cs`) |
+| `Assets/CueStrike/Characters/Gentleman/Scripts~/` | สำเนา legacy (namespace `CueWarp`) — Unity ไม่คอมไพล์โฟลเดอร์ `~`; caller ทั้งหมดใช้ `CueStrike.Characters.Gentleman.*` |
+| `Assets/CueStrike/Characters/MeiLing/Scripts~/` | เหมือนกัน — legacy |
+| `Assets/CueStrike/Characters/Somchay/Scripts~/` | เหมือนกัน — legacy |
+
+### ✅ แก้การอ้างอิงไฟล์ผี (7 จุด, 5 ไฟล์ .md)
+| ไฟล์เอกสาร | แก้จาก → ไปยัง |
+|------------|----------------|
+| `ROADMAP.md:113` | `CueStrikeAIEasy/Medium/Hard.cs` → `CueStrikeAIController.cs` + `CueStrikeAIStrategy.cs` (class จริง: Easy/Medium/Hard/Expert) |
+| `task.md:172` | `CueStrikePinkMaterialFixer.cs` → `CueStrikeAAAApplyAll.cs` (`FixPinkMaterialsMenu`) |
+| `CUESTRIKE_MASTER.md:307` | แถว `MCPSelfTest.cs` → "planned, not created" + ชี้ไป `McpTestClient.cs` |
+| `CUESTRIKE_MASTER.md:337` | หัวข้อ `MCPSelfTest.cs` → "PLANNED — not yet created" + note |
+| `implementation_plan_mcp_unity.md:66-67` | `(NEW)` → `(PLANNED — NOT YET CREATED)` + note ไม่มีไฟล์จริง |
+| `implementation_plan_mcp_unity.md:96` | `[x]` → `[ ]` NOT YET CREATED |
+| `task_mcp_unity.md:12` | `[x] implemented` → `[ ] NOT yet created` |
+
+### ⏳ ยังเหลือ — ไฟล์ซ้ำ 5 คู (กลุ่ม B/C, นอกขอบเขต Option 1 — รอ verify reference ทีละคู)
+| ไฟล์ | A | B | หมายเหตุ |
+|------|---|---|----------|
+| `CueStrikeCrowdSystem.cs` | `Characters/` (1151L) | `MascotSystem/` (396L) | คนละ namespace ทั้งคู่คอมไพล์ — ต้องเช็ค reference/GUID |
+| `CueStrikeBallSync.cs` | `Multiplayer/` (79L, `#if CUESTRIKE_NORMCORE`) | `Scripts/Multiplayer/Normcore/` (252L, ไม่มี guard) | คนละ namespace — ต้องเช็ค define + caller |
+| `CueStrikeGameSync.cs` | `Multiplayer/` (162L, guard) | `Scripts/Multiplayer/Normcore/` (378L) | คนละ namespace |
+| `CueStrikeNormcoreManager.cs` | `Multiplayer/` (100L, guard) | `Scripts/Multiplayer/Normcore/` (567L) | คนละ namespace |
+| `ChinesePoolCallShotUI.cs` | `Scripts/ChinesePool/` (281L, TMP) | `Scripts/UI/ChinesePool/` (250L, legacy Text) | คนละ namespace |
+
+### ⚠️ ค้นพบ PRE-EXISTING compile blocker (2026-08-06, ระหว่างขั้น 6)
+- **`CueStrike_Project` (โปรเจกต์หลัก) compile ไม่ผ่าน 354 error** — ทั้งหมดมาจาก MCP layer ที่ใช้ `System.Text.Json`:
+  `McpProtocol.cs` (231), `McpServer.cs` (24), 5 Tools ×9, `SkinSetup.cs`, `SkinBuilder.cs`, `IMcpTool.cs`, `McpTestClient.cs`
+- **สาเหตุ:** `using System.Text.Json` / `[JsonPropertyName]` แต่โปรเจกต์ไม่มี `.asmdef` อ้าง `System.Text.Json` → ชนิดหาไม่เจอ
+- **พิสูจน์ว่าไม่ใช่การลบของผม:** 0 error อ้างไฟล์ที่ลบ (`DrillSettingsData`/`Scripts~`/`_Recovery`/`New folder`) ทั้งหมด
+- **ทำไม log เก่าบอก "0 errors":** เก่า compile ที่ workspace-root ซึ่งไม่มีโค้ด MCP (`CueStrike/Editor/MCP/McpProtocol.cs` ไม่มีใน root)
+- **สถานะ: ✅ FIXED แล้ว (2026-08-06)** — migrate MCP layer จาก `System.Text.Json` → `Newtonsoft.Json` (UPM `com.unity.nuget.newtonsoft-json` 3.2.1) ตาม Rule 6 (ห้ามฉีด DLL ภายนอก)
+- แก้เพิ่มจาก error ที่เปิดเผยเมื่อ MCP คอมไพล์ผ่าน: เพิ่ม `using CueStrike.MCP.Tools` (McpServer) / `using System.Linq` (ExecuteCodeTool, McpTestClient) / `IMcpTool missing` / `SeasonalEvent.Spring,Winter` / `ModelImporterMaterialLocation.InProject→External` / `LightingSettings.CreateInstance→new LightingSettings()` / `SkinRarity` / `UnityEngine.Object.DestroyImmediate` / `Application.logMessageReceived` event
+- **ผล compile ล่าสุด: 0 errors (log `compile_verify_newtonsoft.log`, return code 0)**
+
+---
+
+## 🎯 PHASE A AUDIO - DETAILED CHECKLIST
+
+### ✅ COMPLETED (Architecture & Setup)
+- [x] Audio system architecture analysis complete
+- [x] CueStrikeAudioManager reviewed (14 clip slots)
+- [x] BallSoundController reviewed (velocity-based hit sounds)
+- [x] PocketSoundDetector reviewed (trigger-based pocket sounds)
+- [x] NearMissDetector reviewed (near-miss gasp detection)
+- [x] CueStrikeChampionshipCrowd reviewed (crowd reactions)
+- [x] CharacterData audio fields verified (voiceClip, abilitySound)
+- [x] Placeholder clips generated (9 WAV files via CueStrikeAudioGenerator.cs)
+- [x] ROADMAP.md updated with current status
+- [x] TASK_PROGRESS_AUDIO.md created with detailed requirements
+- [x] NEXT_STEPS_SUMMARY.md created with recommendations
+
+### 🔄 IN PROGRESS
+- [ ] **Source/Create real audio clips (~50 total)**
+  - [ ] 14 AudioManager clips
+  - [ ] 20 Character voice + ability clips (10 chars × 2)
+  - [ ] 9 Room ambience clips
+  - [ ] 7+ Crowd system clips
+
+### ⏳ PENDING (After clips sourced)
+- [ ] Create 10 CharacterData ScriptableObjects
+- [ ] Assign all clips in Unity Inspector
+- [ ] Set up CueStrikeAudioManager in all room scenes
+- [ ] Implement room ambience switching logic
+- [ ] Assign crowd clips to CueStrikeChampionshipCrowd
+- [ ] Play mode testing & validation
+- [ ] Documentation updates
+
+---
+
+## 🎯 PHASE B - ANIMATOR & BANTER (PENDING)
+
+### P9 Animator Controller
+- [ ] Create Animator Controller asset
+- [ ] Add 9 states: Idle, Walk, Aim, Shoot, Celebrate, Disappointed, Speak, Neutral, Victory
+- [ ] Create transitions with parameters
+- [ ] Assign to all 10 character prefabs
+
+### BoPanda Banter System
+- [ ] Design banter event system
+- [ ] Implement frame start/end comments
+- [ ] Implement pot success reactions
+- [ ] Implement foul callouts
+- [ ] Implement century break hype
+- [ ] Implement snooker escape commentary
+- [ ] Implement fluke teasing
+- [ ] Implement near miss gasps
+
+### Uncle Nok Referee Integration
+- [ ] Hook UncleNokReferee.cs to ShotManager events
+- [ ] Hook UncleNokReferee.cs to RulesManager events
+- [ ] Add voice announcement clips
+- [ ] Test in play mode
+
+### Crowd Reactions
+- [ ] Connect CueStrikeCrowdSystem to game events
+- [ ] Test spatial audio in GrandArena
+- [ ] Verify 84 spectator performance
+
+---
+
+## 🎮 PHASE C - PLAYABILITY (PENDING)
+
+### Shot Manager Polish
+- [ ] Fine-tune cue aiming
+- [ ] Fine-tune power charge
+- [ ] Fine-tune spin (english)
+- [ ] Fine-tune preview line
+
+### Rules System
+- [ ] Complete 8-ball rules
+- [ ] Complete 9-ball rules
+- [ ] Complete Snooker rules
+- [ ] Foul detection
+- [ ] Ball-in-hand logic
+- [ ] Turn switching
+
+### Multiplayer
+- [ ] Photon/Fusion integration
+- [ ] Turn-based sync
+- [ ] Voice chat (CueStrikeVoiceManager exists)
+
+### UI/HUD
+- [ ] Finalize CueStrikeHUD.cs
+- [ ] Finalize MainMenu
+- [ ] Finalize LobbyUI
+- [ ] Finalize NoirMemory results
+
+### Character Abilities
+- [ ] Balance 10 unique abilities
+- [ ] Set cooldowns
+- [ ] Add visual FX
+- [ ] Add audio cues
+
+---
+
+## 📦 PARALLEL WORK - CHARACTER PREFABS & ANIMATIONS
+
+### Ready to Run (CharacterAAASetup.cs)
+- [ ] Run "Setup All AAA Characters" menu item
+- [ ] Verify 12 prefabs created
+- [ ] Verify Humanoid rig on all
+- [ ] Verify URP/Lit materials
+- [ ] Verify IK targets (LeftHand/RightHand)
+
+### Need Animation Clips
+- [ ] Create/acquire P9 animation clips
+- [ ] Assign to Animator Controller
+- [ ] Test IK with cue interaction
+- [ ] Add LOD groups
+
+---
+
+## 🛠️ IMMEDIATE COMMANDS (Run in Order)
+
+```bash
+# 1. Blender: Generate all AAA assets
+# Open Blender 3.6 → Scripting → Paste create_all_aaa_master.py → Run ▶
+
+# 2. Unity: Import & Configure All AAA
+# Tools → CueStrike → Apply → Apply ALL AAA (Final Polish)
+
+# 3. Verify Self-Test
+# Check console for "ALL PASSED ✅"
+
+# 4. Fix Pink Materials (if any)
+# Tools → CueStrike → Fix → Fix Pink Materials (URP Conversion)
+
+# 5. Generate Placeholder Audio
+# Tools → CueStrike → Generate → Create Placeholder Audio
+
+# 6. Setup Character Prefabs
+# Tools → CueStrike → Character System → Setup All AAA Characters
+```
+
+---
+
+## 📁 KEY REFERENCE FILES
+
+| File | Purpose |
+|------|---------|
+| `TASK_PROGRESS_AUDIO.md` | Detailed audio task tracking |
+| `NEXT_STEPS_SUMMARY.md` | Strategic overview & recommendations |
+| `ROADMAP.md` | Phase breakdown with checkboxes |
+| `CHARACTER_SYSTEM_PLAN.md` | 12 character roster & abilities |
+| `AUDIO_SYSTEM_PLAN.md` | Audio architecture |
+| `AAA_WORLD_TOUR_IMPLEMENTATION.md` | Room decoration plan |
+
+---
+
+## 💡 STRATEGIC FOCUS
+
+**NOW:** Phase A Audio - Source ~50 clips, assign, test
+**NEXT:** Phase B Animator - P9 controller + BoPanda banter + Uncle Nok
+**THEN:** Phase C Playability - Rules, multiplayer, UI, abilities
+
+**The foundation is solid. The pipeline works. Now it's content + polish time! 🎱**
+
+## 📌 2026-08-06 — Session Log (Post Coaching Reset, Act Mode)
+
+> Coach รีเซ็ตให้ key platform.stability.ai ใหม่ — ตรวจสอบทุกจุดตาม Iron Rules ก่อนกระทำ (Rule 1 Verify + Rule 6 Technology Mismatch)
+
+### สถานะ Mission (verify ด้วยเครื่องมือ)
+| Mission | Status | Evidence |
+|---|---|---|
+| 1. Compile 0 errors | ✅ | `-executeMethod PinkMaterialFixer.RunScan` → `compile_and_scan.log` = 0 errors, Unity return code 0 |
+| 2. Pink Exorcist | ✅ Scan/Preview | CS0117 fixed (`LoadMainAssetAtGUID`→`GUIDToAssetPath`+`LoadAssetAtPath`); Scan เจอ **41 วัสดุชมพู** (`Standard`→`URP/Lit`, `applied=False`); report: `Assets/CueStrike/Editor/HueFix/Report/pink_report_scan_20260806_215736.txt` |
+| 3. English voiceover (Uncle Nok) | ✅ 14 clips | Windows TTS `Zira` (en-US) → `Assets/CueStrike/Audio/Clips/Voice/UncleNok/*.wav` |
+| 4. Thai voiceover | ⛔ | Windows มีแต่ `Zira(en-US)`+`Hazel(en-GB)` ไม่มีเสียงไทย; `edge-tts` ไม่ได้ลง (pip พร้อมลง) |
+| 5. SFX (Stable Audio) | ⛔ BLOCK (Rule 6) | ดู "SFX Block" ด้านล่าง |
+| 6. Dedupe Wave 2 | ⏳ | 5 คู ค้าง (ทำหลัง Audio เสร็จ) |
+
+### ⚠️ SFX Block — Technology Mismatch (Iron Rule 6: หยุดทันที อย่าใช้ credits ไปโดยไม่มีจุดสิ้นสุด)
+Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix `sk-XnR`) — เป็น **Stability.ai platform/image key** ไม่ใช่ Stable Audio token → พิสูจน์หลายเส้นทางใช้ credits **0** บาท:
+| การพิสูจน์ (พร้อม key จริง) | ผล | ความหมาย |
+|---|---|---|
+| `POST api.stableaudio.com/v2/sound-generation` | **401** (body สั้น) | key ชนิดผิด: Stability.ai image key ≠ Stable Audio token |
+| `POST platform.stability.ai/v2beta/stable-audio/sound-generation` | **405** | ไม่ใช่ API endpoint จริง |
+| `GET platform.stability.ai/v2beta/stable-audio/sound-generation` | 200 + HTML SPA | เส้นทางซ้อน SPA (frontend), ไม่ใช่ sound API |
+| `api.stability.ai/v2beta/audio/sfx`, `/v2beta/stable-audio/sound-generation` | **404** | ไม่มีบน host เดิมกัน |
+
+**สรุป:** คีย์ไม่เข้าถึง sound-generation ได้ที่ไหนก็ตาม; platform.stability.ai ไม่มี sound endpoint เปิดที่พบหลังพิสูจน์ ~10 เส้นทาง → **ยังไม่ใช้ 25 credits** (Rule 1: ห้ามใช้โดยไม่ได้รับอนุญาต/ยืนยันเบื้องตอน)
+
+**ตัวเลือก Coach (เลือกอันเดียว):**
+- (A) มอบ **Stable Audio token** (stableaudio.com → Account → API Keys) → ผมสร้าง 8 SFX AI จริงทันที (prompt มีอยู่ใน AUDIO_SYSTEM_PLAN pp.41–45)
+- (B) อนุญาตใช้ **CueStrikeRealisticAudioSynth.cs** (fallback ตาม AUDIO_SYSTEM_PLAN p.117 "เป็น backup ถ้าไม่มี wav") → เขียน 8 SFX ซินเตซิสรันไทม์แบบ code (0 credits, ไม่ต้อง key); สลับเป็น wav AI ภายหลังได้
+- (C) ถอยไปทำ **Pink Apply + TTS wiring ก่อน** (ไม่ทำ SFX ขณะนี้)
+
+### รอการยืนยัน/การกระทำจาก Coach (ไม่ action จากฝ่ายนี้โดยไม่ได้รับอนุญาต)
+- **Pink Apply:** คุณกด `Tools → CueStrike → Fix → Fix Pink Materials` (มี Undo) แล้วส่ง screenshot เพื่อ Vision confirm (Rule 4)
+- **Voice script:** ให้ข้อความอังกฤษ + ไทยเต็ม (ขณะนี้มีเฉพาะ "Foul — 4 points" เป็นอ้างอิง) เพื่อสร้าง/เชื่อม wav ครบทุกหมวด `UncleNokReferee` (16+ หมวด)
+- **SFX:** เลือก (A)/(B)/(C) ด้านบน
+
+## 🔵 2026-08-06 Session 2 — Execution (หลังอ่าน AI_TOOLS_MANDATE.md + ทำตามกฎเหล็ก)
+
+### ✅ เสร็จแล้ว (verify ด้วย tool)
+| งาน | ผล | หลักฐาน |
+|---|---|---|
+| Pink Fix (`PinkMaterialFixer.RunFix`, batchmode) | 41/41 → `Standard->URP/Lit`, applied=True | `pink_fix.log`: "FIX complete: 41 materials"; รีพอร์ต `Editor/HueFix/Report/pink_report_fix_20260806_225245.txt` (ทุกบรรทัด applied=True); Unity exit 0 |
+| Vision Audit (`RoomScreenshotTool.CaptureAll`) | ถ่ายห้อง 8 ภาค รวม `GrandArena_Room` (ห้องชมพูเดิม) | PNG ที่ `CueStrike_Project/RoomScreenshots/` (GrandArena_Room.png=29KB ฯลฯ); log `[RoomShot] ALL DONE!`; Unity exit 0 |
+| English TTS (Zira en-US) | 14 .wav | `Audio/Clips/Voice/UncleNok/*.wav` |
+| Compile | 0 errors | batchmode exit 0 |
+
+### ⛔ SFX Block — Technology Mismatch (Rule 6: หยุด + รายงาน, ใช้ 0 credits)
+พิสูจน์ endpoint ที่ Coach ระบุ (key จริง `sk-XnRw…`, 51 ตัวอักษร, prefix `sk-XnR`):
+- `api.stability.ai/v2beta/audio/stable-audio-2/sound-generation` → **404** (GET+POST เท่ากัน, body ว่าง)
+- `api.stability.ai/v2beta/audio/sfx`, `/v2beta/stable-audio/...`, `/v2/sound-generation` → **404**
+- `api.stableaudio.com/v2/sound-generation` → **401** (bodyสั้น) — host เสียงแยก auth; sk- เป็น image/speech key ไม่ใช่ Stable Audio token
+
+**สรุป:** คีย์ `sk-` คือ Stability.ai platform/image+speech token → api.stability.ai ไม่มี path sound-generation (404หมด); stableaudio.com ใช้ token แยก (401) → **ไม�่มี SFX-generation endpoint เข้าถึงได้ด้วยคีย์นี้** → ยังไม่ใช้ 25 credits (Rule 1: ห้ามใช้โดยไม่มี endpoint ทำงานจริง; Rule 6: ห้ามฝืนทำต่อ)
+
+**รอคำสั่ง Coach (เลือกอันเดียว):** (A) มอ exact endpoint + Stable Audio token ที่ใช้งานได้ → gen 8 SFX AI จริง; (B) อนุญาต fallback in-repo synth (`CueStrikeRealisticAudioSynth` + 9 placeholder wavs ที่มีอยู่ใน `Audio/Clips/`) เป็น SFX → อัปเกรดผ่าน code, 0 credits; (C) พัก SFX (ใช้ placeholder ที่มีอยู่แล้ว)
+
+### 📋 พร้อม/ต่อไป (ไม่บังคับ SFX)
+- **Vision Audit ✅** — Coach ใช้ Vision ตรวจ `GrandArena_Room.png` (+หรืออื่น) ยืนยัน "ไม่มีสีชมพูแล้ว" (rule 3: ต้องวิเคราะห์จากภาพจริง ไม่เดาจากโค้ด)
+- **TTS wiring** — มี 14 wav Zira แล้ว (`Voice/UncleNok/`) + `UncleNokReferee.cs` (16 หมวด AudioClip[]) + `UncleNok_Prefab.prefab` → พร้อม wiring เมื่อชัดเจนแหล่งที่มา (Zira interim หรือ ElevenLabs ตามมาตรฐาน mandate p.109) + มี script เต็ม (ตอนนี้มีเฉพาะ "Foul — 4 points")
+- **SFX assets** — มี placeholder 9 wavs ใน `Audio/Clips/` (ball_ball_hit, ball_cushion_hit, ball_pocket_drop, chalk_scrape, crowd_murmur, cue_ball_hit, ambient_room_tone, ui_click, ui_hover) + controller 4 ตัว (`BallSoundController`,`PocketSoundDetector`,`NearMissDetector`,`CueStrikeDynamicPhysicsSFX`) มีอยู่แล้ว → รอ AI wavs เมื่อจอด endpoint/token ถูกต้อง
+
+## 🔵 2026-08-07 Session 3 — AAA Master Control + Voice wiring (Safe Mode ออกแล้ว)
+
+### ✅ ทำเสร็จแล้ว (verify ด้วย tool จริง — Rule 1/4A)
+| งาน | ผล | หลักฐาน |
+|---|---|---|
+| **Compile / Safe Mode** | **0 errors** (ล้าง `Library/ScriptAssemblies` + batchmode) | Editor.log: `script compilation time` + `total_errors=0` + UNITY_EXIT=0 → **ออก Safe Mode แล้ว** |
+| **Voice 14/14 wiring** | `AssignVoiceTo` ใหม่ ใช้ `PrefabUtility.LoadPrefabContents` + **AddComponent `UncleNokReferee`** (ถ้าไม่มี) + assign 14 Zira wav + `SaveAsPrefabAsset` | log: `Added UncleNokReferee component` + `Voice: 14/14 clips wired (missingField=False, missingClip=0)` + `Voice persisted to prefab asset`; **YAML: `UncleNokReferee` guid (.prefab) + wav refs 14/14** |
+| **SFX 12/12** | `AssignSfxToScene` ผูก 12 สล็อตใน `CueStrikeAudioManager` (scene instance, ใช้ placeholder ใน `Audio/Clips/`, 0 credits) | log: `SFX: 12/12 placeholder clips wired` |
+| **Pink fix (URP/Lit)** | `PinkMaterialFixer.RunFix()` | log: `props renderers: 475 (pink->URP/Lit)` |
+| **Vision screenshot** | `CaptureVisionScreenshot` 1920x1080 | `RoomScreenshots/GrandHall_Master.png` (48,209 bytes) |
+| **Scene apply** | `EditorSceneManager.SaveScene` | `Title_NoksGrandHall.unity` saved 06:42 |
+
+### 🔧 root cause ของ Voice ที่ไม่มีผล (Rule 6 — Technology Mismatch เปิดเผย)
+- `Characters/UncleNok/UncleNok_Prefab.prefab` (และ `BoPanda_Prefab.prefab`) เป็น **prefab variant** ของ base `guid 983447…` ซึ่งลงแค่ `RigBuilder + CueStrikeCue` — **ไม่มี `UncleNokReferee` component**
+- `Prefabs/AAA_Characters/UncleNok_AAA.prefab` (740KB) เป็น **ตัวโมเดล rig (bones/skinned mesh, `m_Script`=0)** ไม่ใช่ prefab ที่มี gameplay component
+- → `GetComponentInChildren<UncleNokReferee>` เดิม = null → ฟังก์ชัน return เปล่า ๆ (เสียงไม่เคยติด)
+- **วิธีแก้:** `AssignVoiceTo` ใช้ `LoadPrefabContents` + `AddComponent` + `SaveAsPrefabAsset` → component + 14 clips ถูกบันทึกลง `.prefab` จริง (ตรวจ YAML ได้: guid `a66730cb…` + wav refs 14/14)
+
+### 📋 หมายเหตุ / ต่อไป
+- Grand Hall scene อ้าง prefab: `Somchay_AAA` + `LuxuryChandelier` + `BoPanda_Prefab` (variant) — ยังไม่มี `UncleNok_AAA` (model rig) ถูกวาง; Master Control `PlaceCharacters` จะวาง `UncleNok_Prefab`/`BoPanda_Prefab` (variant ที่มี referee + voice) ถ้ายังไม่ present
+- `UncleNokReferee` ฟิลด์เสียงครบ 14 (matchStart/turnStart/potSuccess/centuryBreak/highBreak/foulCalled/foulCueBallPotted/break/clearance)

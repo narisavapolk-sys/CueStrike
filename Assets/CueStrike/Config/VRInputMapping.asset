@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c6ddd952ad9fdb408394135cc048493, type: 3}
+  m_Name: VRInputMapping
+  m_EditorClassIdentifier: Assembly-CSharp::CueStrike.VR.Input.CueStrikeVRInputMapping
+  gripAction: {fileID: 0}
+  optionsButtonAction: {fileID: 0}
+  undoButtonAction: {fileID: 0}
+  offHandGripAction: {fileID: 0}
+  stanceToggleAction: {fileID: 0}
+  orbitStickAction: {fileID: 0}
+  stanceDistanceStickAction: {fileID: 0}
+  minPullBackDistance: 0.05
+  minShotVelocity: 0.3
+  maxShotPower: 10
+  powerMultiplier: 1.5
+  hapticChargeAmplitude: 0.3
+  hapticShotAmplitude: 0.7
+  hapticImpactAmplitude: 0.5
+  crouchDistanceMin: 0.3
+  crouchDistanceMax: 1.5
+  crouchDistanceDefault: 0.8
+  aimOrbitSpeed: 90
+  tableOrbitSpeed: 60

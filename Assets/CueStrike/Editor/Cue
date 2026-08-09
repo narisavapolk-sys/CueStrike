@@ -1,0 +1,219 @@
+#if UNITY_EDITOR
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+using UnityEngine.Rendering;
+using System.Linq;
+
+namespace CueStrike.Editor
+{
+    /// <summary>
+    /// One-click scene setup for the 'Grand Hall (AAA)' showcase.
+    ///
+    /// Creates/positions:
+    ///   • Uncle Nok  – the charismatic announcer (capsule + hat + moustache)
+    ///   • Bo         – the trusty sidekick dog (low-poly from primitives)
+    ///   • Crowd      – a cheering audience ring (procedurally instanced spectators)
+    ///
+    /// Menu: CueStrike → Setup → Grand Hall (AAA)
+    /// </summary>
+    public static class CueStrikeGrandHallSetup
+    {
+        private const string URP_LIT = "Universal Render Pipeline/Lit";
+
+        [MenuItem("CueStrike/Setup/Grand Hall (AAA)")]
+        public static void SetupGrandHall()
+        {
+            // Ensure we're not in play mode
+            if (EditorApplication.isPlaying)
+            {
+                EditorUtility.DisplayDialog("Grand Hall Setup", "Cannot run while in Play Mode.", "OK");
+                return;
+            }
+
+            // Ensure a scene is open (create one if none)
+            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().IsValid() == false ||
+                string.IsNullOrEmpty(UnityEngine.SceneManagement.SceneManager.GetActiveScene().path))
+            {
+                var newScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            }
+
+            // Create a root container for organization
+            GameObject root = CreateGameObject("GrandHall_AAA");
+            root.transform.position = Vector3.zero;
+
+            // --- 1. Floor / Stage ---
+            GameObject floor = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            floor.name = "Stage_Floor";
+            floor.transform.SetParent(root.transform);
+            floor.transform.localPosition = new Vector3(0f, -0.5f, 0f);
+            floor.transform.localScale = new Vector3(40f, 1f, 30f);
+            SetMaterial(floor, new Color(0.35f, 0.18f, 0.08f)); // wood brown
+
+            // --- 2. Uncle Nok (Referee) ---
+            GameObject uncleNok = BuildUncleNok();
+            uncleNok.name = "Uncle_Nok";
+            uncleNok.transform.SetParent(root.transform);
+            uncleNok.transform.localPosition = new Vector3(0f, 0f, 4f);
+
+            // --- 3. Bo (Sidekick) ---
+            GameObject bo = BuildBo();
+
+            bo.name = "Bo";
+            bo.transform.SetParent(root.transform);
+            bo.transform.localPosition = new Vector3(1.6f, 0f, 5.2f);
+
+            // --- 4. Crowd (ring of spectators) ---
+            BuildCrowd(40, root.transform);
+
+            // Mark the scene as dirty so the save prompt appears when closing
+            EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+
+            Debug.Log("[CueStrike] Grand Hall (AAA) setup complete! Uncle Nok, Bo and the crowd are ready.");
+            EditorUtility.DisplayDialog("Grand Hall (AAA)",
+                "Setup complete!\n\n• Uncle Nok (referee)\n• Bo (sidekick)\n• Crowd of 40 spectators\n\n" +
+                "Open your XR rig to test.",
+                "OK");
+        }
+
+        // ---------- Uncle Nok ----------
+        private static GameObject BuildUncleNok()
+        {
+            var nok = new GameObject("Uncle_Nok_Root");
+
+            // Body (robe)
+            var body = CreatePrimitiveCube("Body", nok.transform, new Vector3(0.7f, 1.4f, 0.4f),
+                new Vector3(0f, 0.7f, 0f), new Color(0.05f, 0.05f, 0.05f)); // black referee outfit
+
+            // Head
+            var head = CreatePrimitiveSphere("Head", nok.transform, 0.35f,
+                new Vector3(0f, 1.55f, 0f), new Color(0.85f, 0.60f, 0.45f)); // skin
+
+            // Moustache (small dark bar under nose)
+            var moustache = CreatePrimitiveCube("Moustache", nok.transform, new Vector3(0.5f, 0.05f, 0.1f),
+                new Vector3(0f, 1.55f - 0.15f, 0.32f), new Color(0.25f, 0.15f, 0.05f));
+
+            // Whistle (tiny yellow sphere on chest)
+            var whistle = CreatePrimitiveSphere("Whistle", nok.transform, 0.06f,
+                new Vector3(0.3f, 1.35f, 0.2f), new Color(1f, 0.85f, 0f));
+
+            // Arm + leg hints (simple capsules)
+            CreatePrimitiveCapsule("LeftArm", nok.transform, new Vector3(-0.5f, 1.1f, 0f), new Vector3(0f, 0, 0f), new Color(0.05f, 0.05f, 0.05f));
+            CreatePrimitiveCapsule("RightArm", nok.transform, new Vector3(0.5f, 1.1f, 0f), new Vector3(0f, 0, 0f), new Color(0.05f, 0.05f, 0.05f));
+
+            return nok;
+        }
+
+        // ---------- Bo (small sidekick) ----------
+        private static GameObject BuildBo()
+        {
+            var bo = new GameObject("Bo_Root");
+
+            // Body (small white fluffy)
+            var body = CreatePrimitiveSphere("Body", bo.transform, 0.3f,
+                new Vector3(0f, 0.3f, 0f), Color.white);
+
+            // Ears (two small)
+            CreatePrimitiveSphere("EarL", bo.transform, 0.08f, new Vector3(-0.15f, 0.55f, 0f), Color.white);
+            CreatePrimitiveSphere("EarR", bo.transform, 0.08f, new Vector3(0.15f, 0.55f, 0f), Color.white);
+
+            // Nose (black dot)
+            CreatePrimitiveSphere("Nose", bo.transform, 0.04f, new Vector3(0f, 0.35f, 0.25f), new Color(0.1f, 0.1f, 0.1f));
+
+            return bo;
+        }
+
+        // ---------- Crowd ----------
+        private static void BuildCrowd(int count, Transform parent)
+        {
+            float radius = 9f;
+            for (int i = 0; i < count; i++)
+            {
+                float angle = (float)i / count * Mathf.PI * 2f;
+                Vector3 pos = new Vector3(
+                    Mathf.Cos(angle) * radius,
+                    0.5f,
+                    Mathf.Sin(angle) * radius
+                );
+
+                // Randomise height / colour to look alive
+                Color shirt = UnityEngine.Random.ColorHSV(0f, 1f, 0.6f, 0.9f, 0.3f, 0.6f);
+
+                GameObject spectator = new GameObject($"Spectator_{i:00}");
+                spectator.transform.SetParent(parent);
+                spectator.transform.position = pos;
+                // Face toward centre
+                spectator.transform.rotation = Quaternion.LookRotation(-pos.normalized);
+
+                // Body (simple capsule) + head sphere
+                var body = CreatePrimitiveCapsule("Body", spectator.transform, new Vector3(0f, 1f, 0f), new Vector3(-0f, 0f, 0f), col);
+                var head = CreatePrimitiveSphere("Head", spectator.transform, 0.25f, new Vector3(0f, 1.5f, 0f), new Color(0.8f, 0.6f, 0.5f));
+            }
+        }
+
+        // ---------- Helpers ----------
+        private static GameObject CreateGameObject(string name)
+        {
+            return new GameObject(name);
+        }
+
+        private static GameObject CreatePrimitiveCube(string name, Transform parent,
+            Vector3 scale, Vector3 localPos, Color color)
+        {
+            var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            Configure(go, name, parent, scale, localPos, color);
+            return go;
+        }
+
+        private static GameObject CreatePrimitiveSphere(string name, Transform parent,
+            float radius, Vector3 localPos, Color color)
+        {
+            var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            Configure(go, name, parent, Vector3.one * radius, localPos, color);
+            // Note: sphere collider uses diameter; adjust scale so visual diameter = radius
+            go.transform.localScale = Vector3.one * (radius * 2f);
+            go.transform.localPosition = localPos;
+            SetMaterial(go, color);
+            return go;
+        }
+
+        private static GameObject CreatePrimitiveCapsule(string name, Transform parent,
+            Vector3 localPos, Vector3 euler, Color color)
+        {
+            var go = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            Configure(go, name, parent, Vector3.one, localPos, color);
+            go.transform.localEulerAngles = euler;
+            return go;
+        }
+
+        private static void Configure(GameObject go, string name, Transform parent,
+            Vector3 scale, Vector3 localPos, Color color)
+        {
+            go.name = name;
+            go.transform.SetParent(parent);
+            go.transform.localScale = scale;
+            go.transform.localPosition = localPos;
+            SetMaterial(go, color);
+        }
+
+        /// <summary>Creates/assigns a URP/Lit material with the given color.</summary>
+        private static void SetMaterial(GameObject go, Color color)
+        {
+            var renderer = go.GetComponent<Renderer>();
+            if (renderer == null) return;
+
+            Material mat = new Material(Shader.Find(URP_LIT));
+            if (mat == null || mat.shader == null)
+            {
+                // Fallback to Standard (shouldn't happen on URP project)
+                mat = new Material(Shader.Find("Standard"));
+            }
+            if (mat != null)
+            {
+                mat.color = color;
+                renderer.sharedMaterial = mat;
+            }
+        }
+    }
+}
+#endif
