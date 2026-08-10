@@ -1,9 +1,4 @@
 # Unity Compile Gate
-# Runs the Unity batchmode compile check on every pull request and every push
-# to main, so broken code cannot be merged.
-#
-# Prerequisite: a repo secret named UNITY_LICENSE (see unity-activate.yml).
-
 name: Unity Compile Gate
 
 on:
@@ -28,14 +23,11 @@ jobs:
           key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
           restore-keys: Library-
 
-      # game-ci/unity-test-runner installs Unity 6000.4.4f1, activates the
-      # license from the UNITY_LICENSE secret, compiles the project, then runs
-      # the EditMode tests. A compile failure or test failure fails the job,
-      # which blocks the PR.
       - name: Unity compile + EditMode tests
         uses: game-ci/unity-test-runner@v4
         env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           projectPath: .
           unityVersion: 6000.4.4f1
