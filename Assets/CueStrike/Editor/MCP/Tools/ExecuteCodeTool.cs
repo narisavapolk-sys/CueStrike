@@ -6,10 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
-
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Emit;
+using System.CodeDom.Compiler;
+using Microsoft.CSharp;
 using UnityEditor;
 using UnityEngine;
 
@@ -158,60 +156,53 @@ namespace CueStrike.MCP.Tools
 
         private Assembly CompileAssembly(string code, List<string> extraReferences)
         {
-            var references = new List<MetadataReference>
+            using (var provider = new CSharpCodeProvider())
             {
-                MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(UnityEngine.Object).Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(UnityEditor.Editor).Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(UnityEditor.SceneManagement.EditorSceneManager).Assembly.Location),
-                MetadataReference.CreateFromFile(Assembly.GetExecutingAssembly().Location)
-            };
-
-            // Add Unity Editor assemblies
-            var editorAssemblies = AppDomain.CurrentDomain.GetAssemblies()
-                .Where(a => a.FullName.Contains("UnityEditor") || a.FullName.Contains("UnityEngine"))
-                .Where(a => !a.IsDynamic && !string.IsNullOrEmpty(a.Location));
-
-            foreach (var asm in editorAssemblies)
-            {
-                try { references.Add(MetadataReference.CreateFromFile(asm.Location)); } catch { }
-            }
-
-            // Add extra references
-            foreach (var refName in extraReferences)
-            {
-                var asm = AppDomain.CurrentDomain.GetAssemblies()
-                    .FirstOrDefault(a => a.GetName().Name == refName || a.FullName.StartsWith(refName));
-                if (asm != null && !string.IsNullOrEmpty(asm.Location))
+                var parameters = new CompilerParameters
                 {
-                    try { references.Add(MetadataReference.CreateFromFile(asm.Location)); } catch { }
+                    GenerateInMemory = true,
+                    GenerateExecutable = false
+                };
+
+                // Add standard references
+                parameters.ReferencedAssemblies.Add(typeof(object).Assembly.Location);
+                parameters.ReferencedAssemblies.Add(typeof(UnityEngine.Object).Assembly.Location);
+                parameters.ReferencedAssemblies.Add(typeof(UnityEditor.Editor).Assembly.Location);
+                parameters.ReferencedAssemblies.Add(typeof(UnityEditor.SceneManagement.EditorSceneManager).Assembly.Location);
+                parameters.ReferencedAssemblies.Add(Assembly.GetExecutingAssembly().Location);
+
+                // Add Unity Editor assemblies
+                var editorAssemblies = AppDomain.CurrentDomain.GetAssemblies()
+                    .Where(a => a.FullName.Contains("UnityEditor") || a.FullName.Contains("UnityEngine"))
+                    .Where(a => !a.IsDynamic && !string.IsNullOrEmpty(a.Location));
+
+                foreach (var asm in editorAssemblies)
+                {
+                    try { parameters.ReferencedAssemblies.Add(asm.Location); } catch { }
                 }
-            }
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
-            var compilation = CSharpCompilation.Create(
-                "McpDynamicAssembly",
-                new[] { syntaxTree },
-                references,
-                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
-                    optimizationLevel: OptimizationLevel.Release,
-                    allowUnsafe: true)
-            );
-
-            using (var ms = new MemoryStream())
-            {
-                var result = compilation.Emit(ms);
-                if (!result.Success)
+                // Add extra references
+                foreach (var refName in extraReferences)
                 {
-                    var errors = result.Diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error);
-                    foreach (var err in errors)
+                    var asm = AppDomain.CurrentDomain.GetAssemblies()
+                        .FirstOrDefault(a => a.GetName().Name == refName || a.FullName.StartsWith(refName));
+                    if (asm != null && !string.IsNullOrEmpty(asm.Location))
                     {
-                        UnityEngine.Debug.LogError($"[MCP Compile] {err}");
+                        try { parameters.ReferencedAssemblies.Add(asm.Location); } catch { }
+                    }
+                }
+
+                var result = provider.CompileAssemblyFromSource(parameters, code);
+                if (result.Errors.HasErrors)
+                {
+                    foreach (CompilerError err in result.Errors)
+                    {
+                        UnityEngine.Debug.LogError($"[MCP Compile] {err.ErrorText}");
                     }
                     return null;
                 }
-                ms.Seek(0, SeekOrigin.Begin);
-                return Assembly.Load(ms.ToArray());
+
+                return result.CompiledAssembly;
             }
         }
     }
