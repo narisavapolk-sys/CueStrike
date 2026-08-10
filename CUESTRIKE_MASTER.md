@@ -2,7 +2,7 @@
 > **Project:** CueStrike VR Billiards (AAA Unity, Meta Quest 2/3)
 > **Last Updated:** 2026-08-09
 > **Coach:** Strategist/Director | **Dev Agent:** (AI Assistant) | **User:** โม่ง (Mong)
-> **Status:** P8 = 100% | P9 = 100% (IK Assist + Shader Fix Complete) | 🧹 House Cleaning R2 done (2026-08-06): 6 junk targets removed + 7 ghost-file refs fixed | ✅ **Compile = 0 Errors REAL (2026-08-06): MCP migrated System.Text.Json → Newtonsoft (UPM) + Rule 6 added** | 🔧 **VCS Setup R3 (2026-08-09): git init + .gitignore + Git LFS — baseline commit `8f7b347`** | 🎬 **Scene Loading Fix R4 (2026-08-09): 11 scenes ใน Build Settings + Practice "hub"→`Snooker_Demo`** | 🧹 **Duplicate Cleanup R5 (2026-08-09): ลบ 4 ไฟล์ที่ไม่มี ref (XR Hands stub, CrowdSystem-Chars, BallSync/GameSync-Normcore) — เก็บ 2 คู่ที่ใช้จริง** | 🚦 **Compile Gate R6 (2026-08-09): `tools/compile_check.sh` + pre-commit hook อัตโนมัติ** | 🎯 **CallShotUI Merge R7 (2026-08-09): 2 เวอร์ชัน → 1 (`CueStrike.UI.ChinesePool`) — GameManager หาเจอจริง** | 🧼 **Scene Name Cleanup R8 (2026-08-09): TitleSceneManager defaults ชี้ฉากจริง/ว่าง** | 🚀 **Remote + Push R9 (2026-08-09): `github.com/narisavapolk-sys/CueStrike` — main พร้อม LFS, PR workflow เริ่มได้** | 🎮 **VR Startup Cleanup R10 (2026-08-09): เก็บ `VR/VRStartup.cs` (ตัวจริง), ลบ `CueStrikeVRStartup.cs` (dead, scene names พัง)** | 🔗 **Call-Shot Wiring R11 (2026-08-09): `OnShotCalled`→`SetCallShot`, `OnCallShotCancelled`→`ClearCallShot`** | 🚦 **GitHub Actions CI R12 (2026-08-09): compile gate ทุก PR (`compile-gate.yml`) + helper `unity-activate.yml`** | Ready for Next Phase
+> **Status:** P8 = 100% | P9 = 100% (IK Assist + Shader Fix Complete) | 🧹 House Cleaning R2 done (2026-08-06): 6 junk targets removed + 7 ghost-file refs fixed | ✅ **Compile = 0 Errors REAL (2026-08-06): MCP migrated System.Text.Json → Newtonsoft (UPM) + Rule 6 added** | 🔧 **VCS Setup R3 (2026-08-09): git init + .gitignore + Git LFS — baseline commit `8f7b347`** | 🎬 **Scene Loading Fix R4 (2026-08-09): 11 scenes ใน Build Settings + Practice "hub"→`Snooker_Demo`** | 🧹 **Duplicate Cleanup R5 (2026-08-09): ลบ 4 ไฟล์ที่ไม่มี ref (XR Hands stub, CrowdSystem-Chars, BallSync/GameSync-Normcore) — เก็บ 2 คู่ที่ใช้จริง** | 🚦 **Compile Gate R6 (2026-08-09): `tools/compile_check.sh` + pre-commit hook อัตโนมัติ** | 🎯 **CallShotUI Merge R7 (2026-08-09): 2 เวอร์ชัน → 1 (`CueStrike.UI.ChinesePool`) — GameManager หาเจอจริง** | 🧼 **Scene Name Cleanup R8 (2026-08-09): TitleSceneManager defaults ชี้ฉากจริง/ว่าง** | 🚀 **Remote + Push R9 (2026-08-09): `github.com/narisavapolk-sys/CueStrike` — main พร้อม LFS, PR workflow เริ่มได้** | 🎮 **VR Startup Cleanup R10 (2026-08-09): เก็บ `VR/VRStartup.cs` (ตัวจริง), ลบ `CueStrikeVRStartup.cs` (dead, scene names พัง)** | 🔗 **Call-Shot Wiring R11 (2026-08-09): `OnShotCalled`→`SetCallShot`, `OnCallShotCancelled`→`ClearCallShot`** | 🚦 **GitHub Actions CI R12 (2026-08-09): compile gate ทุก PR (`compile-gate.yml`) + helper `unity-activate.yml`** | 🧹 **CS0618 Find-API Modernize R15 (2026-08-10): 36 deprecated call sites → Unity 6 modern (FindFirstObjectByType / FindObjectsByType) — runtime + editor (13 runtime files + 8 editor files, compile 0 errors)** | 🎯 **VRStartup Frame Rate Auto-Detect R16 (2026-08-10): real Quest device detection (`SystemInfo.deviceModel`) — Quest 2=72Hz, Quest 3=90Hz, optional 120Hz opt-in. OnDestroy guard fix via instance ref. Compile 0 errors.** | Ready for Next Phase
 
 > ## ⚠️ MANDATORY: อ่านก่อนทำงานทุกครั้ง
 > **AI ทุกตัวต้องอ่าน [`AI_TOOLS_MANDATE.md`](AI_TOOLS_MANDATE.md) ก่อนเริ่มงาน**
@@ -196,6 +196,19 @@ CueStrike.<Module>.<Submodule>
 - ✅ YAML valid + `.gitignore` ครอบ `*_results.xml`
 - ⏳ **พี่โม่งต้องตั้ง secret `UNITY_LICENSE`** (ขั้นตอนใน `TASK_PROGRESS.md` Round 12) — workflow ครั้งแรกจะ fail จนกว่าจะตั้ง
 - 📝 Plan: `implementation_plan_github_ci.md`
+
+### 🎯 VRStartup Frame Rate Auto-Detect (2026-08-10, by Buffy/Freebuff — per implementation_plan_vrstartup_framerate.md)
+**Vision audit พบ 2 bugs ใน R13 (`feat/vrstartup-menu`):**
+- ❌ **Bug A:** Frame rate "auto-detect" เป็น hard-code (`Application.targetFrameRate = 90` ทุกครั้ง) — คอมเมนต์ claim "Quest 2 = 72Hz, Quest 3 = 90Hz" แต่ไม่มี detection จริง
+- ❌ **Bug B:** `OnDestroy` reset guard ใช้ `gameObject.name == "[VRStartup]"` (magic name) — GameObject จริงชื่อ `BootManager` → guard ไม่เคย true
+
+**Fix (R16, single file `Assets/CueStrike/VR/VRStartup.cs`):**
+- ✅ `AutoDetectFrameRate()` ตาม `SystemInfo.deviceModel` substring: Quest 2 / Oculus Quest → 72Hz, Quest 3 / 3S / Pro → 90Hz (opt-in 120Hz บน Quest 3 เท่านั้น), default → 90Hz (PCVR/Editor/Stage)
+- ✅ `DetectDeviceLabel()` ใน log line → รู้ว่า device อะไรเลย
+- ✅ `s_InitInstance` (static ref) → OnDestroy track ตัว GO ที่ init ไปแล้วจริง ไม่ใช่ magic name
+- ✅ New inspector field `enable120HzOnQuest3` (opt-in default false) — ไม่กระทบ existing users
+- ✅ Compile gate: 0 errors
+- 💡 ℹ️ Risk: runtime verification ต้องเล่นจริงใน headset เห็น Hz ว่าถูก — logged in `[VRStartup] Quest optimizations applied: 90Hz (Meta Quest 3)`.
 
 ### PlayMode & Runtime Fixes (by Dev Agent)
 - ✅ EditorSceneManager guards ครบทุกไฟล์ (9 ไฟล์) — ไม่มี unguarded calls
