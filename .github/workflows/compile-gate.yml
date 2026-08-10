@@ -9,14 +9,13 @@ on:
 jobs:
   compile:
     name: Unity batchmode compile check (editmode)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           lfs: false
 
-      # เพิ่มขั้นตอนล้างโฟลเดอร์แคชเก่าที่เสียหายตามที่ AI แนะนำ
       - name: Clear Corrupted Library Cache
         run: rm -rf Library
 
