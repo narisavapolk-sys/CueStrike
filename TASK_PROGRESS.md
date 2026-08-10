@@ -213,7 +213,7 @@
 | Compile | ✅ **0 errors** (`compile_check.sh` exit 0) |
 
 ### ⏳ ยังเหลือ (งานถัดไป)
-- **ฝั่งแสดง UI ยังไม่มี trigger** — ไม่มีใครเรียก `ShowCallShot` — ต้องออกแบบเกมโฟลว์ (ถึงตาที่ต้องเรียก → โชว์ panel)
+- ~~ฝั่งแสดง UI ยังไม่มี trigger~~ → **ทำแล้ว R14** (show trigger: `MaybeShowCallShotUI()` — panel โชว์เมื่อต้องเรียก)
 - UI ในฉากบาง instance field ว่าง (`_callShotPanel: {fileID: 0}` ฯลฯ) — assign ใน Editor + Vision audit (กฎข้อ 4) ก่อนเล่นจริง
 
 ---
@@ -255,6 +255,26 @@
 ### ⏳ งานถัดไป
 - Vision audit (กฎข้อ 4): เปิด Editor → เล่นจาก `Boot.unity` → ดู transition → Title ทำงาน + ตั้งค่า VRStartup (frame rate 72/90 ตามอุปกรณ์)
 - CI: workflow รอ secret `UNITY_LICENSE` (Round 12) — ตั้งแล้ว compile gate จะรันบน PR ด้วย
+
+---
+
+## 🔗 CALL-SHOT SHOW TRIGGER — Round 14 (2026-08-10, per implementation_plan_callshot_trigger.md)
+
+> ปิดวงจร call-shot ครบ (ต่อจาก R11): เพิ่มฝั่ง "โชว์ UI" — panel ปรากฏเมื่อถึงตาผู้เล่นจริงที่ต้องเรียก | Unity ปิดก่อนแก้ (Iron Rule 4)
+
+### ✅ ทำแล้ว
+| รายการ | รายละเอียด |
+|--------|-----------|
+| `MaybeShowCallShotUI()` (ใหม่) | `IsCallShotRequired()` + `!isAiTurn` → `ChinesePoolUIManager.Instance?.ShowCallShot(false, groupInt)` — `BallGroupToPlayerGroup`: Red→1, Yellow→2, None→0 |
+| จุดเรียก 1 | ท้าย `NextPlayer()` (`:247`) — ทุก turn change (foul/wrong-ball/ธรรมดา) |
+| จุดเรียก 2 | ท้าย `HandleBreakOrOpenTable()` (`:438`) — หลัง assign กลุ่ม (ผู้เล่นเดิมเล่นต่อโดยไม่ผ่าน NextPlayer) |
+| Guard | Break/OpenTable → `IsCallShotRequired()` false → ไม่โชว์; ตา AI → `isAiTurn` → ไม่โชว์ |
+| Wiring R11 | ยังอยู่ครบ (`OnShotCalled`→`SetCallShot`, `OnCallShotCancelled`→`ClearCallShot`) |
+| Compile | ✅ **0 errors** (`compile_check.sh` exit 0) |
+
+### ⏳ ยังเหลือ (งานถัดไป)
+- UI ในฉากบาง instance field ว่าง (`_callShotPanel: {fileID: 0}` ฯลฯ) — assign ใน Editor + Vision audit (กฎข้อ 4) ก่อนเห็นภาพจริง
+- ตา AI ต่อจาก panel ที่โชว์ค้าง → v2: hide logic (`HideCallShot` ผ่าน UIManager)
 
 ---
 
