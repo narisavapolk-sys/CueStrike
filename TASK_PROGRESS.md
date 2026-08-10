@@ -196,7 +196,7 @@
 | Verify | GUID `59437c5c…` = 0 ref ทั่ว Assets; compile **0 errors** (`compile_check.sh` exit 0) |
 
 ### ⏳ งานถัดไป
-- `VRStartup.cs` ยังไม่ได้ถูกใส่ในฉากใด — ตอนทำ Boot scene จริงต้องสร้าง editor tool ผูก component นี้ + Vision audit (กฎข้อ 4)
+- ✅ `VRStartup.cs` ถูกใส่ในฉากแล้ว (R13 — `Boot.unity` Scene 0 + Editor tool "NARI CUE STRIKE") — เหลือ Vision audit
 
 ---
 
@@ -235,6 +235,26 @@
 2. https://license.unity3d.com/manual → อัปโหลด `.alf` → ได้ไฟล์ `.ulf`
 3. Repo → Settings → Secrets and variables → Actions → New secret: ชื่อ `UNITY_LICENSE` = เนื้อหา `.ulf` ทั้งหมด
 4. ครั้งแรก workflow จะ fail เพราะยังไม่มี secret (คาดหมายได้) — ตั้ง secret แล้ว rerun
+
+---
+
+## 🎮 BOOT SCENE + VRSTARTUP EDITOR TOOL — Round 13 (2026-08-10, per implementation_plan_boot_scene.md)
+
+> สร้าง Boot scene (Scene 0) + Editor tool "NARI CUE STRIKE" ผูก VRStartup.cs ตาม design (`VRStartup.cs:16`) | Unity ปิดก่อนแก้ (Iron Rule 4)
+
+### ✅ ทำแล้ว
+| รายการ | รายละเอียด |
+|--------|-----------|
+| `Scenes/Boot.unity` (ใหม่) | Scene 0 ใน Build Settings (12 scenes รวม) — GO `BootManager` + `VRStartup` (Quest optimization: frame rate, CPU/GPU, FFR, OpenXR features) + `BootSceneLoader` (→ `Title_NoksGrandHall` ผ่าน `CueStrikeLoadingScreen` — reuse gold standard VR transition) |
+| `Editor/BootSceneBuilder.cs` (ใหม่) | เมนู `Tools → NARI CUE STRIKE → Build Boot Scene (VRStartup)` — guard 3 ชั้น, idempotent (ไม่ซ้ำใน build settings), ใช้ batchmode `-executeMethod` ได้ตามกฎข้อ 4 |
+| `VR/BootSceneLoader.cs` (ใหม่) | `public string nextSceneName = "Title_NoksGrandHall"` → `Start()` เรียก `CueStrikeLoadingScreen.LoadScene` (guard ค่าว่าง) |
+| Build settings diff | เพิ่ม Boot ที่ index 0 เท่านั้น — 11 ตัวเดิมเรียงเดิม (side benefit: build เริ่มที่ Boot → Title แทนที่จะเริ่มที่ห้อง) |
+| Compile | ✅ **0 errors** (batchmode exit 0, script compilation 14.5s) — scene สร้างโดย Unity เอง, GUID ตรวจตรง (`VRStartup.cs` = `c650868c…`, `BootSceneLoader.cs` = `c4d6e49f…` ใน scene) |
+| หมายเหตุ | licensing ล่มรอบแรก (protocol mismatch, transient) → retry ผ่าน |
+
+### ⏳ งานถัดไป
+- Vision audit (กฎข้อ 4): เปิด Editor → เล่นจาก `Boot.unity` → ดู transition → Title ทำงาน + ตั้งค่า VRStartup (frame rate 72/90 ตามอุปกรณ์)
+- CI: workflow รอ secret `UNITY_LICENSE` (Round 12) — ตั้งแล้ว compile gate จะรันบน PR ด้วย
 
 ---
 

@@ -1,8 +1,8 @@
 # CueStrike VR Billiards — MASTER DOCUMENT
 > **Project:** CueStrike VR Billiards (AAA Unity, Meta Quest 2/3)
-> **Last Updated:** 2026-08-09
+> **Last Updated:** 2026-08-10
 > **Coach:** Strategist/Director | **Dev Agent:** (AI Assistant) | **User:** โม่ง (Mong)
-> **Status:** P8 = 100% | P9 = 100% (IK Assist + Shader Fix Complete) | 🧹 House Cleaning R2 done (2026-08-06): 6 junk targets removed + 7 ghost-file refs fixed | ✅ **Compile = 0 Errors REAL (2026-08-06): MCP migrated System.Text.Json → Newtonsoft (UPM) + Rule 6 added** | 🔧 **VCS Setup R3 (2026-08-09): git init + .gitignore + Git LFS — baseline commit `8f7b347`** | 🎬 **Scene Loading Fix R4 (2026-08-09): 11 scenes ใน Build Settings + Practice "hub"→`Snooker_Demo`** | 🧹 **Duplicate Cleanup R5 (2026-08-09): ลบ 4 ไฟล์ที่ไม่มี ref (XR Hands stub, CrowdSystem-Chars, BallSync/GameSync-Normcore) — เก็บ 2 คู่ที่ใช้จริง** | 🚦 **Compile Gate R6 (2026-08-09): `tools/compile_check.sh` + pre-commit hook อัตโนมัติ** | 🎯 **CallShotUI Merge R7 (2026-08-09): 2 เวอร์ชัน → 1 (`CueStrike.UI.ChinesePool`) — GameManager หาเจอจริง** | 🧼 **Scene Name Cleanup R8 (2026-08-09): TitleSceneManager defaults ชี้ฉากจริง/ว่าง** | 🚀 **Remote + Push R9 (2026-08-09): `github.com/narisavapolk-sys/CueStrike` — main พร้อม LFS, PR workflow เริ่มได้** | 🎮 **VR Startup Cleanup R10 (2026-08-09): เก็บ `VR/VRStartup.cs` (ตัวจริง), ลบ `CueStrikeVRStartup.cs` (dead, scene names พัง)** | 🔗 **Call-Shot Wiring R11 (2026-08-09): `OnShotCalled`→`SetCallShot`, `OnCallShotCancelled`→`ClearCallShot`** | 🚦 **GitHub Actions CI R12 (2026-08-09): compile gate ทุก PR (`compile-gate.yml`) + helper `unity-activate.yml`** | Ready for Next Phase
+> **Status:** P8 = 100% | P9 = 100% (IK Assist + Shader Fix Complete) | 🧹 House Cleaning R2 done (2026-08-06): 6 junk targets removed + 7 ghost-file refs fixed | ✅ **Compile = 0 Errors REAL (2026-08-06): MCP migrated System.Text.Json → Newtonsoft (UPM) + Rule 6 added** | 🔧 **VCS Setup R3 (2026-08-09): git init + .gitignore + Git LFS — baseline commit `8f7b347`** | 🎬 **Scene Loading Fix R4 (2026-08-09): 11 scenes ใน Build Settings + Practice "hub"→`Snooker_Demo`** | 🧹 **Duplicate Cleanup R5 (2026-08-09): ลบ 4 ไฟล์ที่ไม่มี ref (XR Hands stub, CrowdSystem-Chars, BallSync/GameSync-Normcore) — เก็บ 2 คู่ที่ใช้จริง** | 🚦 **Compile Gate R6 (2026-08-09): `tools/compile_check.sh` + pre-commit hook อัตโนมัติ** | 🎯 **CallShotUI Merge R7 (2026-08-09): 2 เวอร์ชัน → 1 (`CueStrike.UI.ChinesePool`) — GameManager หาเจอจริง** | 🧼 **Scene Name Cleanup R8 (2026-08-09): TitleSceneManager defaults ชี้ฉากจริง/ว่าง** | 🚀 **Remote + Push R9 (2026-08-09): `github.com/narisavapolk-sys/CueStrike` — main พร้อม LFS, PR workflow เริ่มได้** | 🎮 **VR Startup Cleanup R10 (2026-08-09): เก็บ `VR/VRStartup.cs` (ตัวจริง), ลบ `CueStrikeVRStartup.cs` (dead, scene names พัง)** | 🔗 **Call-Shot Wiring R11 (2026-08-09): `OnShotCalled`→`SetCallShot`, `OnCallShotCancelled`→`ClearCallShot`** | 🚦 **GitHub Actions CI R12 (2026-08-09): compile gate ทุก PR (`compile-gate.yml`) + helper `unity-activate.yml`** | 🎮 **Boot Scene R13 (2026-08-10): `Boot.unity` (Scene 0) + Editor tool "NARI CUE STRIKE" ผูก VRStartup — Quest optimization รันก่อนทุกอย่าง** | Ready for Next Phase
 
 > ## ⚠️ MANDATORY: อ่านก่อนทำงานทุกครั้ง
 > **AI ทุกตัวต้องอ่าน [`AI_TOOLS_MANDATE.md`](AI_TOOLS_MANDATE.md) ก่อนเริ่มงาน**
@@ -180,7 +180,7 @@ CueStrike.<Module>.<Submodule>
 - ✅ **เก็บ `VR/VRStartup.cs`** (`VRStartup`) — ตัวจริง: `DefaultExecutionOrder(-1000)`, auto frame rate 72/90Hz, CPU/GPU levels, FFR, OpenXR Meta Quest features config
 - ✅ **ลบ `Scripts/CueStrikeVRStartup.cs`** + `.meta` — duplicate เก่า: XR-init + scene loading แต่ scene names `"Main"`/`"Boot"` ไม่มีฉากจริง (ถ้าใช้จะ error); GUID `59437c5c…` = 0 ref ทั่ว Assets
 - ✅ **Compile batchmode: 0 errors** (`compile_check.sh` exit 0)
-- ⏳ `VRStartup.cs` ยังไม่ถูกใส่ในฉากใด — ตอนทำ Boot scene ต้องสร้าง editor tool ผูก + Vision audit
+- ✅ `VRStartup.cs` ถูกใส่ในฉากแล้ว (R13 — `Boot.unity` Scene 0 + Editor tool "NARI CUE STRIKE") — เหลือ Vision audit
 - 📝 Plan: `implementation_plan_vr_startup_cleanup.md`
 
 ### 🔗 Call-Shot Wiring (2026-08-09, by Buffy/Freebuff — per implementation_plan_callshot_wiring.md)
@@ -196,6 +196,16 @@ CueStrike.<Module>.<Submodule>
 - ✅ YAML valid + `.gitignore` ครอบ `*_results.xml`
 - ⏳ **พี่โม่งต้องตั้ง secret `UNITY_LICENSE`** (ขั้นตอนใน `TASK_PROGRESS.md` Round 12) — workflow ครั้งแรกจะ fail จนกว่าจะตั้ง
 - 📝 Plan: `implementation_plan_github_ci.md`
+
+### 🎮 Boot Scene + VRStartup Editor Tool (2026-08-10, by Buffy/Freebuff — per implementation_plan_boot_scene.md)
+- ✅ **`Assets/CueStrike/Scenes/Boot.unity` (ใหม่)** — Scene 0 ใน Build Settings (12 scenes รวม): GO `BootManager` + `VRStartup` (Quest optimization: frame rate, CPU/GPU levels, FFR, OpenXR features — รันก่อนทุกอย่าง `DefaultExecutionOrder(-1000)`) + `BootSceneLoader` (transition → `Title_NoksGrandHall` ผ่าน `CueStrikeLoadingScreen` — gold standard VR transition, reuse pattern เดิม)
+- ✅ **Editor Tool ใหม่: `Tools → NARI CUE STRIKE → Build Boot Scene (VRStartup)`** (`Editor/BootSceneBuilder.cs` — ns `CueStrike.Editor`, guard 3 ชั้น, idempotent, ใช้ batchmode `-executeMethod` ได้ตามกฎข้อ 4) — สร้างตาม design ใน comment `VRStartup.cs:16` ("Attaches to the Boot Scene (Scene 0) via the 'NARI CUE STRIKE' editor menu")
+- ✅ **`VR/BootSceneLoader.cs` (ใหม่)** — `public string nextSceneName = "Title_NoksGrandHall"` → `Start()` เรียก `CueStrikeLoadingScreen.LoadScene` (guard ค่าว่าง)
+- ✅ **Compile batchmode: 0 errors** (script compilation 14.5s, exit 0) — scene สร้างโดย Unity เอง (ไม่แตะ YAML มือ), GUID ตรวจตรง: component ใน scene = `VRStartup.cs` (`c650868c…`) + `BootSceneLoader.cs` (`c4d6e49f…`)
+- ✅ Build settings diff: เพิ่ม Boot ที่ index 0 เท่านั้น (11 ตัวเดิมเรียงเดิม) — side benefit: build เริ่มที่ Boot → Title (เมนู) แทนที่จะเริ่มที่ห้อง
+- ⚠️ Licensing batchmode ล่มครั้งแรก (protocol mismatch) → retry ผ่าน (transient) — log `compile_check_buffy.log`
+- ⏳ Vision audit (กฎข้อ 4) ต้องทำใน Editor — batchmode เห็นไม่ครบ
+- 📝 Plan: `implementation_plan_boot_scene.md`
 
 ### PlayMode & Runtime Fixes (by Dev Agent)
 - ✅ EditorSceneManager guards ครบทุกไฟล์ (9 ไฟล์) — ไม่มี unguarded calls

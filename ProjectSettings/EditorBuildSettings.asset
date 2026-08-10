@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/CueStrike/Scenes/Boot.unity
+    guid: eafdab4717f4d684e9897bb229439373
+  - enabled: 1
     path: Assets/CueStrike/Scenes/AAA DAY/AAA_RoomDAY.unity
     guid: 7e71f528c8e120345ae8764536972e5a
   - enabled: 1
