@@ -20,8 +20,12 @@ using UnityEditor.XR.OpenXR.Features.MetaQuestSupport;
 public class VRStartup : MonoBehaviour
 {
     [Header("Frame Rate & Performance")]
-    [Tooltip("0 = Auto (72Hz on Quest 2, 90Hz on Quest 3). Set 72, 90, or 120 to force.")]
+    [Tooltip("0 = Auto-detect from device (Meta Quest 2 = 72Hz, Quest 3/Pro = 90Hz, Quest 3 = 120Hz if enable120Hz, PCVR = 90Hz). Set 72, 90, or 120 to force.")]
     public int targetFrameRate = 0;
+
+    [Header("Quest 3 120Hz (Experimental)")]
+    [Tooltip("Opt-in: bump frame rate to 120Hz on detected Quest 3 family. Requires VSync disabled. Off by default.")]
+    public bool enable120HzOnQuest3 = false;
 
     [Header("CPU/GPU Levels (Meta Quest)")]
     [Range(0, 4)] public int cpuLevel = 2;
@@ -46,6 +50,7 @@ public class VRStartup : MonoBehaviour
     }
 
     private static bool s_Initialized = false;
+    private static VRStartup s_InitInstance = null; // tracks which GO ran init, for correct OnDestroy reset
 
     void Awake()
     {
@@ -56,6 +61,7 @@ public class VRStartup : MonoBehaviour
 
         if (s_Initialized) return;
         s_Initialized = true;
+        s_InitInstance = this;
 
         ApplyQuestOptimizations();
         
@@ -73,8 +79,7 @@ public class VRStartup : MonoBehaviour
             }
             else
             {
-                // Auto-detect: Quest 2 = 72Hz, Quest 3/3S = 90Hz (can go 120Hz)
-                Application.targetFrameRate = 90;
+                Application.targetFrameRate = AutoDetectFrameRate();
             }
 
             // VSync
@@ -91,7 +96,43 @@ public class VRStartup : MonoBehaviour
             // Fixed Foveated Rendering - Runtime via OpenXR
             SetFoveatedRenderingLevel(foveatedRendering);
 
-            Debug.Log($"[VRStartup] Quest optimizations applied: {Application.targetFrameRate}Hz, CPU Lv{cpuLevel}, GPU Lv{gpuLevel}, FFR: {foveatedRendering}");
+            Debug.Log($"[VRStartup] Quest optimizations applied: {Application.targetFrameRate}Hz ({DetectDeviceLabel()}), CPU Lv{cpuLevel}, GPU Lv{gpuLevel}, FFR: {foveatedRendering}");
+        }
+
+        // Detect frame rate from SystemInfo.deviceModel (Meta Quest 2 = 72Hz, Quest 3 family = 90 or 120Hz, PCVR/Editor = 90Hz).
+        // We use substring match because deviceModel is a free-form string and the exact casing varies by Unity/Oculus plugin version.
+        private int AutoDetectFrameRate()
+        {
+            string model = SystemInfo.deviceModel ?? string.Empty;
+            string lowered = model.ToLowerInvariant();
+
+            // Quest 3 family: "Meta Quest 3", "Meta Quest 3S", "Meta Quest Pro"
+            // Optional 120Hz opt-in only on Quest 3 (not Pro/3S to be conservative).
+            if (lowered.Contains("quest 3") && !lowered.Contains("3s") && !lowered.Contains("pro"))
+            {
+                return enable120HzOnQuest3 ? 120 : 90;
+            }
+            if (lowered.Contains("quest 3s") || lowered.Contains("quest pro"))
+            {
+                return 90;
+            }
+
+            // Quest 2 / Quest 1: 72Hz (native refresh).
+            // We exclude "2" prefix with care — query both "quest 2" AND just "quest" to catch the 1st-gen.
+            if (lowered.Contains("quest 2") || lowered.Contains("oculus quest"))
+            {
+                return 72;
+            }
+
+            // Unknown device — default to 90Hz (safe for PCVR + Editor + Stage).
+            return 90;
+        }
+
+        // Human-readable device label for logging only — never used as a key.
+        private string DetectDeviceLabel()
+        {
+            string model = SystemInfo.deviceModel;
+            return string.IsNullOrEmpty(model) ? "Unknown" : model;
         }
 
 #if UNITY_EDITOR
@@ -224,9 +265,13 @@ public class VRStartup : MonoBehaviour
 
     void OnDestroy()
     {
-        if (persistAcrossScenes && gameObject.name == "[VRStartup]")
+        // Only reset when the instance that originally ran the optimizations is destroyed.
+        // (DontDestroyOnLoad normally prevents this, but on domain reload / explicit Destroy,
+        // we don't want a subsequent BootManager instance to skip initialization.)
+        if (s_InitInstance == this)
         {
             s_Initialized = false;
+            s_InitInstance = null;
         }
     }
 }
