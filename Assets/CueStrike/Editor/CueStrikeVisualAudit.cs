@@ -37,7 +37,7 @@ public static class CueStrikeVisualAudit
                 .SelectMany(rx => rx.sharedMaterials)
                 .Where(m => m != null && m.shader != null && (m.shader.name.Contains("Universal") || m.shader.name.Contains("Lit")))
                 .Count();
-            var am = UnityEngine.Object.FindObjectOfType<CueStrikeAudioManager>();
+            var am = UnityEngine.Object.FindFirstObjectByType<CueStrikeAudioManager>();
             if (am != null)
                 sfxSlotWired = typeof(CueStrikeAudioManager).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance).Count(fi => fi.FieldType == typeof(AudioClip) && fi.GetValue(am) != null);
             string vdir = Path.Combine(Application.dataPath, "CueStrike/Audio/Clips/Voice/UncleNok");

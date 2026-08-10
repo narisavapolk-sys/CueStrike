@@ -289,8 +289,8 @@ namespace CueStrike.Editor
 
         private void RefreshReferences()
         {
-            ballSetup = FindObjectOfType<ChinesePoolBallSetup>();
-            aiModifier = FindObjectOfType<ChinesePoolAIModifier>();
+            ballSetup = FindFirstObjectByType<ChinesePoolBallSetup>();
+            aiModifier = FindFirstObjectByType<ChinesePoolAIModifier>();
 
             if (ballSetup != null)
                 Debug.Log("[ChinesePoolEditor] Found ChinesePoolBallSetup");
