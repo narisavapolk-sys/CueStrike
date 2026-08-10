@@ -16,12 +16,16 @@ jobs:
         with:
           lfs: false
 
+      # เพิ่มขั้นตอนล้างโฟลเดอร์แคชเก่าที่เสียหายตามที่ AI แนะนำ
+      - name: Clear Corrupted Library Cache
+        run: rm -rf Library
+
       - name: Cache Unity Library
         uses: actions/cache@v4
         with:
           path: Library
-          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
-          restore-keys: Library-
+          key: Library-v2-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: Library-v2-
 
       - name: Unity compile + EditMode tests
         uses: game-ci/unity-test-runner@v4
