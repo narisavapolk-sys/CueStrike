@@ -541,3 +541,40 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 - Grand Hall scene อ้าง prefab: `Somchay_AAA` + `LuxuryChandelier` + `BoPanda_Prefab` (variant) — ยังไม่มี `UncleNok_AAA` (model rig) ถูกวาง; Master Control `PlaceCharacters` จะวาง `UncleNok_Prefab`/`BoPanda_Prefab` (variant ที่มี referee + voice) ถ้ายังไม่ present
 - `UncleNokReferee` ฟิลด์เสียงครบ 14 (matchStart/turnStart/potSuccess/centuryBreak/highBreak/foulCalled/foulCueBallPotted/break/clearance)
 \n\n## 🎯 CALL-SHOT UI SHOW TRIGGER — Round 14 (2026-08-10, per implementation_plan_callshot_trigger.md)\n\n**Goal:** เมื่อถึงตาผู้เล่นที่ต้อง call-shot → panel ปรากฏจริง (ไม่ใช่แค่ wire event แต่ trigger visible)\n\n### ✅ Files changed (single file: `ChinesePoolGameManager.cs`)\n- ✅ `MaybeShowCallShotUI()` private helper:\n  - Guard: `!isAiTurn` + `IsCallShotRequired()` → only show when human player must call\n  - เรียก `ChinesePoolUIManager.Instance?.ShowCallShot(false, BallGroupToPlayerGroup(GetCurrentPlayerGroup()))`\n- ✅ Trigger 2 จุด: ท้าย `NextPlayer()` (ทุก turn change) + ท้าย `HandleBreakOrOpenTable()` (หลัง assign กลุ่ม)\n- ✅ Compile verify: EditMode compile 0 errors\n- ✅ Wire (R11) → Trigger (R14) → Find ref (R17) chain ครบ\n\n### ℹ️ Follow-up needed (จาก Vision audit R17)\n- เติม UI ref ในฉากที่ยังขาด (R17 fix ส่วน duplicate ตัว panel ไม่ได้ wire UI fields ส่วนอื่น)\n- Hide CallShot ตอน AI เทิร์น\n\n📝 Plan: `implementation_plan_callshot_trigger.md`\n
+---
+
+## 🚀 ALL PRs MERGED — R13–R23 (2026-08-11, via gh CLI authenticated as narisavapolk-sys)
+
+สถานะปิดจบของ backlog ทั้งหมด — ทุก branch ที่ค้าง push ขึ้น origin แล้วเปิด PR + CI เขียว + merge เข้า `main` ครบ:
+
+| # | Round | PR | หัวข้อ |
+|---|-------|----|--------|
+| 1 | R13 | #7 | Boot scene (Scene 0) + VRStartup Quest optimization + NARI CUE STRIKE editor tool |
+| 2 | R14 | #11 | CallShot UI show trigger (`MaybeShowCallShotUI`) |
+| 3 | R15 | #10 | CS0618 Find-API modernize (36 call sites → Unity 6 modern API) |
+| 4 | R16 | #3 | VRStartup frame-rate auto-detect (Quest 2=72 / 3=90 / 120 opt-in) |
+| 5 | R17 | #2 | CallShot UI empty-ref fix (2 scenes) |
+| 6 | R18 | #12 | BoPanda mascot prefab + banter |
+| 7 | R19 | #13 | VoiceBinder → Editor-only refactor |
+| 8 | R20 | #14 | MCP ExecuteCodeTool → CodeDom + McpSettings |
+| 9 | R21 | (closed) | CI Node 24 — เนื้อหาส่วนใหญ่เข้า main ไปแล้ว, เหลือ supersede |
+| 10 | CI | #5 | ลบ unity-activate.yml duplicate (CI รัน compile 2 รอบ/PR) |
+| 11 | R22 | #16 | VISION_AUDIT_CHECKLIST.md |
+| 12 | R23 | #17 | PlayMode NUnit suite (R14/R16/R17) — 12/12 ผ่าน |
+
+### 🔒 Branch protection (ตั้งแล้ว)
+- `main`: ต้องผ่าน **Unity Compile Gate** (`Unity batchmode compile check (editmode)`) ก่อน merge
+- enforce_admins = true, ห้าม force-push / delete branch
+- → ทุกงานถัดไปต้องมาเป็น PR (ไม่มี push ตรงเข้า main)
+
+### 🧹 Cleanup (session นี้)
+- ลบ worktree/cache เสีย (`playmode-test-worktree/`, nested `CueStrike_Project/`) ที่เหลือจาก session ก่อน
+- stash backup `main-checkout-uncommitted-backup-2026-08-11` — เนื้อหาถูก merge ไปครบแล้วผ่าน R17/R18/R19/R20 → เก็บไว้เป็น safety net
+
+### ⏭️ Roadmap R24+ (จัดลำดับความสำคัญ)
+1. **R24 Single-Player flow** — เล่นคนเดียวครบวงจร (Boot → Title → ห้อง → เล่น → จบเกม) + ชนะ/แพ้ flow
+2. **R25 Tutorial** — สอนกติกา/การควบคุม VR ครั้งแรก (Uncle Nok นำทาง)
+3. **R26 Voice Pinning** — ผูก `UncleNokReferee` 14 clips กับ prefab variant จริง (งานค้างจาก Session 3)
+4. **R27 Multiplayer room** — Normcore room flow (host/join, sync) — ใหญ่สุด ต้องแยกแผน
+5. **R28 Polish animation** — P9 animator states + BoPanda banter reactions ในฉากจริง
+6. **R29 SFX generation** — รอ Stable Audio token จริง (technology mismatch ที่บันทึกไว้)
