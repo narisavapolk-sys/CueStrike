@@ -721,7 +721,25 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 - ยังไม่ผูก referee กับ game events (R31 กรรมการจริง — ประกาศคะแนน/ฟาวล์) — ตอนนี้พร้อมรับ event แล้ว
 - `_homePosition` = root Transform → `Start()` ล็อกตำแหน่ง + `Update()` หมุนหันเข้าหา home position (referee หันหน้าเข้าหาโต๊ะตลอด)
 
+## 🐼 BOPANDA ลงห้องแข่ง (คู่พิธีกรครบ) — Round 33 (2026-08-12, per implementation_plan_r33_bopanda_match_scenes.md)
+
+**Goal (ตามคำสั่งพี่โม่ง):** วาง BoPanda ลง AAA_RoomDAY + Snooker_Demo ด้วย — ให้ห้องแข่งมีคู่พิธีกรครบ (ลุงโน๊ก referee + โบกองเชียร์)
+
+### ✅ Files changed
+- **`MascotScenePlacementSetup.cs`** (ขยายจาก R29): เพิ่ม `BoPandaPrefabPath` + `BoPandaTargets` — วาง BoPanda ฝั่งตรงข้ามลุงโน๊ก (0, 0, 4.6) + idempotent ตรวจชื่อ GameObject (UncleNok/BoPanda) + self-test ตรวจ Bo ด้วย
+- **`AAA_RoomDAY.unity`** + **`Snooker_Demo.unity`**: เพิ่ม BoPanda instance ที่ (0, 0, 4.6) — ลุงโน๊ก (0, 0, -4.6) ยืนคนละฝั่งโต๊ะ
+
+### ✅ Verify
+- Compile gate batchmode: **0 errors** (ไฟล์ใหม่ 0 warnings)
+- Tool รันจริง: วาง BoPanda **2/2 ฉาก** + **idempotent** (รันซ้ำ → skip ทั้งหมด — Title/AAA/Snooker)
+- Self-test **4/4 ผ่าน**
+- main checkout คืนสภาพสะอาด
+
+### ⏳ หมายเหตุ
+- Title ไม่ถูกแตะ (มี Bo อยู่แล้ว) — tool ข้ามอัตโนมัติ
+- ฉากห้องแข่งตอนนี้มีลุงโน๊ก + โบครบคู่ — พร้อมให้ R32 Bo Comedy (เมื่อ merge) ทำงานเต็มรูปแบบ (มี Scoreboard ในห้อง)
+
 ### ⏭️ Roadmap R24+ (จัดลำดับความสำคัญ — ปรับตามโค้ช)
 1. **R31 กรรมการจริง** — ผูก UncleNokReferee กับ game events (OnFrameStart/OnBallPotted/OnFoulCommitted) — ประกาศคะแนน/ฟาวล์จริง
-2. **R32 ลุงโน๊กคู่ซ้อม AI** — ต่อ AI opponent (CueStrikeAIController มีอยู่แล้ว) กับโหมด Practice + เลือกระดับ Easy/Medium/Hard/Expert
-3. **R33 (nice-to-have)** — Bo Comedy Director (โมเมนต์ตลกน้องโบ) + Multiplayer room
+2. **R34 ลุงโน๊กคู่ซ้อม AI** — ต่อ AI opponent (CueStrikeAIController มีอยู่แล้ว) กับโหมด Practice + เลือกระดับ Easy/Medium/Hard/Expert
+3. **R35 (nice-to-have)** — Multiplayer room (Normcore)
