@@ -1,10 +1,25 @@
-# Task: CueStrike VR — R29 Mascot Scene Placement (Current) → R30+ Roadmap
+# Task: CueStrike VR — R30 Voice Pinning (Current) → R31+ Roadmap
 
-**Current Objective (2026-08-12):** ตรวจว่า UncleNok + BoPanda ถูกวางในฉากไหนบ้าง + animation ใหม่ (R27) จะเล่นในฉากนั้นจริงหรือไม่ — รายงาน + แก้ถ้าขาด
+**Current Objective (2026-08-12):** ผูก UncleNokReferee 14 voice clips กับ prefab จริง — เพิ่ม AudioSource + assign `_animator`/`_audioSource`/`_homePosition`
 
 ---
 
-## 🎯 R29 — MASCOT SCENE PLACEMENT (Ready for PR)
+## 🎯 R30 — VOICE PINNING (Ready for PR)
+
+### ✅ Done
+- [x] ตรวจของจริง: clips 14 ตัว **assign ครบแล้ว** ใน prefab แต่ **ไม่มี AudioSource** + refs 3 ตัวว่าง
+- [x] Editor tool `UncleNokVoicePinSetup.cs` — `Tools/CueStrike/Mascots/60. Pin UncleNok Voice & Refs` (PrefabUtility.LoadPrefabContents + idempotent + self-test + batchmode)
+- [x] เพิ่ม AudioSource (3D spatial) + assign `_animator`/`_audioSource`/`_homePosition` ใน UncleNok_Prefab
+- [x] Compile verify: batchmode **0 errors** + tool รันจริง + self-test **12/12**
+- [x] 3 ฉาก (Title/AAA_RoomDAY/Snooker_Demo) เป็น prefab instance → ได้ผลอัตโนมัติ ไม่ต้องแก้
+
+### ⏳ เหลือ (R31 กรรมการจริง)
+- [ ] ผูก UncleNokReferee กับ game events (OnFrameStart/OnBallPotted/OnFoulCommitted) — ประกาศคะแนน/ฟาวล์จริง
+- [ ] Vision audit: เปิด Title → ลุงโน๊กพูด (voice 14 clips) ตอนเริ่มเกม/ลูกเข้าหลุม/ฟาวล์
+
+---
+
+## 🎯 R29 — MASCOT SCENE PLACEMENT (MERGED ✅ — PR #24)
 
 ### ✅ Done
 - [x] ตรวจของจริง: BoPanda อยู่ใน Title (1.8, 0.4, -1.6) + Animator/controller ครบ → **animation เล่นได้**
