@@ -1,6 +1,6 @@
 # CueStrike VR - Master Task Progress Tracker
 
-> **Last Updated:** 2026-08-09  
+> **Last Updated:** 2026-08-11
 > **Current Phase:** Phase A Audio Completion
 
 ---
@@ -273,8 +273,29 @@
 | Compile | ✅ **0 errors** (`compile_check.sh` exit 0) |
 
 ### ⏳ ยังเหลือ (งานถัดไป)
-- UI ในฉากบาง instance field ว่าง (`_callShotPanel: {fileID: 0}` ฯลฯ) — assign ใน Editor + Vision audit (กฎข้อ 4) ก่อนเห็นภาพจริง
+- ✅ R17 ตรวจ/แก้แล้ว: ลบ duplicate + orphan YAML block และ assign refs ใน 2 scenes; PlayMode integrity test ผ่าน 2/2
 - ตา AI ต่อจาก panel ที่โชว์ค้าง → v2: hide logic (`HideCallShot` ผ่าน UIManager)
+
+---
+
+## 🧪 PLAYMODE QA AUTOMATION — Round 23 (2026-08-11, per implementation_plan_playmode_qa.md)
+
+> ลด manual Vision audit ด้วย Unity PlayMode tests จริง ครอบคลุม R14 CallShot cycle + R16 Quest frame-rate policy + R17 scene refs | ทดสอบบน Unity 6000.4.4f1
+
+### ✅ ทำแล้ว
+| รายการ | รายละเอียด |
+|--------|-----------|
+| Test assembly | `Assets/CueStrike/Tests/PlayMode/CueStrike.PlayModeTests.asmdef` — `testAssemblies: true`, อ้างเฉพาะ Unity Test Runner/NUnit; ใช้ reflection เรียก production types ที่ยังอยู่ใน predefined `Assembly-CSharp` |
+| R14 CallShot | graph จริงของ `ChinesePoolGameManager` + `ChinesePoolUIManager` + `ChinesePoolCallShotUI`; human Show → 15 balls/6 pockets → Confirm/Cancel → state และ AI guard |
+| R16 Frame rate | policy matrix 8 cases: Quest 2/Oculus Quest=72, Quest 3=90/120 opt-in, Quest 3S/Pro=90, PC/unknown=90 |
+| R17 Scene refs | additive-load `Title_NoksGrandHall` + `AAA_RoomDAY`; exactly one UI, 9/9 refs, UIManager pointer, no orphan invalid-script log |
+| Scene serialization fix | ลบ orphan duplicate component blocks ที่ R17 เคยถอดออกจาก `m_Component` แต่เหลือ YAML block ทำให้ Unity log `Invalid Script reference` |
+| Compile | ✅ `tools/compile_check.sh` → **0 errors** |
+| PlayMode batch | ✅ **12/12 passed, 0 failed** (`-runTests -testPlatform PlayMode`) |
+| Plan | `implementation_plan_playmode_qa.md` |
+
+### ⏳ เหลือ
+- CI จะรันซ้ำเมื่อ branch ถูก push/เปิด PR; headset-specific visual/refresh-rate check ยังเป็น manual integration check เสริม (ไม่แทนที่ด้วย mock)
 
 ---
 

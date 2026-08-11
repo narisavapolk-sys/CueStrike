@@ -28647,31 +28647,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 800, y: 600}
   m_Pivot: {x: 0.5, y: 0.5}
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1107091477}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d69029a44fcc5046beeef73945940a3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CueStrike.UI.ChinesePool.ChinesePoolCallShotUI
-  _callShotPanel: {fileID: 0}
-  _titleText: {fileID: 0}
-  _instructionText: {fileID: 0}
-  _ballSelectionGrid: {fileID: 0}
-  _pocketSelectionGrid: {fileID: 0}
-  _confirmButton: {fileID: 0}
-  _cancelButton: {fileID: 0}
-  _selectedBallText: {fileID: 0}
-  _selectedPocketText: {fileID: 0}
-  _redGroupColor: {r: 0.9, g: 0.1, b: 0.1, a: 1}
-  _yellowGroupColor: {r: 0.9, g: 0.8, b: 0.1, a: 1}
-  _blackBallColor: {r: 0, g: 0, b: 0, a: 1}
-  _selectedColor: {r: 0.2, g: 0.8, b: 0.2, a: 1}
-  _unselectedColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &1107091480
 MonoBehaviour:
   m_ObjectHideFlags: 0

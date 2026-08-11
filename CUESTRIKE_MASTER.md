@@ -1,8 +1,8 @@
 # CueStrike VR Billiards — MASTER DOCUMENT
 > **Project:** CueStrike VR Billiards (AAA Unity, Meta Quest 2/3)
-> **Last Updated:** 2026-08-10
+> **Last Updated:** 2026-08-11
 > **Coach:** Strategist/Director | **Dev Agent:** (AI Assistant) | **User:** โม่ง (Mong)
-> **Status:** P8 = 100% | P9 = 100% (IK Assist + Shader Fix Complete) | 🧹 House Cleaning R2 done (2026-08-06): 6 junk targets removed + 7 ghost-file refs fixed | ✅ **Compile = 0 Errors REAL (2026-08-06): MCP migrated System.Text.Json → Newtonsoft (UPM) + Rule 6 added** | 🔧 **VCS Setup R3 (2026-08-09): git init + .gitignore + Git LFS — baseline commit `8f7b347`** | 🎬 **Scene Loading Fix R4 (2026-08-09): 11 scenes ใน Build Settings + Practice "hub"→`Snooker_Demo`** | 🧹 **Duplicate Cleanup R5 (2026-08-09): ลบ 4 ไฟล์ที่ไม่มี ref (XR Hands stub, CrowdSystem-Chars, BallSync/GameSync-Normcore) — เก็บ 2 คู่ที่ใช้จริง** | 🚦 **Compile Gate R6 (2026-08-09): `tools/compile_check.sh` + pre-commit hook อัตโนมัติ** | 🎯 **CallShotUI Merge R7 (2026-08-09): 2 เวอร์ชัน → 1 (`CueStrike.UI.ChinesePool`) — GameManager หาเจอจริง** | 🧼 **Scene Name Cleanup R8 (2026-08-09): TitleSceneManager defaults ชี้ฉากจริง/ว่าง** | 🚀 **Remote + Push R9 (2026-08-09): `github.com/narisavapolk-sys/CueStrike` — main พร้อม LFS, PR workflow เริ่มได้** | 🎮 **VR Startup Cleanup R10 (2026-08-09): เก็บ `VR/VRStartup.cs` (ตัวจริง), ลบ `CueStrikeVRStartup.cs` (dead, scene names พัง)** | 🔗 **Call-Shot Wiring R11 (2026-08-09): `OnShotCalled`→`SetCallShot`, `OnCallShotCancelled`→`ClearCallShot`** | 🚦 **GitHub Actions CI R12 (2026-08-09): compile gate ทุก PR (`compile-gate.yml`) + helper `unity-activate.yml`** | 🎮 **Boot Scene R13 (2026-08-10): `Boot.unity` (Scene 0) + Editor tool "NARI CUE STRIKE" ผูก VRStartup — Quest optimization รันก่อนทุกอย่าง** | 🔗 **Call-Shot Cycle Complete R14 (2026-08-10): เพิ่ม show trigger — panel โชว์เมื่อต้องเรียก (NextPlayer + หลัง assign กลุ่ม)** | Ready for Next Phase
+> **Status:** P8 = 100% | P9 = 100% (IK Assist + Shader Fix Complete) | 🧹 House Cleaning R2 done (2026-08-06): 6 junk targets removed + 7 ghost-file refs fixed | ✅ **Compile = 0 Errors REAL (2026-08-06): MCP migrated System.Text.Json → Newtonsoft (UPM) + Rule 6 added** | 🔧 **VCS Setup R3 (2026-08-09): git init + .gitignore + Git LFS — baseline commit `8f7b347`** | 🎬 **Scene Loading Fix R4 (2026-08-09): 11 scenes ใน Build Settings + Practice "hub"→`Snooker_Demo`** | 🧹 **Duplicate Cleanup R5 (2026-08-09): ลบ 4 ไฟล์ที่ไม่มี ref (XR Hands stub, CrowdSystem-Chars, BallSync/GameSync-Normcore) — เก็บ 2 คู่ที่ใช้จริง** | 🚦 **Compile Gate R6 (2026-08-09): `tools/compile_check.sh` + pre-commit hook อัตโนมัติ** | 🎯 **CallShotUI Merge R7 (2026-08-09): 2 เวอร์ชัน → 1 (`CueStrike.UI.ChinesePool`) — GameManager หาเจอจริง** | 🧼 **Scene Name Cleanup R8 (2026-08-09): TitleSceneManager defaults ชี้ฉากจริง/ว่าง** | 🚀 **Remote + Push R9 (2026-08-09): `github.com/narisavapolk-sys/CueStrike` — main พร้อม LFS, PR workflow เริ่มได้** | 🎮 **VR Startup Cleanup R10 (2026-08-09): เก็บ `VR/VRStartup.cs` (ตัวจริง), ลบ `CueStrikeVRStartup.cs` (dead, scene names พัง)** | 🔗 **Call-Shot Wiring R11 (2026-08-09): `OnShotCalled`→`SetCallShot`, `OnCallShotCancelled`→`ClearCallShot`** | 🚦 **GitHub Actions CI R12 (2026-08-09): compile gate ทุก PR (`compile-gate.yml`) + helper `unity-activate.yml`** | 🎮 **Boot Scene R13 (2026-08-10): `Boot.unity` (Scene 0) + Editor tool "NARI CUE STRIKE" ผูก VRStartup — Quest optimization รันก่อนทุกอย่าง** | 🔗 **Call-Shot Cycle Complete R14 (2026-08-10): เพิ่ม show trigger — panel โชว์เมื่อต้องเรียก (NextPlayer + หลัง assign กลุ่ม)** | 🧪 **PlayMode QA R23 (2026-08-11): NUnit runtime coverage R14/R16/R17 — 12/12 ผ่าน, 0 errors** | Ready for Next Phase
 
 > ## ⚠️ MANDATORY: อ่านก่อนทำงานทุกครั้ง
 > **AI ทุกตัวต้องอ่าน [`AI_TOOLS_MANDATE.md`](AI_TOOLS_MANDATE.md) ก่อนเริ่มงาน**
@@ -212,8 +212,17 @@ CueStrike.<Module>.<Submodule>
 - ✅ **จุดเรียก 2 จุด**: ท้าย `NextPlayer()` (`:247`) + ท้าย `HandleBreakOrOpenTable()` หลัง assign กลุ่ม (`:438`) — ครอบทุก turn change; break/OpenTable/AI ถูก suppress โดย guard (`IsCallShotRequired` + `isAiTurn`)
 - ✅ Wiring R11 เดิมยังอยู่ครบ (`OnShotCalled`→`SetCallShot` :121, `OnCallShotCancelled`→`ClearCallShot` :122, unsubscribe :90-91)
 - ✅ **Compile batchmode: 0 errors** (gate exit 0)
-- ⏳ ยังค้าง: UI ในฉากบาง instance field ว่าง (`_callShotPanel: {fileID: 0}`) — ต้อง assign ใน Editor + Vision audit (กฎข้อ 4); ตา AI ต่อจาก panel ที่ค้าง → v2 hide logic
+- ✅ R17 แก้แล้ว: ลบ duplicate component + orphan YAML block และ repoint UIManager ใน `AAA_RoomDAY`/`Title_NoksGrandHall`; PlayMode scene integrity ผ่าน 2/2
 - 📝 Plan: `implementation_plan_callshot_trigger.md`
+
+### 🧪 PlayMode QA Automation (2026-08-11, R23 — per implementation_plan_playmode_qa.md)
+- ✅ Added dedicated `Assets/CueStrike/Tests/PlayMode/CueStrike.PlayModeTests.asmdef` + `R14R16R17PlayModeTests.cs`; tests instantiate real MonoBehaviours and additive-load real scenes.
+- ✅ R14 coverage: human turn shows CallShot panel, 15/6 selection grids, Confirm → `SetCallShot`, Cancel → `ClearCallShot`, AI turn guard.
+- ✅ R16 coverage: deterministic Quest device policy matrix (Quest 2=72Hz, Quest 3=90/120 opt-in, Quest 3S/Pro=90, unknown=90).
+- ✅ R17 coverage: both `Title_NoksGrandHall` and `AAA_RoomDAY` load in PlayMode; exactly one CallShotUI, all 9 refs, UIManager points to survivor, and no orphan invalid-script log.
+- ✅ Compile gate: `tools/compile_check.sh` → **0 errors**.
+- ✅ PlayMode batch run: **12/12 passed, 0 failed** (Unity 6000.4.4f1).
+- 📝 Plan: `implementation_plan_playmode_qa.md`
 
 ### PlayMode & Runtime Fixes (by Dev Agent)
 - ✅ EditorSceneManager guards ครบทุกไฟล์ (9 ไฟล์) — ไม่มี unguarded calls

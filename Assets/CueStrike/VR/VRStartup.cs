@@ -103,10 +103,16 @@ public class VRStartup : MonoBehaviour
         // We use substring match because deviceModel is a free-form string and the exact casing varies by Unity/Oculus plugin version.
         private int AutoDetectFrameRate()
         {
-            string model = SystemInfo.deviceModel ?? string.Empty;
-            string lowered = model.ToLowerInvariant();
+            return ResolveAutoFrameRate(SystemInfo.deviceModel, enable120HzOnQuest3);
+        }
 
-            // Quest 3 family: "Meta Quest 3", "Meta Quest 3S", "Meta Quest Pro"
+        // Kept separate from SystemInfo so the device policy can be tested deterministically
+        // without a headset or platform-specific device-model mocking.
+        private static int ResolveAutoFrameRate(string deviceModel, bool enable120HzOnQuest3)
+        {
+            string lowered = (deviceModel ?? string.Empty).ToLowerInvariant();
+
+            // Quest 3 family: "Meta Quest 3", "Meta Quest 3S", "Meta Quest Pro".
             // Optional 120Hz opt-in only on Quest 3 (not Pro/3S to be conservative).
             if (lowered.Contains("quest 3") && !lowered.Contains("3s") && !lowered.Contains("pro"))
             {
@@ -118,7 +124,6 @@ public class VRStartup : MonoBehaviour
             }
 
             // Quest 2 / Quest 1: 72Hz (native refresh).
-            // We exclude "2" prefix with care — query both "quest 2" AND just "quest" to catch the 1st-gen.
             if (lowered.Contains("quest 2") || lowered.Contains("oculus quest"))
             {
                 return 72;
