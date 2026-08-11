@@ -408,7 +408,7 @@ public class CueStrikeHUDController : MonoBehaviour
         else
         {
             // Fallback: search all game objects for "TableSurface" or "Felt"
-            foreach (var go in GameObject.FindObjectsOfType<MeshRenderer>())
+            foreach (var go in FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None))
             {
                 if (go.name.ToLower().Contains("tablesurface") || go.name.ToLower().Contains("felt"))
                 {

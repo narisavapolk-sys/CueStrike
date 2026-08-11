@@ -20,7 +20,7 @@ namespace CueStrike.Editor
             GUILayout.Label("Noir Memory Puzzle Debug", EditorStyles.largeLabel);
             EditorGUILayout.Space(10);
 
-            var manager = FindObjectOfType<NoirMemoryPuzzleManager>();
+            var manager = FindFirstObjectByType<NoirMemoryPuzzleManager>();
             if (manager == null)
             {
                 EditorGUILayout.HelpBox("NoirMemoryPuzzleManager not found in scene", MessageType.Warning);
@@ -53,7 +53,7 @@ namespace CueStrike.Editor
             GUILayout.Label("AI Memory", EditorStyles.boldLabel);
             aiAccuracy = EditorGUILayout.Slider("AI Accuracy", aiAccuracy, 0f, 1f);
             
-            var aiMemory = FindObjectOfType<NoirMemoryAIMemory>();
+            var aiMemory = FindFirstObjectByType<NoirMemoryAIMemory>();
             if (aiMemory != null && GUILayout.Button("Set AI Accuracy"))
             {
                 aiMemory.SetMemoryAccuracy(aiAccuracy);

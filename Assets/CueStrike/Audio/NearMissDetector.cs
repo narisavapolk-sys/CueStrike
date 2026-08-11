@@ -84,7 +84,7 @@ namespace CueStrike.Audio
                 }
 
                 // If ball stopped or pocketed, it's not a near miss
-                Rigidbody ballRigidbody = FindObjectOfType<Rigidbody>(); // This might be too broad, consider passing ball reference
+                Rigidbody ballRigidbody = FindFirstObjectByType<Rigidbody>(); // This might be too broad, consider passing ball reference
                 if (ballRigidbody != null && ballRigidbody.linearVelocity.magnitude < 0.1f)
                 {
                     yield break; // Ball stopped
