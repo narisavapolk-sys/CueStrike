@@ -1,10 +1,25 @@
-# Task: CueStrike VR — R28 SFX 9 ช่อง (Current) → R29+ Roadmap
+# Task: CueStrike VR — R29 Mascot Scene Placement (Current) → R30+ Roadmap
 
-**Current Objective (2026-08-12):** ผูกช่อง SFX จริง 9 ตัว (ball hit, cushion, pocket, cue, chalk, crowd, ambient, ui_click, ui_hover) เข้ากับ AudioSource + volume ตามแรงกระแทก — เขียนตารางไฟล์ที่พี่ต้องหาไว้ใน TASK_PROGRESS
+**Current Objective (2026-08-12):** ตรวจว่า UncleNok + BoPanda ถูกวางในฉากไหนบ้าง + animation ใหม่ (R27) จะเล่นในฉากนั้นจริงหรือไม่ — รายงาน + แก้ถ้าขาด
 
 ---
 
-## 🎯 R28 — SFX 9 ช่อง (Ready for PR)
+## 🎯 R29 — MASCOT SCENE PLACEMENT (Ready for PR)
+
+### ✅ Done
+- [x] ตรวจของจริง: BoPanda อยู่ใน Title (1.8, 0.4, -1.6) + Animator/controller ครบ → **animation เล่นได้**
+- [x] พบว่า **UncleNok_Prefab ไม่ถูกวางในฉากไหนเลย** (มีแค่ `UncleNok_Placeholder` cube ใน Title) + ฉากห้องแข่งไม่มี mascot/referee
+- [x] Editor tool `MascotScenePlacementSetup.cs` — `Tools/CueStrike/Mascots/50. Place Mascots in Scenes` (PrefabUtility.InstantiatePrefab + idempotent + self-test + batchmode)
+- [x] วาง UncleNok_Prefab: Title (แทน placeholder, 0, 0.9, 2) + AAA_RoomDAY + Snooker_Demo (ริมโต๊ะ 0, 0, -4.6)
+- [x] Compile verify: batchmode **0 errors** + tool **3/3 ฉาก** + idempotent (รันซ้ำ skip) + self-test **4/4**
+
+### ⏳ เหลือ (R30 Voice Pinning)
+- [ ] assign `_animator/_audioSource/_homePosition` ของ UncleNokReferee (ตอนนี้ animation เล่นได้ แต่ voice + home position ยังว่าง)
+- [ ] Vision audit: เปิด Title → เห็นลุงโน๊ก+โบยืนริม (Idle animation หายใจ); เปิดห้องแข่ง → เห็น referee ริมโต๊ะ
+
+---
+
+## 🎯 R28 — SFX 9 ช่อง (MERGED ✅ — PR #23)
 
 ### ✅ Done
 - [x] ตรวจของจริง: ไฟล์ SFX 9 ตัวมีอยู่แล้วใน `Audio/Clips/` (placeholder สังเคราะห์) แต่ **AudioManager อยู่ในแค่ Title scene** — ห้องแข่ง/เมนูไม่มีเสียง

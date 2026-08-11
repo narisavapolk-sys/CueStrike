@@ -668,7 +668,33 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 
 **วิธีใช้:** ดาวน์โหลดไฟล์เสียง → ตั้งชื่อตรงตามคอลัมน์ 2 → ลากวางทับไฟล์เดิมใน `Assets/CueStrike/Audio/Clips/` (Unity จะ import ใหม่ GUID เดิม) → เล่นเกมได้เลย ไม่ต้องแก้โค้ด
 
+## 🦣 MASCOT SCENE PLACEMENT — Round 29 (2026-08-12, per implementation_plan_r29_mascot_scenes.md)
+
+**Goal (ตามคำสั่งพี่โม่ง):** ตรวจว่า UncleNok + BoPanda ถูกวางในฉากไหนบ้าง + animation ใหม่ (R27) จะเล่นในฉากนั้นจริงหรือไม่ — รายงาน + แก้ถ้าขาด
+
+### 📋 Findings (ตรวจโค้ดจริง)
+| รายการ | สถานะ | Animation เล่นไหม? |
+|--------|--------|-------------------|
+| BoPanda_Prefab ใน Title (1.8, 0.4, -1.6) + Animator + controller (R27) | ✅ | ✅ เล่นได้ |
+| **UncleNok_Prefab ไม่อยู่ในฉากไหนเลย** (มีแค่ placeholder cube) | ❌ | ❌ ไม่มีทางเล่น |
+| ฉากห้องแข่งทั้ง 9 + MainMenu/Boot ไม่มี mascot/referee | ❌ | ❌ |
+
+### ✅ Files changed
+- **`MascotScenePlacementSetup.cs`** (ใหม่): Editor tool `Tools/CueStrike/Mascots/50. Place Mascots in Scenes` — ใช้ `PrefabUtility.InstantiatePrefab` + idempotent (มี UncleNokReferee อยู่แล้ว → skip) + self-test + batchmode
+- **`Title_NoksGrandHall.unity`**: ลบ `UncleNok_Placeholder` (cube) → วาง `UncleNok_Prefab` ที่ (0, 0.9, 2)
+- **`AAA_RoomDAY.unity`** + **`Snooker_Demo.unity`**: วาง `UncleNok_Prefab` เป็น referee ริมโต๊ะ (0, 0, -4.6)
+
+### ✅ Verify
+- Compile gate batchmode: **0 errors** (ไฟล์ใหม่ 0 warnings)
+- Tool รันจริง **3/3 ฉาก** ผ่าน + **idempotent** (รันซ้ำ → skip ทั้ง 3)
+- Self-test **4/4 ผ่าน** (prefab มี Animator + controller + UncleNokReferee)
+- main checkout คืนสภาพสะอาด
+
+### ⏳ หมายเหตุ
+- `_animator/_audioSource/_homePosition` ของ UncleNokReferee ยังว่าง — animation จะเล่น (Animator อัตโนมัติจาก controller) แต่ voice + home position ต้องรอ R30 Voice Pinning
+- ห้อง 8 ตัว + MainMenu/Boot ยังไม่มี mascot (เล่นผ่าน scene picker เท่านั้น — เพิ่มทีหลังได้)
+
 ### ⏭️ Roadmap R24+ (จัดลำดับความสำคัญ — ปรับตามโค้ช)
-1. **R29 Voice Pinning (งานค้าง)** — ผูก `UncleNokReferee` 14 voice clips กับ prefab variant จริง (plan `implementation_plan_r28_unclenok_voice.md` พร้อม — branch `feat/r28-unclenok-voice`)
-2. **R30 Multiplayer room** — Normcore room flow (host/join, sync) — ใหญ่สุด ต้องแยกแผน
-3. **R31 (nice-to-have)** — ฉาก dedicated 8-Ball/9-Ball + โหมด Best-of/Practice ต่อกับ R25 dialog ลงทุกโหมด
+1. **R30 Voice Pinning (งานค้าง)** — ผูก `UncleNokReferee` 14 voice clips + AudioSource + `_animator/_audioSource/_homePosition` (plan `implementation_plan_r28_unclenok_voice.md` พร้อม)
+2. **R31 Multiplayer room** — Normcore room flow (host/join, sync) — ใหญ่สุด ต้องแยกแผน
+3. **R32 (nice-to-have)** — ฉาก dedicated 8-Ball/9-Ball + โหมด Best-of/Practice ต่อกับ R25 dialog ลงทุกโหมด
