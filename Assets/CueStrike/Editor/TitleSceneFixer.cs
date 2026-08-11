@@ -155,7 +155,7 @@ namespace CueStrike.Editor
             if (manager == null)
             {
                 // Try to find by type name
-                var all = FindObjectsOfType<MonoBehaviour>(true);
+                var all = FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None);
                 manager = all.FirstOrDefault(m => m.GetType().Name == "TitleSceneManager");
             }
 

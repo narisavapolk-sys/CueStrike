@@ -329,7 +329,7 @@ namespace CueStrike.Characters.Editor
         /// </summary>
         private void SetupAllInScene()
         {
-            var characters = FindObjectsOfType<PlayerCharacterManager>();
+            var characters = FindObjectsByType<PlayerCharacterManager>(FindObjectsSortMode.None);
             if (characters.Length == 0)
             {
                 EditorUtility.DisplayDialog("No Manager", "No PlayerCharacterManager found in scene!", "OK");

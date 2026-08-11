@@ -28,7 +28,7 @@ public class CueStrikeHUD : MonoBehaviour
     void Start()
     {
         rules = CueStrikeRulesManager.Instance;
-        shotManager = FindObjectOfType<CueStrikeShotManager>();
+        shotManager = FindFirstObjectByType<CueStrikeShotManager>();
         audioManager = CueStrikeAudioManager.Instance;
 
         if (rules != null)

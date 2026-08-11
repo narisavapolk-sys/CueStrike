@@ -139,7 +139,7 @@ namespace CueStrike.Characters.Phantom
         /// </summary>
         public void ResetBallVisibility()
         {
-            var balls = FindObjectsOfType<Rigidbody>();
+            var balls = FindObjectsByType<Rigidbody>(FindObjectsSortMode.None);
             foreach (var ball in balls)
             {
                 Renderer r = ball.GetComponent<Renderer>();

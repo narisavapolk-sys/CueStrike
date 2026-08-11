@@ -74,7 +74,7 @@ namespace CueStrike.Characters.Gentleman
         private void FindAllTableBalls()
         {
             _trackedBalls.Clear();
-            Rigidbody[] bodies = FindObjectsOfType<Rigidbody>();
+            Rigidbody[] bodies = FindObjectsByType<Rigidbody>(FindObjectsSortMode.None);
             foreach (var rb in bodies)
             {
                 if (rb.name.ToLower().Contains("ball") || rb.name.ToLower().Contains("cue"))
@@ -84,7 +84,7 @@ namespace CueStrike.Characters.Gentleman
 
         private void FindSceneLights()
         {
-            Light[] lights = FindObjectsOfType<Light>();
+            Light[] lights = FindObjectsByType<Light>(FindObjectsSortMode.None);
             foreach (var l in lights)
             {
                 if (l.type == LightType.Spot || l.name.ToLower().Contains("key") || l.name.ToLower().Contains("spot"))

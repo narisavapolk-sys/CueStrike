@@ -27,7 +27,7 @@ namespace CueStrike.VR.Input
 #if UNITY_2023_1_OR_NEWER
                     _instance = FindAnyObjectByType<CueStrikeVRInputManager>();
 #else
-                    _instance = FindObjectOfType<CueStrikeVRInputManager>();
+                    _instance = FindFirstObjectByType<CueStrikeVRInputManager>();
 #endif
 
                     // Runtime fallback: create if still null and we're playing

@@ -132,7 +132,7 @@ namespace CueStrike.Editor.SelfTest
             ResetCounters();
 
             // Test 1: CueStrikeMultiplayerLobbyUI exists
-            var lobbyUI = Object.FindObjectOfType<CueStrikeMultiplayerLobbyUI>();
+            var lobbyUI = Object.FindFirstObjectByType<CueStrikeMultiplayerLobbyUI>();
             if (lobbyUI != null)
             {
                 Debug.Log("✅ PASS: CueStrikeMultiplayerLobbyUI found in scene");
@@ -283,7 +283,7 @@ namespace CueStrike.Editor.SelfTest
 
         private static void TestMultiplayerLobbyUI_Internal()
         {
-            var lobbyUI = Object.FindObjectOfType<CueStrikeMultiplayerLobbyUI>();
+            var lobbyUI = Object.FindFirstObjectByType<CueStrikeMultiplayerLobbyUI>();
             if (lobbyUI == null) { _failCount++; return; }
             _passCount++;
 

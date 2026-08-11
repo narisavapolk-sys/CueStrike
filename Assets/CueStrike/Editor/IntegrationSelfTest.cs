@@ -31,7 +31,7 @@ namespace CueStrike.Editor.SelfTest
 
             // Test 1: Both bridge and game controller exist in scene
             var bridge = CueStrikeRCANoirBridge.Instance;
-            var controller = Object.FindObjectOfType<NoirMemoryGameController>();
+            var controller = Object.FindFirstObjectByType<NoirMemoryGameController>();
 
             if (bridge != null)
             {
@@ -141,7 +141,7 @@ namespace CueStrike.Editor.SelfTest
             ResetCounters();
 
             var normcoreMgr = CueStrike.Multiplayer.Normcore.CueStrikeNormcoreManager.Instance;
-            var lobbyUI = Object.FindObjectOfType<CueStrike.UI.CueStrikeMultiplayerLobbyUI>();
+            var lobbyUI = Object.FindFirstObjectByType<CueStrike.UI.CueStrikeMultiplayerLobbyUI>();
 
             // Test 1: Both exist in scene
             if (normcoreMgr != null)
