@@ -694,7 +694,34 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 - `_animator/_audioSource/_homePosition` ของ UncleNokReferee ยังว่าง — animation จะเล่น (Animator อัตโนมัติจาก controller) แต่ voice + home position ต้องรอ R30 Voice Pinning
 - ห้อง 8 ตัว + MainMenu/Boot ยังไม่มี mascot (เล่นผ่าน scene picker เท่านั้น — เพิ่มทีหลังได้)
 
+## 🎙️ VOICE PINNING (UncleNokReferee + AudioSource + refs) — Round 30 (2026-08-12, per implementation_plan_r30_voice_pinning.md)
+
+**Goal (ตามคำสั่งพี่โม่ง):** ผูก UncleNokReferee 14 voice clips กับ prefab จริง — เพิ่ม AudioSource + assign `_animator`/`_audioSource`/`_homePosition`
+
+### 📋 Findings (ตรวจโค้ดจริง)
+| รายการ | สถานะ |
+|--------|--------|
+| clips 14 ตัว (Voice/UncleNok/*.wav) | ✅ **assign ครบแล้ว** ใน prefab (GUID ตรงทุกตัว) |
+| **AudioSource component ใน prefab** | ❌ ไม่มีเลย → เสียงไม่ออก |
+| `_animator` / `_audioSource` / `_homePosition` | ❌ ว่าง (fileID: 0) |
+| 3 ฉาก (Title/AAA_RoomDAY/Snooker_Demo) | ℹ️ เป็น prefab instance → แก้ prefab แล้วได้ผลอัตโนมัติ |
+
+### ✅ Files changed
+- **`UncleNok_Prefab.prefab`**: เพิ่ม **AudioSource** (3D spatial, logarithmic rolloff, maxDistance 20) + assign `_animator` = Animator (1307204390460968239) + `_audioSource` = AudioSource ใหม่ (6649867984910534005) + `_homePosition` = root Transform (3714027086145795936)
+- **`UncleNokVoicePinSetup.cs`** (ใหม่): Editor tool `Tools/CueStrike/Mascots/60. Pin UncleNok Voice & Refs` — ใช้ `PrefabUtility.LoadPrefabContents` (Unity จัดการ fileID เอง) + idempotent + self-test + batchmode
+- **ไม่ต้องแก้ 3 ฉาก** — prefab instance ได้รับผลอัตโนมัติ
+
+### ✅ Verify
+- Compile gate batchmode: **0 errors** (ไฟล์ใหม่ 0 warnings)
+- Tool รันจริง: เพิ่ม AudioSource + assign refs ครบ + save prefab
+- Self-test **12/12 ผ่าน** (AudioSource + Animator + controller + refs 3 ตัว + clips 4 กลุ่มหลัก)
+- main checkout คืนสภาพสะอาด
+
+### ⏳ หมายเหตุ
+- ยังไม่ผูก referee กับ game events (R31 กรรมการจริง — ประกาศคะแนน/ฟาวล์) — ตอนนี้พร้อมรับ event แล้ว
+- `_homePosition` = root Transform → `Start()` ล็อกตำแหน่ง + `Update()` หมุนหันเข้าหา home position (referee หันหน้าเข้าหาโต๊ะตลอด)
+
 ### ⏭️ Roadmap R24+ (จัดลำดับความสำคัญ — ปรับตามโค้ช)
-1. **R30 Voice Pinning (งานค้าง)** — ผูก `UncleNokReferee` 14 voice clips + AudioSource + `_animator/_audioSource/_homePosition` (plan `implementation_plan_r28_unclenok_voice.md` พร้อม)
-2. **R31 Multiplayer room** — Normcore room flow (host/join, sync) — ใหญ่สุด ต้องแยกแผน
-3. **R32 (nice-to-have)** — ฉาก dedicated 8-Ball/9-Ball + โหมด Best-of/Practice ต่อกับ R25 dialog ลงทุกโหมด
+1. **R31 กรรมการจริง** — ผูก UncleNokReferee กับ game events (OnFrameStart/OnBallPotted/OnFoulCommitted) — ประกาศคะแนน/ฟาวล์จริง
+2. **R32 ลุงโน๊กคู่ซ้อม AI** — ต่อ AI opponent (CueStrikeAIController มีอยู่แล้ว) กับโหมด Practice + เลือกระดับ Easy/Medium/Hard/Expert
+3. **R33 (nice-to-have)** — Bo Comedy Director (โมเมนต์ตลกน้องโบ) + Multiplayer room
