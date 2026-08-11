@@ -1,6 +1,6 @@
 # CueStrike VR Billiards — MASTER DOCUMENT
 > **Project:** CueStrike VR Billiards (AAA Unity, Meta Quest 2/3)
-> **Last Updated:** 2026-08-09
+> **Last Updated:** 2026-08-10
 > **Coach:** Strategist/Director | **Dev Agent:** (AI Assistant) | **User:** โม่ง (Mong)
 > **Status:** P8 = 100% | P9 = 100% (IK Assist + Shader Fix Complete) | 🧹 House Cleaning R2 done (2026-08-06): 6 junk targets removed + 7 ghost-file refs fixed | ✅ **Compile = 0 Errors REAL (2026-08-06): MCP migrated System.Text.Json → Newtonsoft (UPM) + Rule 6 added** | 🔧 **VCS Setup R3 (2026-08-09): git init + .gitignore + Git LFS — baseline commit `8f7b347`** | 🎬 **Scene Loading Fix R4 (2026-08-09): 11 scenes ใน Build Settings + Practice "hub"→`Snooker_Demo`** | 🧹 **Duplicate Cleanup R5 (2026-08-09): ลบ 4 ไฟล์ที่ไม่มี ref (XR Hands stub, CrowdSystem-Chars, BallSync/GameSync-Normcore) — เก็บ 2 คู่ที่ใช้จริง** | 🚦 **Compile Gate R6 (2026-08-09): `tools/compile_check.sh` + pre-commit hook อัตโนมัติ** | 🎯 **CallShotUI Merge R7 (2026-08-09): 2 เวอร์ชัน → 1 (`CueStrike.UI.ChinesePool`) — GameManager หาเจอจริง** | 🧼 **Scene Name Cleanup R8 (2026-08-09): TitleSceneManager defaults ชี้ฉากจริง/ว่าง** | 🚀 **Remote + Push R9 (2026-08-09): `github.com/narisavapolk-sys/CueStrike` — main พร้อม LFS, PR workflow เริ่มได้** | 🎮 **VR Startup Cleanup R10 (2026-08-09): เก็บ `VR/VRStartup.cs` (ตัวจริง), ลบ `CueStrikeVRStartup.cs` (dead, scene names พัง)** | 🔗 **Call-Shot Wiring R11 (2026-08-09): `OnShotCalled`→`SetCallShot`, `OnCallShotCancelled`→`ClearCallShot`** | 🚦 **GitHub Actions CI R12 (2026-08-09): compile gate ทุก PR (`compile-gate.yml`) + helper `unity-activate.yml`** | 🧹 **CS0618 Find-API Modernize R15 (2026-08-10): 36 deprecated call sites → Unity 6 modern (FindFirstObjectByType / FindObjectsByType) — runtime + editor (13 runtime files + 8 editor files, compile 0 errors)** | 🎯 **VRStartup Frame Rate Auto-Detect R16 (2026-08-10): real Quest device detection (`SystemInfo.deviceModel`) — Quest 2=72Hz, Quest 3=90Hz, optional 120Hz opt-in. OnDestroy guard fix via instance ref. Compile 0 errors.** | Ready for Next Phase
 
@@ -180,7 +180,7 @@ CueStrike.<Module>.<Submodule>
 - ✅ **เก็บ `VR/VRStartup.cs`** (`VRStartup`) — ตัวจริง: `DefaultExecutionOrder(-1000)`, auto frame rate 72/90Hz, CPU/GPU levels, FFR, OpenXR Meta Quest features config
 - ✅ **ลบ `Scripts/CueStrikeVRStartup.cs`** + `.meta` — duplicate เก่า: XR-init + scene loading แต่ scene names `"Main"`/`"Boot"` ไม่มีฉากจริง (ถ้าใช้จะ error); GUID `59437c5c…` = 0 ref ทั่ว Assets
 - ✅ **Compile batchmode: 0 errors** (`compile_check.sh` exit 0)
-- ⏳ `VRStartup.cs` ยังไม่ถูกใส่ในฉากใด — ตอนทำ Boot scene ต้องสร้าง editor tool ผูก + Vision audit
+- ✅ `VRStartup.cs` ถูกใส่ในฉากแล้ว (R13 — `Boot.unity` Scene 0 + Editor tool "NARI CUE STRIKE") — เหลือ Vision audit
 - 📝 Plan: `implementation_plan_vr_startup_cleanup.md`
 
 ### 🔗 Call-Shot Wiring (2026-08-09, by Buffy/Freebuff — per implementation_plan_callshot_wiring.md)
