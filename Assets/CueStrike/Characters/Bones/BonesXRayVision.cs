@@ -80,7 +80,7 @@ namespace CueStrike.Characters.Bones
             else
             {
                 // Fallback: scan by name
-                var all = FindObjectsOfType<Transform>();
+                var all = FindObjectsByType<Transform>(FindObjectsSortMode.None);
                 int count = 0;
                 foreach (var t in all)
                 {

@@ -60,10 +60,10 @@ namespace CueStrike.Gameplay.Tutorial
         private void Start()
         {
             // Find required components
-            _shotManager = FindObjectOfType<CueStrikeShotManager>();
-            _rulesManager = FindObjectOfType<CueStrikeWPARulesManager>();
-            _shotValidator = FindObjectOfType<CueStrikeShotValidator>();
-            _pottedBallTracker = FindObjectOfType<CueStrikePottedBallTracker>();
+            _shotManager = FindFirstObjectByType<CueStrikeShotManager>();
+            _rulesManager = FindFirstObjectByType<CueStrikeWPARulesManager>();
+            _shotValidator = FindFirstObjectByType<CueStrikeShotValidator>();
+            _pottedBallTracker = FindFirstObjectByType<CueStrikePottedBallTracker>();
 
             // Subscribe to shot events
             if (_shotManager != null)

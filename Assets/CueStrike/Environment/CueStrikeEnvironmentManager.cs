@@ -25,7 +25,7 @@ public class CueStrikeEnvironmentManager : MonoBehaviour
             gameObject.AddComponent<BallMaterialAssigner>();
         }
         // Locate the RoomLightingManager in the scene (if any)
-        roomLightingManager = FindObjectOfType<RoomLightingManager>();
+        roomLightingManager = FindFirstObjectByType<RoomLightingManager>();
     }
 
         public void SetMode(CueStrikeEnvMode newMode)

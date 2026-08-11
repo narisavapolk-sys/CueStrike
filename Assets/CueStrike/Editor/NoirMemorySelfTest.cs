@@ -30,7 +30,7 @@ namespace CueStrike.Editor.SelfTest
             ResetCounters();
 
             // Test 1: NoirMemoryResultsScreen exists
-            var resultsScreen = Object.FindObjectOfType<NoirMemoryResultsScreen>();
+            var resultsScreen = Object.FindFirstObjectByType<NoirMemoryResultsScreen>();
             if (resultsScreen != null)
             {
                 Debug.Log("✅ PASS: NoirMemoryResultsScreen found in scene");
@@ -206,7 +206,7 @@ namespace CueStrike.Editor.SelfTest
             Debug.Log("========== [CueStrike Test] Noir Memory Game Controller ==========");
             ResetCounters();
 
-            var controller = Object.FindObjectOfType<NoirMemoryGameController>();
+            var controller = Object.FindFirstObjectByType<NoirMemoryGameController>();
             if (controller != null)
             {
                 Debug.Log("✅ PASS: NoirMemoryGameController found in scene");
@@ -307,7 +307,7 @@ namespace CueStrike.Editor.SelfTest
                 Debug.LogWarning("[CueStrike Test] ⚠️ Skip leaderboard test: wrong scene");
                 return;
             }
-            var resultsScreen = Object.FindObjectOfType<NoirMemoryResultsScreen>();
+            var resultsScreen = Object.FindFirstObjectByType<NoirMemoryResultsScreen>();
             if (resultsScreen != null) _passCount++; else { Debug.LogWarning("[CueStrike Test] ⚠️ Skip: NoirMemoryResultsScreen not in scene"); return; }
             if (NoirMemoryResultsScreen.Instance != null) _passCount++; else _failCount++;
             var score = resultsScreen.CalculateScore(5, 2, 10, 0.8f, 45f, 3, "SuiteTest");
@@ -347,7 +347,7 @@ namespace CueStrike.Editor.SelfTest
                 Debug.LogWarning("[CueStrike Test] ⚠️ Skip game controller test: wrong scene");
                 return;
             }
-            var controller = Object.FindObjectOfType<NoirMemoryGameController>();
+            var controller = Object.FindFirstObjectByType<NoirMemoryGameController>();
             if (controller == null) { Debug.LogWarning("[CueStrike Test] ⚠️ Skip: NoirMemoryGameController not in scene"); return; }
             _passCount++;
             var puzzles = controller.GetType().GetMethod("GetPuzzles")?.Invoke(controller, null) as System.Collections.IList;

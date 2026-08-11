@@ -220,6 +220,46 @@
 
 ## 🚦 GITHUB ACTIONS CI — Round 12 (2026-08-09, per implementation_plan_github_ci.md)
 
+## 🧹 CS0618 FIND-API MODERNIZE — Round 15 (2026-08-10, per implementation_plan_cs0618_cleanup.md)
+
+**Goal:** Eliminate CS0618 warnings from deprecated FindObjectOfType/FindObjectsOfType family across runtime + editor.
+
+### ✅ Migration mapping (verified against Unity 6 docs)
+- `FindObjectOfType<T>()` → `FindFirstObjectByType<T>()` (semantics identical, since 2023.1)
+- `Object.FindObjectOfType<T>()` → `Object.FindFirstObjectByType<T>()` (same)
+- `GameObject.FindObjectsOfType<T>()` → `FindObjectsByType<T>(FindObjectsSortMode.None)` (drop legacy `GameObject.` prefix)
+- `FindObjectsOfType<T>()` → `FindObjectsByType<T>(FindObjectsSortMode.None)` (no sort cost; order may differ but no call site depends)
+- `FindObjectsOfType<T>(true)` → `FindObjectsByType<T>(FindObjectsInactive.Include, FindObjectsSortMode.None)` (one Editor occurrence)
+
+### ✅ จำนวน
+- **36 call sites** replaced (15 runtime + 21 editor) — `grep -rn "FindObject[s]OfType" Assets/CueStrike --include="*.cs"` จาก 36 → 0 (verify dry-run + post-write).
+- **21 ไฟล์** modified (13 runtime + 8 editor): `Audio/NearMissDetector.cs`, `Characters/Bones/BonesXRayVision.cs`, `Characters/Editor/CharacterSetupEditor.cs`, `Characters/Gentleman/GentlemanAbilityController.cs`, `Characters/MeiLing/MeiLingAbilityController.cs`, `Characters/Phantom/PhantomSpectralSight.cs`, `Demo/CueStrikeAutoDemo.cs`, `Editor/ChinesePoolEditor.cs`, `Editor/ChinesePoolUISetup.cs`, `Editor/CueStrikeVisualAudit.cs`, `Editor/IntegrationSelfTest.cs`, `Editor/MultiplayerSelfTest.cs`, `Editor/NoirMemoryPuzzleEditor.cs`, `Editor/NoirMemorySelfTest.cs`, `Editor/RoomScreenshotTool.cs`, `Editor/TitleSceneFixer.cs`, `Environment/CueStrikeEnvironmentManager.cs`, `Gameplay/Tutorial/CueStrikeTutorialManager.cs`, `Scripts/VR/Input/CueStrikeVRInputManager.cs`, `UI/CueStrikeHUD.cs`, `UI/CueStrikeHUDController.cs`.
+
+### ✅ Compile verify (กฎข้อ 4)
+- `tools/compile_check.sh` (Local Unity gate) → **0 errors** ✅
+- ไม่มี runtime/behavior change (Unity 6 ScriptReference guarantees):
+  - `FindFirstObjectByType` คืน instance ตัวเดียวกับ `FindObjectOfType` (active + InstanceID order)
+  - `FindObjectsByType(None)` คืน component ชุดเดียวกัน — order เปลี่ยนได้ แต่ไม่มี call site ที่ depend order
+  - `FindObjectsByType(Include, None)` = exactly same as `FindObjectsOfType(true)`
+- PR/commit: branch `chore/cs0618-find-modernize` (รอพี่โม่งกด Create)
+
+### ℹ️ งานที่ uncommitted อยู่ใน main checkout (ของอีก session — ไม่แตะ)
+- `BoPandaBanter.cs`, `BoPanda_Prefab.prefab`, `ExecuteCodeTool.cs`, `CueStrikeVoiceBinder.cs` (-d), `AAA_RoomDAY.unity`, `McpSettings.asset`
+- แตะเฉพาะ 21 ไฟล์ R15 + plan
+
+### ⏳ ยังเหลือ (แนะนำเป็นงานถัดไป)
+1. **Branch protection** บน main (บล็อก push ตรง + บังคับ PR + CI เขียวก่อน merge) — ตั้งในหน้า Settings → Branches ของ GitHub
+2. **`UNITY_LICENSE` secret** ตั้งในหน้า Actions secrets — workflow รอบแรก fail ตามคาด จนกว่าจะตั้ง
+3. **Vision audit** (กฎข้อ 4) — ลอง build + run ใน Editor ดูสคริปต์ที่ find instance ตอน startup (VR singleton, RoomLightingManager, TutorialManager) ทำงานถูก
+
+### 🛠️ Tool (เผื่อใช้ซ้ำ / ต่อยอด)
+- `tools/migrate_find_api.py` — token-based scan + balanced-paren matcher
+  - Handle nested generic เช่น `Dictionary<string, List<int>>`
+  - Skip comments + string/char literals กัน false-positive
+  - Verifiable input/output (dry-run mode: `--dry`)
+
+📝 Plan: `implementation_plan_cs0618_cleanup.md`
+
 > ต่อยอด compile gate (R6) ขึ้น CI: ทุก PR/push → Unity batchmode compile check บน GitHub | Unity ปิดก่อนแก้ (Iron Rule 4)
 
 ### ✅ ทำแล้ว

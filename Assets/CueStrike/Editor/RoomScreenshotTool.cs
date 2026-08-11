@@ -27,7 +27,7 @@ public static class RoomScreenshotTool
             if (!File.Exists(scenePath)) { Debug.LogError("[RoomShot] Missing: " + scenePath); continue; }
             EditorSceneManager.OpenScene(scenePath);
             Camera cam = Camera.main;
-            if (cam == null) { cam = Object.FindObjectOfType<Camera>(); }
+            if (cam == null) { cam = Object.FindFirstObjectByType<Camera>(); }
             if (cam == null) { Debug.LogError("[RoomShot] No camera in " + scenePath); continue; }
 
             string name = Path.GetFileNameWithoutExtension(scenePath).Replace(" ", "_");
