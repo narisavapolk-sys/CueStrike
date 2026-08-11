@@ -721,6 +721,33 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 - ยังไม่ผูก referee กับ game events (R31 กรรมการจริง — ประกาศคะแนน/ฟาวล์) — ตอนนี้พร้อมรับ event แล้ว
 - `_homePosition` = root Transform → `Start()` ล็อกตำแหน่ง + `Update()` หมุนหันเข้าหา home position (referee หันหน้าเข้าหาโต๊ะตลอด)
 
+## 🦣 REFEREE EVENT BRIDGE (UncleNok กรรมการจริง) — Round 31 (2026-08-12, per implementation_plan_r31_referee_events.md)
+
+**Goal (ตามคำสั่งพี่โม่ง):** ผูก UncleNokReferee กับ game events (OnFrameStart/OnBallPotted/OnFoulCommitted) — กรรมการประกาศคะแนน+ฟาวล์จริง
+
+### 📋 Findings (ตรวจโค้ดจริง)
+| รายการ | สถานะ |
+|--------|--------|
+| GameManager events (`OnFrameWon`/`OnFoulCommitted`/`OnMatchOver`/`OnTurnChanged`/`OnPhaseChanged`) | ✅ มีครบ — ใช้ `OnPhaseChanged` (phase=Break ตอน StartNewFrame) เป็นจุดเริ่มเฟรม/แมตช์ |
+| WBPS events (`OnBallPotted`/`OnFoulCommitted`/`OnFrameWon`) | ✅ มีครบ — ทั้ง 2 มี `Instance` pattern |
+| `UncleNokReferee` methods (`OnFrameStart`/`OnMatchStart`/`OnBallPotted`/`OnFoulCommitted`/`OnMatchEnd`) | ✅ มีครบ — แต่ยังไม่มีใคร subscribe (dead code) |
+| namespace | ⚠️ GameManager อยู่ `CueStrike.Gameplay.ChinesePool`, WBPS เป็น global — bridge ต้อง using ถูก |
+
+### ✅ Files changed
+- **`UncleNokRefereeEventBridge.cs`** (ใหม่): runtime — subscribe `ChinesePoolGameManager` + `CueStrikeWBPSRuleset` events → เรียก referee methods (`OnMatchStart`/`OnFrameStart`/`OnBallPotted`/`OnFoulCommitted`) — fail-safe: หา Instance ไม่เจอ → retry ทุก 2s
+- **`RefereeEventBridgeSetup.cs`** (ใหม่): Editor tool `Tools/CueStrike/Mascots/80. Setup Referee Event Bridge` — `PrefabUtility.LoadPrefabContents` + idempotent + self-test + batchmode
+- **`UncleNok_Prefab.prefab`**: เพิ่ม `UncleNokRefereeEventBridge` component — ฉากไหนมีลุงโน๊ก (Title/AAA_RoomDAY/Snooker_Demo) ได้ผลอัตโนมัติ
+
+### ✅ Verify
+- Compile gate batchmode: **0 errors** (ไฟล์ใหม่ 0 warnings)
+- Tool รันจริง: ผูก bridge เข้า prefab สำเร็จ + save
+- Self-test **5/5 ผ่าน** (bridge + Animator + AudioSource + controller + clips)
+- main checkout คืนสภาพสะอาด — base = main `d5aa9cd` (รวม R32)
+
+### ⏳ หมายเหตุ
+- กรรมการพร้อมประกาศจริงแล้ว — รอเสียงคนจริง (หา wav วางใน `Assets/CueStrike/Audio/Clips/`) ก็พูดได้เลย
+- โหมด Practice (เล่นคนเดียว) ยังไม่ผูก — กรรมการจะประกาศเฉพาะโหมดแข่ง (R35 คู่ซ้อม AI ต่อยอดได้)
+
 ## 🐼 BO COMEDY DIRECTOR (โมเมนต์ตลก 2 ตัว) — Round 32 (2026-08-12, per implementation_plan_r32_bo_comedy.md)
 
 **Goal (ตามคำสั่งพี่โม่ง):** ระบบ Bo Comedy Director — โมเมนต์ตลกง่ายๆ 2 ตัวก่อน ใช้ animation ที่มีอยู่แล้ว (R27)

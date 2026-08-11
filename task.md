@@ -1,10 +1,25 @@
-# Task: CueStrike VR — R32 Bo Comedy Director (Current) → R33+ Roadmap
+# Task: CueStrike VR — R31 Referee Event Bridge (Current) → R33+ Roadmap
 
-**Current Objective (2026-08-12):** ระบบ Bo Comedy Director — โมเมนต์ตลกง่ายๆ 2 ตัว (Bo หลับเมื่อคิดนานเกิน 30s, Bo มึนสกอร์เสมอ) ใช้ animation ที่มีอยู่แล้ว
+**Current Objective (2026-08-12):** ผูก UncleNokReferee กับ game events (OnFrameStart/OnBallPotted/OnFoulCommitted) — กรรมการประกาศคะแนน+ฟาวล์จริง
 
 ---
 
-## 🎯 R32 — BO COMEDY DIRECTOR (Ready for PR)
+## 🎯 R31 — REFEREE EVENT BRIDGE (Ready for PR)
+
+### ✅ Done
+- [x] ตรวจของจริง: GameManager (`OnFrameWon`/`OnFoulCommitted`/`OnMatchOver`/`OnTurnChanged`/`OnPhaseChanged`) + WBPS (`OnBallPotted`/`OnFoulCommitted`/`OnFrameWon`) — มี Instance pattern ทั้งคู่; `UncleNokReferee` methods มีครบแต่ยังไม่มีใคร subscribe
+- [x] `UncleNokRefereeEventBridge.cs` — subscribe events → เรียก referee methods (OnMatchStart/OnFrameStart/OnBallPotted/OnFoulCommitted) + fail-safe retry
+- [x] Editor tool `RefereeEventBridgeSetup.cs` — `Tools/CueStrike/Mascots/80. Setup Referee Event Bridge` (PrefabUtility + idempotent + self-test + batchmode)
+- [x] ผูก bridge เข้า UncleNok_Prefab — ฉากไหนมีลุงโน๊กได้ผลอัตโนมัติ
+- [x] Compile verify: batchmode **0 errors** + self-test **5/5**
+
+### ⏳ เหลือ (R35 คู่ซ้อม AI / เสียงจริง)
+- [ ] หาเสียงกรรมการจริง (wav วางใน `Assets/CueStrike/Audio/Clips/`) — bridge พร้อมรับแล้ว ไม่ต้องแก้โค้ด
+- [ ] โหมด Practice (เล่นคนเดียว) — กรรมการเป็นคู่ซ้อม AI (R35)
+
+---
+
+## 🎯 R32 — BO COMEDY DIRECTOR (MERGED ✅ — PR #26)
 
 ### ✅ Done
 - [x] ตรวจของจริง: BoPanda prefab มี Animator + controller (triggers Disappointed/Speak/IsIdle) + `BoPandaBanter` + Scoreboard มี `OnScoreChanged`
