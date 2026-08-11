@@ -19,7 +19,7 @@ public class CueStrikeAutoDemo : MonoBehaviour
     {
         if (aiController == null)
         {
-            aiController = FindObjectOfType<CueStrikeAIController>();
+            aiController = FindFirstObjectByType<CueStrikeAIController>();
         }
 
         // If you want AI skill level, set it directly in AIController

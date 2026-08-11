@@ -39,7 +39,7 @@ namespace CueStrike.Editor
                 WirePrivateField(uiMgr, "_callShotUI", callShot);
                 WirePrivateField(uiMgr, "_groupDisplay", groupDisplay);
 
-                var scoreboard = Object.FindObjectOfType<UI.ChinesePoolScoreboard>();
+                var scoreboard = Object.FindFirstObjectByType<UI.ChinesePoolScoreboard>();
                 if (scoreboard != null)
                 {
                     WirePrivateField(uiMgr, "_scoreboard", scoreboard);
@@ -76,13 +76,13 @@ namespace CueStrike.Editor
             bool allPass = true;
             int pass = 0, fail = 0;
 
-            var uiMgr = Object.FindObjectOfType<UI.ChinesePool.ChinesePoolUIManager>();
+            var uiMgr = Object.FindFirstObjectByType<UI.ChinesePool.ChinesePoolUIManager>();
             if (uiMgr != null && uiMgr.RunSelfTest()) { pass++; } else { fail++; allPass = false; }
 
-            var callShot = Object.FindObjectOfType<UI.ChinesePool.ChinesePoolCallShotUI>();
+            var callShot = Object.FindFirstObjectByType<UI.ChinesePool.ChinesePoolCallShotUI>();
             if (callShot != null && callShot.RunSelfTest()) { pass++; } else { fail++; allPass = false; }
 
-            var groupDisp = Object.FindObjectOfType<UI.ChinesePool.ChinesePoolGroupDisplay>();
+            var groupDisp = Object.FindFirstObjectByType<UI.ChinesePool.ChinesePoolGroupDisplay>();
             if (groupDisp != null && groupDisp.RunSelfTest()) { pass++; } else { fail++; allPass = false; }
 
             Debug.Log($"[ChinesePoolUISetup] === Result: {pass} PASS, {fail} FAIL ===");
@@ -107,7 +107,7 @@ namespace CueStrike.Editor
 
         private static GameObject FindOrCreateCanvas()
         {
-            var canvas = Object.FindObjectOfType<Canvas>();
+            var canvas = Object.FindFirstObjectByType<Canvas>();
             if (canvas != null) return canvas.gameObject;
 
             GameObject obj = new GameObject("CueStrike_UI_Canvas");

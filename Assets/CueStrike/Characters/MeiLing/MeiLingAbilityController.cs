@@ -76,7 +76,7 @@ namespace CueStrike.Characters.MeiLing
         private void FindAllTableBalls()
         {
             _trackedBalls.Clear();
-            Rigidbody[] bodies = FindObjectsOfType<Rigidbody>();
+            Rigidbody[] bodies = FindObjectsByType<Rigidbody>(FindObjectsSortMode.None);
             foreach (var rb in bodies)
             {
                 if (rb.name.ToLower().Contains("ball") || rb.name.ToLower().Contains("cue"))
