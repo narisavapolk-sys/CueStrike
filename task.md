@@ -1,10 +1,25 @@
-# Task: CueStrike VR — R30 Voice Pinning (Current) → R31+ Roadmap
+# Task: CueStrike VR — R32 Bo Comedy Director (Current) → R33+ Roadmap
 
-**Current Objective (2026-08-12):** ผูก UncleNokReferee 14 voice clips กับ prefab จริง — เพิ่ม AudioSource + assign `_animator`/`_audioSource`/`_homePosition`
+**Current Objective (2026-08-12):** ระบบ Bo Comedy Director — โมเมนต์ตลกง่ายๆ 2 ตัว (Bo หลับเมื่อคิดนานเกิน 30s, Bo มึนสกอร์เสมอ) ใช้ animation ที่มีอยู่แล้ว
 
 ---
 
-## 🎯 R30 — VOICE PINNING (Ready for PR)
+## 🎯 R32 — BO COMEDY DIRECTOR (Ready for PR)
+
+### ✅ Done
+- [x] ตรวจของจริง: BoPanda prefab มี Animator + controller (triggers Disappointed/Speak/IsIdle) + `BoPandaBanter` + Scoreboard มี `OnScoreChanged`
+- [x] `BoComedyDirector.cs` — Bo หลับ (idle 30s → Disappointed, ตื่นเมื่อลูกขยับ) + Bo มึนสกอร์เสมอ (OnScoreChanged → Speak + cooldown)
+- [x] Editor tool `BoComedySetup.cs` — `Tools/CueStrike/Mascots/70. Setup Bo Comedy Director` (PrefabUtility + idempotent + self-test + batchmode)
+- [x] ผูกเข้า BoPanda_Prefab — ฉากไหนมี Bo instance ได้ผลอัตโนมัติ
+- [x] Compile verify: batchmode **0 errors** + self-test **7/7**
+
+### ⏳ เหลือ (โมเมนต์ตลกขั้นสูง)
+- [ ] ท่า animation ใหม่ (Sleep/Gasp/Dance) ผ่าน Blender — Bo ขโมยชอล์ก / กลัวลูกพุ่ง / กองเชียร์พลาด
+- [ ] ใส่ BoPanda ในห้องแข่ง → Comedy มึนสกอร์ทำงานเต็มรูปแบบ (ตอนนี้ Bo อยู่ใน Title อย่างเดียว)
+
+---
+
+## 🎯 R30 — VOICE PINNING (MERGED ✅ — PR #25)
 
 ### ✅ Done
 - [x] ตรวจของจริง: clips 14 ตัว **assign ครบแล้ว** ใน prefab แต่ **ไม่มี AudioSource** + refs 3 ตัวว่าง
