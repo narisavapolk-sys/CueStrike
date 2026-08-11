@@ -1,6 +1,6 @@
 # CueStrike VR - Master Task Progress Tracker
 
-> **Last Updated:** 2026-08-09  
+> **Last Updated:** 2026-08-11
 > **Current Phase:** Phase A Audio Completion
 
 ---
@@ -213,7 +213,7 @@
 | Compile | ✅ **0 errors** (`compile_check.sh` exit 0) |
 
 ### ⏳ ยังเหลือ (งานถัดไป)
-- **ฝั่งแสดง UI ยังไม่มี trigger** — ไม่มีใครเรียก `ShowCallShot` — ต้องออกแบบเกมโฟลว์ (ถึงตาที่ต้องเรียก → โชว์ panel)
+- ~~ฝั่งแสดง UI ยังไม่มี trigger~~ → **ทำแล้ว R14** (show trigger: `MaybeShowCallShotUI()` — panel โชว์เมื่อต้องเรียก)
 - UI ในฉากบาง instance field ว่าง (`_callShotPanel: {fileID: 0}` ฯลฯ) — assign ใน Editor + Vision audit (กฎข้อ 4) ก่อนเล่นจริง
 
 ---
