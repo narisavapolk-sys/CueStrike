@@ -21,6 +21,10 @@ public class MainMenuUIController : MonoBehaviour
     public GameObject roomSelectionPanel;
     public Button backFromRoomsButton;
 
+    [Header("R26 — Mode Selection")]
+    [Tooltip("ปุ่มเลือกโหมด — ต่อกับ CueStrikeGameModeSelector.SelectModeAndLoad")]
+    public Button[] modeButtons; // 6 ปุ่ม: Snooker15/10/6, 8-Ball, 9-Ball, ChinesePool (ลำดับตาม enum)
+
     private void Start()
     {
         // Audio will use CueStrikeAudioManager singleton
@@ -62,6 +66,22 @@ public class MainMenuUIController : MonoBehaviour
             AddHoverEffects(backFromRoomsButton.gameObject);
         }
 
+        // R26 — bind mode selection buttons (ถ้ามี) ตามลำดับ enum
+        if (modeButtons != null)
+        {
+            var modes = (CueStrike.UI.CueStrikeGameModeSelector.GameMode[])System.Enum.GetValues(typeof(CueStrike.UI.CueStrikeGameModeSelector.GameMode));
+            for (int i = 0; i < modeButtons.Length && i < modes.Length; i++)
+            {
+                int index = i; // capture
+                if (modeButtons[i] != null)
+                {
+                    var mode = modes[index];
+                    modeButtons[i].onClick.AddListener(() => SelectModeAndLoad(mode));
+                    AddHoverEffects(modeButtons[i].gameObject);
+                }
+            }
+        }
+
         // Initialize panel states
         if (mainPanel != null) mainPanel.SetActive(true);
         if (optionsPanel != null) optionsPanel.SetActive(false);
@@ -91,6 +111,23 @@ public class MainMenuUIController : MonoBehaviour
         if (roomSelectionPanel != null) roomSelectionPanel.SetActive(false);
         if (mainPanel != null) mainPanel.SetActive(true);
         Debug.Log("MainMenu: Back to main panel from Room Selection.");
+    }
+
+    /// <summary>
+    /// R26 — เลือกโหมด → ตั้งค่า → โหลดฉากห้องที่ถูกต้อง.
+    /// ใช้ CueStrikeGameModeSelector (Snooker 15/10/6 เป็นโหมดหลัก + 8/9-Ball + Chinese Pool).
+    /// </summary>
+    public void SelectModeAndLoad(CueStrike.UI.CueStrikeGameModeSelector.GameMode mode)
+    {
+        CueStrikeAudioManager.Instance?.PlayMenuClick();
+        CueStrike.UI.CueStrikeGameModeSelector.SelectedMode = mode;
+
+        string sceneName = CueStrike.UI.CueStrikeGameModeSelector.ModeToSceneName(mode);
+        string label = CueStrike.UI.CueStrikeGameModeSelector.GetModeLabel(mode);
+        Debug.Log($"MainMenu: Mode '{label}' selected → loading '{sceneName}'.");
+
+        CueStrike.UI.CueStrikeGameModeSelector.ApplyModeToScene();
+        CueStrike.VR.CueStrikeLoadingScreen.LoadScene(sceneName);
     }
 
     private void OnOptionsClicked()

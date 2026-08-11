@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using CueStrike;
 
 /// <summary>
 /// CueStrikeWBPSRuleset - International Snooker Ruleset (WBPS / WPBSA)
@@ -106,6 +107,23 @@ public class CueStrikeWBPSRuleset : MonoBehaviour
     {
         if (Instance != null && Instance != this) Destroy(gameObject);
         Instance = this;
+
+        // R26 — read mode selection (Snooker 15/10/6) set by the Main Menu before scene load
+        try
+        {
+            var mode = CueStrike.UI.CueStrikeGameModeSelector.SelectedMode;
+            int reds = CueStrike.UI.CueStrikeGameModeSelector.GetRedBallsForMode(mode);
+            if (reds > 0 && reds != totalRedBalls)
+            {
+                Debug.Log($"[WBPS] Applying selected Snooker mode: {reds} reds.");
+                totalRedBalls = reds;
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning($"[WBPS] Could not read game mode selector: {e.Message}");
+        }
+
         ResetFrame();
     }
 
@@ -393,7 +411,119 @@ public class CueStrikeWBPSRuleset : MonoBehaviour
         isColorPhase = false;
         awaitingRespotColor = false;
         _colorSequenceIndex = 0;
-                Debug.Log("[WBPS] Frame reset - 15 reds, 6 colors on table");
+        SetupRack();
+        Debug.Log($"[WBPS] Frame reset - {totalRedBalls} reds, 6 colors on table");
+    }
+
+    /// <summary>
+    /// R26 — Runtime rack builder: places the red triangle according to <see cref="totalRedBalls"/>
+    /// (15 = full 5-row triangle, 10 = 4-row, 6 = 3-row), plus the 6 colors and cue ball if missing.
+    /// Coach-approved: "ต่างกันแค่จำนวนลูกแดงตอนตั้งโต๊ะ — ส่งค่า totalRedBalls ไปคุมระบบ Setup ลูก".
+    /// Balls live under this GameObject (same layout as CreateSnookerScene).
+    /// </summary>
+    public void SetupRack()
+    {
+        try
+        {
+            // 1. Remove existing red balls (ballId 1..15) under this transform
+            var existing = FindObjectsByType<BallIdentity>();
+            foreach (var identity in existing)
+            {
+                if (identity == null) continue;
+                if (identity.ballId >= 1 && identity.ballId <= 15)
+                {
+                    // Only destroy balls that belong to our rack subtree
+                    if (identity.transform.IsChildOf(transform))
+                    {
+                        // DestroyImmediate in edit mode (batchmode/editor), Destroy at runtime
+                        if (Application.isPlaying)
+                        {
+                            Destroy(identity.gameObject);
+                        }
+                        else
+                        {
+                            DestroyImmediate(identity.gameObject);
+                        }
+                    }
+                }
+            }
+
+            int reds = Mathf.Clamp(totalRedBalls, 1, 15);
+            int rows = RedTriangleRows(reds);
+
+            float ballRadius = 0.026f;
+            float ballY = 0.42f + ballRadius;
+            float redSpacing = ballRadius * 2f * 1.03f;
+            Vector3 rackApex = new Vector3(0f, ballY, 1.15f);
+
+            // 2. Place reds in a triangle
+            int redId = 1;
+            for (int row = 0; row < rows && redId <= reds; row++)
+            {
+                for (int i = 0; i <= row && redId <= reds; i++)
+                {
+                    Vector3 pos = rackApex
+                        + new Vector3((i - row * 0.5f) * redSpacing, 0f, row * redSpacing * 0.866f);
+                    SpawnSnookerBall($"Red_{redId}", pos, redId, Color.red);
+                    redId++;
+                }
+            }
+
+            // 3. Colors + cue ball (only if missing)
+            if (!HasBall(16)) SpawnSnookerBall("Yellow", new Vector3(0f, ballY, -0.9f), 16, Color.yellow);
+            if (!HasBall(17)) SpawnSnookerBall("Green", new Vector3(-1.2f, ballY, -0.9f), 17, Color.green);
+            if (!HasBall(18)) SpawnSnookerBall("Brown", new Vector3(1.2f, ballY, -0.9f), 18, new Color(0.5f, 0.3f, 0.1f));
+            if (!HasBall(19)) SpawnSnookerBall("Blue", new Vector3(0f, ballY, 0f), 19, Color.blue);
+            if (!HasBall(20)) SpawnSnookerBall("Pink", new Vector3(0f, ballY, 0.8f), 20, new Color(1f, 0.5f, 0.7f));
+            if (!HasBall(21)) SpawnSnookerBall("Black", new Vector3(0f, ballY, 1.5f), 21, Color.black);
+            if (!HasBall(0)) SpawnSnookerBall("CueBall", new Vector3(0.4f, ballY, -1.35f), 0, Color.white);
+
+            Debug.Log($"[WBPS] Rack set: {reds} reds ({rows} rows).");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[WBPS] SetupRack failed: {e.Message}");
+        }
+    }
+
+    /// <summary>Number of triangle rows for a given red count (15→5, 10→4, 6→3).</summary>
+    private static int RedTriangleRows(int reds)
+    {
+        // rows*(rows+1)/2 <= reds
+        int rows = 0;
+        while ((rows + 1) * (rows + 2) / 2 <= reds) rows++;
+        return Mathf.Max(1, rows);
+    }
+
+    /// <summary>True if a ball with the given ballId exists anywhere in the scene.</summary>
+    private bool HasBall(int ballId)
+    {
+        var existing = FindObjectsByType<BallIdentity>();
+        foreach (var identity in existing)
+        {
+            if (identity != null && identity.ballId == ballId) return true;
+        }
+        return false;
+    }
+
+    /// <summary>Runtime ball spawner (primitive sphere + BallIdentity, under this transform).</summary>
+    private void SpawnSnookerBall(string ballName, Vector3 position, int ballId, Color color)
+    {
+        var ball = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        ball.name = ballName;
+        ball.transform.position = position;
+        ball.transform.localScale = Vector3.one * 0.052f; // 52mm diameter
+        ball.transform.SetParent(transform, true);
+
+        var renderer = ball.GetComponent<Renderer>();
+        if (renderer != null) renderer.sharedMaterial.color = color;
+
+        var identity = ball.AddComponent<BallIdentity>();
+        identity.ballId = ballId;
+        identity.ballName = ballName;
+        identity.type = ballId == 0 ? BallIdentity.BallType.CueBall
+            : ballId >= 1 && ballId <= 15 ? BallIdentity.BallType.RedBall
+            : BallIdentity.BallType.ColorBall;
     }
 
     /// <summary>

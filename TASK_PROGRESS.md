@@ -612,9 +612,31 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 ### ℹ️ Vision audit (manual — ยังต้องดูด้วยตา)
 - เปิด Editor → AAA_RoomDAY → Play → เห็น panel เลือกเงื่อนไข → Best of 3 → เล่นจนเฟรมจบ → frame score อัปเดต → จบ 2 เฟรม → WINNER screen → เล่นอีกครั้ง / กลับเมนู
 
+## 🎱 MODE SELECTION (SNOOKER 15/10/6 หลัก) — Round 26 (2026-08-11, per implementation_plan_r26_mode_selection.md)
+
+**Goal (coach-approved):** เลือกโหมดจริงจากเมนู — SNOOKER 15/10/6 เป็นโหมดหลัก —
+ใช้ `totalRedBalls` คุมการตั้งโต๊ะ (15 = สามเหลี่ยมเต็ม, 10 = ตัดแถวหลัง, 6 = สามเหลี่ยมเล็กสุด)
+
+### ✅ Files changed
+- **`CueStrikeWBPSRuleset.cs`**: เพิ่ม `SetupRack()` — runtime rack builder วางลูกแดงเป็นสามเหลี่ยมตาม `totalRedBalls` (15→5 แถว, 10→4 แถว, 6→3 แถว) + สี/cue ball ถ้ายังไม่มี; `ResetFrame()` เรียก `SetupRack()`; `Awake()` อ่านโหมดจาก selector; ใช้ `DestroyImmediate` ใน edit mode
+- **`CueStrikeGameModeSelector.cs`** (ใหม่): enum Snooker15/10/6 + EightBall/NineBall/ChinesePool; static `SelectedMode` (PlayerPrefs); `GetRedBallsForMode()`; `ModeToSceneName()`; `ApplyModeToScene()`
+- **`CueStrikeModeSelectionPanel.cs`** (ใหม่): World-Space VR panel 6 ปุ่ม (Snooker 15/10/6, 8-Ball, 9-Ball, Chinese Pool) + กลับ — self-building, fail-safe
+- **`MainMenuUIController.cs`**: เพิ่ม `modeButtons[]` + `SelectModeAndLoad(GameMode)`
+- **`MainMenu.unity`**: ผูก GameObject `ModeSelectionPanel` (SceneRoots)
+- **`CueStrikeModeSelectionSetup.cs`** (ใหม่): Editor tool `Tools/CueStrike/Main Menu/30. Setup Mode Selection` — idempotent + self-test + batchmode
+
+### ✅ Verify
+- Compile gate batchmode: **0 errors, 0 warnings** (ไฟล์ใหม่)
+- Scene load MainMenu + `-executeMethod SetupModeSelection`: 0 errors, idempotent, self-test 3/3
+- **Rack builder พิสูจน์ด้วย batchmode test:** reds=6 → 6 ลูก, 10 → 10 ลูก, 15 → 15 ลูก — **PASS**
+- หมายเหตุ: Build Settings มี 12 ฉากครบ (AAA_RoomDAY อยู่ใน list อยู่แล้ว)
+
+### ℹ️ Vision audit (manual)
+- เลือก Snooker 6 → Snooker_Demo → เห็นลูกแดง 6 ลูก (สามเหลี่ยมเล็ก 3 แถว)
+
 ### ⏭️ Roadmap R24+ (จัดลำดับความสำคัญ — ปรับตามโค้ช)
-1. **R26 เลือกโหมดจริงจากเมนู: SNOOKER 15/10/6 เป็นโหมดหลัก** — ใช้ `totalRedBalls` คุมการตั้งโต๊ะ (15=สามเหลี่ยมเต็ม, 10/6=เล็กลง) + 8-Ball/9-Ball/Chinese Pool + Best-of/Practice ต่อกับ R25 dialog
-2. **R27 Animation (Blender + Unity)** — ลุงโน๊ก/โบ idle/celebrate/disappointed/speak (มี controller อยู่แล้ว ต้องสร้าง .anim clips ผ่าน pipeline `create_character_aaa.py`)
-3. **R28 Voice Pinning** — ผูก `UncleNokReferee` 14 clips กับ prefab variant จริง (งานค้างจาก Session 3)
-4. **R29 Multiplayer room** — Normcore room flow (host/join, sync) — ใหญ่สุด ต้องแยกแผน
-5. **R30 SFX generation** — รอพี่หาเสียงจริง (รายการ 9 ช่องที่ขาดบันทึกไว้ — พี่วางไฟล์ลง Inspector ได้ทันที)
+1. **R27 Animation (Blender + Unity)** — ลุงโน๊ก/โบ idle/celebrate/disappointed/speak (มี controller อยู่แล้ว ต้องสร้าง .anim clips ผ่าน pipeline `create_character_aaa.py`)
+2. **R28 Voice Pinning** — ผูก `UncleNokReferee` 14 clips กับ prefab variant จริง (งานค้างจาก Session 3)
+3. **R29 Multiplayer room** — Normcore room flow (host/join, sync) — ใหญ่สุด ต้องแยกแผน
+4. **R30 SFX generation** — รอพี่หาเสียงจริง (รายการ 9 ช่องที่ขาดบันทึกไว้ — พี่วางไฟล์ลง Inspector ได้ทันที)
+5. **R31 (nice-to-have)** — ฉาก dedicated 8-Ball/9-Ball + โหมด Best-of/Practice ต่อกับ R25 dialog ลงทุกโหมด
