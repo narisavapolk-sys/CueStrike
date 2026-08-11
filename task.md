@@ -1,4 +1,34 @@
-# Task: CueStrike VR - Phase A Audio Completion & Next Phases
+# Task: CueStrike VR — R24 First-Time Tutorial (Current) → R25–R30 Roadmap
+
+**Current Objective (coach-approved, 2026-08-11):** เปิดเกม (Boot) → Title (Lobby) → ผู้เล่นครั้งแรก
+ต้องผ่าน Tutorial สอนจับไม้คิว/เล็ง/ยิง ก่อนเข้าเมนู; เคยเล่นแล้ว / กด Skip → เข้า Lobby ทันที
+
+## 🎯 R24 — FIRST-TIME TUTORIAL (IN PROGRESS → Ready for test)
+
+### ✅ Done
+- [x] ตรวจระบบเดิม: `CueStrikeTutorialManager` เป็น in-match validation (ต้องมีโต๊ะ/ShotManager) — ไม่เหมาะกับ Lobby onboarding
+- [x] สร้าง `CueStrikeFirstTimeFlow.cs` — PlayerPrefs first-time flag + 3 สไลด์ภาษาไทย + Skip + fail-safe auto-UI
+- [x] ผูก component เข้า `Title_NoksGrandHall.unity` (GameObject `FirstTimeTutorial`)
+- [x] Editor tool `FirstTimeTutorialSetup.cs` — idempotent + guard 3 ชั้น + self-test + batchmode entry
+- [x] Compile verify: batchmode **0 errors** + scene load 0 errors
+- [x] Docs: `CUESTRIKE_MASTER.md`, `TASK_PROGRESS.md`, `implementation_plan_r24_title_tutorial.md`
+
+### 🔄 To verify in Editor (Vision audit)
+- [ ] เปิด Title scene → Enter Play Mode → สไลด์ 1 ปรากฏ (ครั้งแรก)
+- [ ] กด ถัดไป ×3 → เริ่มเล่น → ครั้งต่อไปไม่โชว์ (PlayerPrefs)
+- [ ] ResetTutorialFlag → โชว์อีกครั้ง; ปุ่ม ข้าม → เข้า Lobby ทันที
+
+## ⏭️ NEXT (R25–R30, per coach)
+- **R25** จบเกม Best-of Flow: Single Frame / Best of 3/5/7 / Practice + scoreboard + WINNER screen
+- **R26** เลือกโหมดจริงจากเมนู: SNOOKER 15/10/6 (หลัก) + 8-Ball/9-Ball/Chinese Pool
+- **R27** Animation (Blender pipeline `create_character_aaa.py`): UncleNok/Bo idle/celebrate/disappointed/speak
+- **R28** Voice Pinning: `UncleNokReferee` 14 clips → prefab variant
+- **R29** Multiplayer room (Normcore host/join/sync) — แยกแผน
+- **R30** SFX จริง (พี่หาเสียง → วาง Inspector ได้ทันที)
+
+---
+
+# (งานเก่า) Phase A Audio Completion & Next Phases
 
 **Objective:** Complete Phase A Audio (source ~50 real audio clips, assign, test), then proceed to Phase B (P9 Animator + BoPanda Banter) and Phase C (Playability Polish).
 

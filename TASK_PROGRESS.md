@@ -571,10 +571,30 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 - ลบ worktree/cache เสีย (`playmode-test-worktree/`, nested `CueStrike_Project/`) ที่เหลือจาก session ก่อน
 - stash backup `main-checkout-uncommitted-backup-2026-08-11` — เนื้อหาถูก merge ไปครบแล้วผ่าน R17/R18/R19/R20 → เก็บไว้เป็น safety net
 
-### ⏭️ Roadmap R24+ (จัดลำดับความสำคัญ)
-1. **R24 Single-Player flow** — เล่นคนเดียวครบวงจร (Boot → Title → ห้อง → เล่น → จบเกม) + ชนะ/แพ้ flow
-2. **R25 Tutorial** — สอนกติกา/การควบคุม VR ครั้งแรก (Uncle Nok นำทาง)
-3. **R26 Voice Pinning** — ผูก `UncleNokReferee` 14 clips กับ prefab variant จริง (งานค้างจาก Session 3)
-4. **R27 Multiplayer room** — Normcore room flow (host/join, sync) — ใหญ่สุด ต้องแยกแผน
-5. **R28 Polish animation** — P9 animator states + BoPanda banter reactions ในฉากจริง
-6. **R29 SFX generation** — รอ Stable Audio token จริง (technology mismatch ที่บันทึกไว้)
+## 🎓 FIRST-TIME TUTORIAL — Round 24 (2026-08-11, per implementation_plan_r24_title_tutorial.md)
+
+**Goal (coach-approved):** เปิดเกม (Boot) → Title (Lobby) → ผู้เล่นครั้งแรกต้องผ่าน Tutorial
+สอนจับไม้คิว/เล็ง/ยิง เบื้องต้น ก่อนเข้าเมนูหลัก; เคยเล่นแล้ว / กด Skip → เข้า Lobby ได้ทันที
+
+### ✅ Files changed
+- **`Assets/CueStrike/Scripts/TitleScene/CueStrikeFirstTimeFlow.cs`** (ใหม่):
+  - PlayerPrefs first-time flag (`CueStrike_FirstTimeTutorialDone`) — static `IsTutorialDone()` / `MarkTutorialDone()` / `ResetTutorialFlag()`
+  - 3 สไลด์ภาษาไทย default (ยินดีต้อนรับ / จับไม้คิว+เล็ง / ยิง+เริ่มเล่น) — assign `slides[]` ใน Inspector ได้
+  - Fail-safe: ไม่หา Canvas/สร้าง UI ไม่ได้ → ข้าม tutorial (ไม่บล็อก Lobby)
+  - ปุ่ม ถัดไป / ข้าม Tutorial — สไลด์สุดท้ายเปลี่ยนเป็น "เริ่มเล่น"
+- **`Assets/CueStrike/Scenes/Title_NoksGrandHall.unity`**: ผูก `FirstTimeTutorial` GameObject + component เข้าฉาก (SceneRoots)
+- **`Assets/CueStrike/Editor/FirstTimeTutorialSetup.cs`** (ใหม่): Editor tool `Tools/CueStrike/Title Scene/10. Setup First-Time Tutorial`
+  - Idempotent (มี component อยู่แล้ว → skip) + Guard 3 ชั้น + Self-test
+
+### ✅ Verify
+- Compile gate batchmode: **0 errors, 0 warnings** (ไฟล์ใหม่)
+- Scene load + `-executeMethod SetupFirstTimeTutorial`: 0 errors — tool พบ component ที่ wire ไว้แล้ว → skip (idempotent)
+- หมายเหตุ: `CueStrikeTutorialManager` (in-match validation) ยังอยู่ครบ — R24 เป็น onboarding เบาๆ ใน Lobby ตามแบบโค้ช
+
+### ⏭️ Roadmap R24+ (จัดลำดับความสำคัญ — ปรับตามโค้ช)
+1. **R25 จบเกม Best-of Flow** — UI เลือก Single Frame / Best of 3/5/7 / Practice (ตกลงกับ AI ก่อนเริ่ม) + scoreboard + WINNER screen
+2. **R26 เลือกโหมดจริงจากเมนู: SNOOKER 15/10/6 เป็นโหมดหลัก** — ใช้ `totalRedBalls` คุมการตั้งโต๊ะ (15=สามเหลี่ยมเต็ม, 10/6=เล็กลง) + 8-Ball/9-Ball/Chinese Pool
+3. **R27 Animation (Blender + Unity)** — ลุงโน๊ก/โบ idle/celebrate/disappointed/speak (มี controller อยู่แล้ว ต้องสร้าง .anim clips ผ่าน pipeline `create_character_aaa.py`)
+4. **R28 Voice Pinning** — ผูก `UncleNokReferee` 14 clips กับ prefab variant จริง (งานค้างจาก Session 3)
+5. **R29 Multiplayer room** — Normcore room flow (host/join, sync) — ใหญ่สุด ต้องแยกแผน
+6. **R30 SFX generation** — รอพี่หาเสียงจริง (รายการ 9 ช่องที่ขาดบันทึกไว้ — พี่วางไฟล์ลง Inspector ได้ทันที)
