@@ -1459,6 +1459,68 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1100164323
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1100164325}
+  - component: {fileID: 1100164324}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1100164324
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1100164323}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c04beda437cad44790f5b61904cba77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CueStrike.Audio.CueStrikeAudioManager
+  hitSoft: {fileID: 8300000, guid: 33c584391a67438295a626fab79e3e7d, type: 3}
+  hitMedium: {fileID: 8300000, guid: 33c584391a67438295a626fab79e3e7d, type: 3}
+  hitHard: {fileID: 8300000, guid: 33c584391a67438295a626fab79e3e7d, type: 3}
+  cushionHit: {fileID: 8300000, guid: f48161819def4501996e204e678d0977, type: 3}
+  pocketHit: {fileID: 8300000, guid: 535899c3cbfd467b934354459dc83b0d, type: 3}
+  pocketRollClip: {fileID: 8300000, guid: 535899c3cbfd467b934354459dc83b0d, type: 3}
+  nearMissGasp: {fileID: 8300000, guid: cf58e8dd1a484304a0d555ca9190524f, type: 3}
+  ambientRoom: {fileID: 8300000, guid: cbd711afd26a47b680770100e095e399, type: 3}
+  chalkDust: {fileID: 8300000, guid: 9999370e4204442a88a2402b812dd21a, type: 3}
+  miscued: {fileID: 0}
+  ambientLoungeMusic: {fileID: 8300000, guid: cbd711afd26a47b680770100e095e399, type: 3}
+  whooshShot: {fileID: 0}
+  menuClick: {fileID: 8300000, guid: 0b497cc7d503482d958dec68877cb3f1, type: 3}
+  menuHover: {fileID: 8300000, guid: 3175ad18d19444b9944ca39fe40d2762, type: 3}
+  cueStrike: {fileID: 8300000, guid: e3db0ad836664689b194d829f1d9c791, type: 3}
+  crowdAmbient: {fileID: 8300000, guid: cf58e8dd1a484304a0d555ca9190524f, type: 3}
+  volume: 1
+  muted: 0
+--- !u!4 &1100164325
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1100164323}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1260677938
 GameObject:
   m_ObjectHideFlags: 0
@@ -1779,6 +1841,52 @@ Material:
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
+--- !u!1 &1441194088
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1441194090}
+  - component: {fileID: 1441194089}
+  m_Layer: 0
+  m_Name: PhysicsSFX
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1441194089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1441194088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15980fbdd051f4748a58bc03e53589e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CueStrike.Audio.CueStrikeDynamicPhysicsSFX
+  pitchMin: 0.88
+  pitchMax: 1.12
+--- !u!4 &1441194090
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1441194088}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1528548232
 GameObject:
   m_ObjectHideFlags: 0
@@ -2409,3 +2517,5 @@ SceneRoots:
   - {fileID: 958708340}
   - {fileID: 1029411506}
   - {fileID: 709920410}
+  - {fileID: 1100164325}
+  - {fileID: 1441194090}

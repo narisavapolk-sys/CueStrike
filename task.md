@@ -1,11 +1,26 @@
-# Task: CueStrike VR — R27 Character Animation (Current) → R28+ Roadmap
+# Task: CueStrike VR — R28 SFX 9 ช่อง (Current) → R29+ Roadmap
 
-**Current Objective (coach-approved, 2026-08-11):** สร้าง animation clips (Idle/Celebrate/Disappointed/Speak)
-สำหรับลุงโน๊กและโบผ่าน Blender pipeline แล้ว assign ลง `UncleNok.controller` — ให้ตัวละคร "มีชีวิต"
+**Current Objective (2026-08-12):** ผูกช่อง SFX จริง 9 ตัว (ball hit, cushion, pocket, cue, chalk, crowd, ambient, ui_click, ui_hover) เข้ากับ AudioSource + volume ตามแรงกระแทก — เขียนตารางไฟล์ที่พี่ต้องหาไว้ใน TASK_PROGRESS
 
 ---
 
-## 🎯 R27 — CHARACTER ANIMATION (Ready for test)
+## 🎯 R28 — SFX 9 ช่อง (Ready for PR)
+
+### ✅ Done
+- [x] ตรวจของจริง: ไฟล์ SFX 9 ตัวมีอยู่แล้วใน `Audio/Clips/` (placeholder สังเคราะห์) แต่ **AudioManager อยู่ในแค่ Title scene** — ห้องแข่ง/เมนูไม่มีเสียง
+- [x] `CueStrikeAudioManager.cs`: เพิ่ม `cueStrike` + `crowdAmbient` fields + `PlayCueStrike(intensity)` (volume/pitch ตามแรงยิง) + `PlayCrowdAmbient()` (loop)
+- [x] Editor tool `CueStrikeSfxSceneSetup.cs` — `Tools/CueStrike/Audio/40. Setup SFX Channels`
+  - เพิ่ม AudioManager + assign 9 clips + DynamicPhysicsSFX + crowd murmur ให้ **12 ฉากที่เล่นได้** (idempotent)
+- [x] Compile verify: batchmode **0 errors** + tool รันจริง **12/12 ฉาก** + self-test **19/19 ผ่าน**
+- [x] ตารางไฟล์ที่พี่ต้องหา (9 ช่อง) เขียนไว้ใน TASK_PROGRESS.md — วางไฟล์ทับชื่อเดิม ไม่ต้องแก้โค้ด
+
+### ⏳ เหลือ (พี่ต้องทำ — หาเสียงจริง)
+- [ ] หาเสียงจริง 9 ไฟล์ตามตารางใน `TASK_PROGRESS.md` → วางทับใน `Assets/CueStrike/Audio/Clips/`
+- [ ] Vision audit: เปิดห้องแข่ง → ตียิง → ควรได้ยิน ball hit/cushion/pocket/cue + UI click/hover
+
+---
+
+## 🎯 R27 — CHARACTER ANIMATION (MERGED ✅ — PR #22)
 
 ### ✅ Done
 - [x] ตรวจของจริง: rig Rigify **706 bones ชื่อเหมือนกันทุกตัวละคร** (UncleNok = Somchay), mesh skin กับ DEF-* bones (72 vgroups), prefab เป็น Somchay variant + Animator `m_Controller: 0` (ว่าง)
