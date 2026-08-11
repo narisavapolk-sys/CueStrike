@@ -96,6 +96,31 @@ namespace CueStrike.UI.ChinesePool
             }
         }
 
+        /// <summary>R25 — updates the match score (frames won) on the scoreboard.</summary>
+        public void SetFrameScore(int player1Frames, int player2Frames)
+        {
+            if (_scoreboard != null)
+            {
+                _scoreboard.SetFrameScore(player1Frames, player2Frames);
+            }
+        }
+
+        /// <summary>R25 — called when a frame ends (before next frame starts).</summary>
+        public void OnFrameEnded(int player1Frames, int player2Frames)
+        {
+            SetFrameScore(player1Frames, player2Frames);
+        }
+
+        /// <summary>R25 — called when the match is over (WINNER screen handles visuals).</summary>
+        public void ShowMatchOver(string winnerText)
+        {
+            UpdateGameState(winnerText);
+            if (_scoreboard != null)
+            {
+                _scoreboard.StopMatch();
+            }
+        }
+
         private void UpdateGameState(string state)
         {
             if (_gameStateText != null)

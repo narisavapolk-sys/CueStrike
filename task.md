@@ -1,9 +1,19 @@
-# Task: CueStrike VR — R24 First-Time Tutorial (Current) → R25–R30 Roadmap
+# Task: CueStrike VR — R25 Match Flow (Current) → R26–R30 Roadmap
 
-**Current Objective (coach-approved, 2026-08-11):** เปิดเกม (Boot) → Title (Lobby) → ผู้เล่นครั้งแรก
-ต้องผ่าน Tutorial สอนจับไม้คิว/เล็ง/ยิง ก่อนเข้าเมนู; เคยเล่นแล้ว / กด Skip → เข้า Lobby ทันที
+**Current Objective (coach-approved, 2026-08-11):** UI Dialog เลือกเงื่อนไขก่อนเริ่มเกม
+(Single Frame / Best of 3/5/7 / Practice) → ส่งค่าเข้า GameManager คุมเฟรมที่จะชนะ
++ scoreboard ต่อเฟรม + WINNER screen + กลับเมนู
 
-## 🎯 R24 — FIRST-TIME TUTORIAL (IN PROGRESS → Ready for test)
+## 🎯 R24 — FIRST-TIME TUTORIAL (MERGED ✅ — PR #19)
+
+### ✅ Done (merged 2026-08-11)
+- [x] `CueStrikeFirstTimeFlow.cs` — PlayerPrefs first-time flag + 3 สไลด์ภาษาไทย + Skip + fail-safe auto-UI
+- [x] ผูกเข้า `Title_NoksGrandHall.unity` + Editor tool `FirstTimeTutorialSetup`
+- [x] Compile 0 errors + scene load clean + PR #19 merged (CI green)
+
+---
+
+## 🎯 R25 — MATCH FLOW (BEST-OF + WINNER) (Ready for test)
 
 ### ✅ Done
 - [x] ตรวจระบบเดิม: `CueStrikeTutorialManager` เป็น in-match validation (ต้องมีโต๊ะ/ShotManager) — ไม่เหมาะกับ Lobby onboarding
@@ -13,14 +23,23 @@
 - [x] Compile verify: batchmode **0 errors** + scene load 0 errors
 - [x] Docs: `CUESTRIKE_MASTER.md`, `TASK_PROGRESS.md`, `implementation_plan_r24_title_tutorial.md`
 
-### 🔄 To verify in Editor (Vision audit)
-- [ ] เปิด Title scene → Enter Play Mode → สไลด์ 1 ปรากฏ (ครั้งแรก)
-- [ ] กด ถัดไป ×3 → เริ่มเล่น → ครั้งต่อไปไม่โชว์ (PlayerPrefs)
-- [ ] ResetTutorialFlag → โชว์อีกครั้ง; ปุ่ม ข้าม → เข้า Lobby ทันที
+### ✅ Done
+- [x] `ChinesePoolGameManager` — practice mode (`StartNewMatch(0)`, `isPracticeMode`, `StartPracticeMatch`)
+- [x] `ChinesePoolScoreboard` — `SetFrameScore` + ช่อง frames (P1/P2)
+- [x] `ChinesePoolUIManager` — `SetFrameScore` / `OnFrameEnded` / `ShowMatchOver`
+- [x] `ChinesePoolMatchSetupUI.cs` (ใหม่) — panel 5 ปุ่ม (Single Frame/3/5/7/Practice)
+- [x] `ChinesePoolMatchEndScreen.cs` (ใหม่) — WINNER + เล่นอีกครั้ง/กลับเมนู
+- [x] ผูก `MatchFlow` + `MatchEndScreen` เข้า `AAA_RoomDAY.unity`
+- [x] Editor tool `ChinesePoolMatchFlowSetup` — idempotent + self-test + batchmode
+- [x] Compile 0 errors + scene load clean + self-test 3/3
 
-## ⏭️ NEXT (R25–R30, per coach)
-- **R25** จบเกม Best-of Flow: Single Frame / Best of 3/5/7 / Practice + scoreboard + WINNER screen
-- **R26** เลือกโหมดจริงจากเมนู: SNOOKER 15/10/6 (หลัก) + 8-Ball/9-Ball/Chinese Pool
+### 🔄 To verify in Editor (Vision audit)
+- [ ] AAA_RoomDAY → Play → เห็น panel เลือกเงื่อนไข
+- [ ] Best of 3 → เล่นจนเฟรมจบ → frame score อัปเดต
+- [ ] จบ 2 เฟรม → WINNER screen → เล่นอีกครั้ง / กลับเมนู
+
+## ⏭️ NEXT (R26–R30, per coach)
+- **R26** เลือกโหมดจริงจากเมนู: SNOOKER 15/10/6 (หลัก) + 8-Ball/9-Ball/Chinese Pool + ต่อ Best-of dialog
 - **R27** Animation (Blender pipeline `create_character_aaa.py`): UncleNok/Bo idle/celebrate/disappointed/speak
 - **R28** Voice Pinning: `UncleNokReferee` 14 clips → prefab variant
 - **R29** Multiplayer room (Normcore host/join/sync) — แยกแผน
