@@ -22,6 +22,8 @@ namespace CueStrike.Audio
     public AudioClip whooshShot; // Power Shot whoosh sound
     public AudioClip menuClick; // Sound for UI menu clicks
     public AudioClip menuHover; // Sound for UI menu hover
+    public AudioClip cueStrike;      // R28: cue striking the cue ball (volume scales with shot power)
+    public AudioClip crowdAmbient;   // R28: low-level background crowd murmur (looped)
 
     [Header("Settings")]
     public float volume = 1f;
@@ -184,6 +186,34 @@ namespace CueStrike.Audio
     public void PlayMenuHover()
     {
         PlaySound(menuHover, 0.5f);
+    }
+
+    /// <summary>
+    /// R28: plays the cue-strike sound with volume/pitch scaling by shot power (0..1).
+    /// </summary>
+    public void PlayCueStrike(float intensity)
+    {
+        if (audioSource == null || cueStrike == null || muted) return;
+
+        audioSource.pitch = Mathf.Lerp(0.9f, 1.2f, Mathf.Clamp01(intensity));
+        PlaySound(cueStrike, Mathf.Clamp01(0.4f + intensity * 0.6f));
+        audioSource.pitch = 1f; // reset
+    }
+
+    /// <summary>
+    /// R28: plays the background crowd murmur (looped) unless muted.
+    /// </summary>
+    public void PlayCrowdAmbient()
+    {
+        if (muted || crowdAmbient == null || ambientMusicSource == null) return;
+
+        ambientMusicSource.clip = crowdAmbient;
+        ambientMusicSource.loop = true;
+        ambientMusicSource.volume = 0.12f;
+        if (!muted)
+        {
+            ambientMusicSource.Play();
+        }
     }
 
     /// <summary>

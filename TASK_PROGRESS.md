@@ -634,9 +634,41 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 ### ℹ️ Vision audit (manual)
 - เลือก Snooker 6 → Snooker_Demo → เห็นลูกแดง 6 ลูก (สามเหลี่ยมเล็ก 3 แถว)
 
+## 🔊 SFX 9 ช่อง (ผูก AudioSource + volume ตามแรง) — Round 28 (2026-08-12, per implementation_plan_r28_sfx_channels.md)
+
+**Goal (ตามคำสั่งพี่โม่ง):** ผูกช่อง SFX จริง 9 ตัวเข้ากับ AudioSource (ball hit, cushion, pocket, cue, chalk, crowd, ambient, ui_click, ui_hover) + volume ตามแรงกระแทก + เขียนตารางไฟล์ที่พี่ต้องหา
+
+### ✅ Files changed
+- **`CueStrikeAudioManager.cs`**: เพิ่ม `cueStrike` + `crowdAmbient` fields + `PlayCueStrike(intensity)` (volume/pitch ตามแรงยิง) + `PlayCrowdAmbient()` (loop background)
+- **`CueStrikeSfxSceneSetup.cs`** (ใหม่): Editor tool `Tools/CueStrike/Audio/40. Setup SFX Channels`
+  - หา/สร้าง `AudioManager` + `CueStrikeAudioManager` ใน **12 ฉากที่เล่นได้** (MainMenu, Boot, Title, AAA_RoomDAY, Snooker_Demo + ห้อง 8 ตัว)
+  - assign 9 clips จาก `Audio/Clips/` + เพิ่ม `CueStrikeDynamicPhysicsSFX` (3D spatial + velocity volume) + assign `CrowdSystem.ambientMurmur = crowd_murmur.wav`
+  - Idempotent + self-test + batchmode
+- **12 scene files**: เพิ่ม AudioManager + clips ให้ทุกฉาก (ก่อนหน้า AudioManager อยู่ในแค่ Title scene → เสียงไม่ออกในห้องแข่ง)
+
+### ✅ Verify
+- Compile gate batchmode: **0 errors** (ไฟล์ใหม่ 0 warnings)
+- Tool รันจริง **12/12 ฉาก** ผ่าน — self-test **19/19 ผ่าน** (9 clips มีไฟล์ + AudioManager assign ครบ 9 ช่อง)
+- Main checkout คืนสภาพสะอาดแล้ว
+
+### 📋 ตารางไฟล์ที่พี่ต้องหา (R28 — พี่หาเสียงจริงมาแทน placeholder)
+> ไฟล์ทั้งหมดตอนนี้เป็น **placeholder สังเคราะห์** (`CueStrikeAudioGenerator`) — วางไฟล์จริงที่ชื่อเดียวกันลงใน `Assets/CueStrike/Audio/Clips/` แล้ว **ไม่ต้องแก้โค้ด** (GUID เดิมถูกอ้างอิงจากทุกฉาก)
+
+| # | ช่อง SFX | ไฟล์ placeholder ปัจจุบัน | ใช้ที่ไหน | วิธีหาเสียงจริง |
+|---|----------|--------------------------|-----------|----------------|
+| 1 | ball hit | `ball_ball_hit.wav` | `CueStrikeBallPhysics.OnCollisionEnter` → `PlayBallHit(intensity)` | เสียงลูกบิลเลียดชนกัน (อัดจริง / ฟรี asset: freesound.org search "billiard ball hit") |
+| 2 | cushion | `ball_cushion_hit.wav` | เดียวกับ #1 (`cushionImpact: true`) | เสียงลูกชนขอบโต๊ะ (rubber thud) |
+| 3 | pocket | `ball_pocket_drop.wav` | `Pocket.cs` / `PocketSoundDetector` → `PlayPocketAt` | เสียงลูกลงหลุม + กลิ้งในราง |
+| 4 | cue | `cue_ball_hit.wav` | `PlayCueStrike(intensity)` (ใหม่ R28) | เสียงคิวตีลูกขาว (crisp click) |
+| 5 | chalk | `chalk_scrape.wav` | `CueStrikeCueRack` / `CueStrikeShotManager` → `PlayChalk()` | เสียงถูชอล์กที่หัวคิว |
+| 6 | crowd | `crowd_murmur.wav` | `CrowdSystem.ambientMurmur` + `nearMissGasp` | เสียงผู้ชมพูดคุยเบาๆ (loop) + อุทานตอนพลาดใกล้ |
+| 7 | ambient | `ambient_room_tone.wav` | `PlayAmbientRoom()` (RoomSetupAAA โหลดห้อง) | เสียงบรรยากาศห้อง (แอร์/คน murmuring — loop) |
+| 8 | ui_click | `ui_click.wav` | `MainMenuUIController` → `PlayMenuClick()` | เสียงกดปุ่ม (short click) |
+| 9 | ui_hover | `ui_hover.wav` | `MainMenuUIController` → `PlayMenuHover()` | เสียงชี้ปุ่ม (soft tick) |
+
+**วิธีใช้:** ดาวน์โหลดไฟล์เสียง → ตั้งชื่อตรงตามคอลัมน์ 2 → ลากวางทับไฟล์เดิมใน `Assets/CueStrike/Audio/Clips/` (Unity จะ import ใหม่ GUID เดิม) → เล่นเกมได้เลย ไม่ต้องแก้โค้ด
+
 ### ⏭️ Roadmap R24+ (จัดลำดับความสำคัญ — ปรับตามโค้ช)
-1. **R27 Animation (Blender + Unity)** — ลุงโน๊ก/โบ idle/celebrate/disappointed/speak (มี controller อยู่แล้ว ต้องสร้าง .anim clips ผ่าน pipeline `create_character_aaa.py`)
-2. **R28 Voice Pinning** — ผูก `UncleNokReferee` 14 clips กับ prefab variant จริง (งานค้างจาก Session 3)
-3. **R29 Multiplayer room** — Normcore room flow (host/join, sync) — ใหญ่สุด ต้องแยกแผน
-4. **R30 SFX generation** — รอพี่หาเสียงจริง (รายการ 9 ช่องที่ขาดบันทึกไว้ — พี่วางไฟล์ลง Inspector ได้ทันที)
-5. **R31 (nice-to-have)** — ฉาก dedicated 8-Ball/9-Ball + โหมด Best-of/Practice ต่อกับ R25 dialog ลงทุกโหมด
+1. **R29 Voice Pinning (งานค้าง)** — ผูก `UncleNokReferee` 14 voice clips กับ prefab variant จริง (plan `implementation_plan_r28_unclenok_voice.md` พร้อม — branch `feat/r28-unclenok-voice`)
+2. **R30 Multiplayer room** — Normcore room flow (host/join, sync) — ใหญ่สุด ต้องแยกแผน
+3. **R31 (nice-to-have)** — ฉาก dedicated 8-Ball/9-Ball + โหมด Best-of/Practice ต่อกับ R25 dialog ลงทุกโหมด
