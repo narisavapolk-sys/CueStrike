@@ -288,7 +288,7 @@ Animator:
   m_GameObject: {fileID: 9014648732227366908}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 261a1acaa5798b042a502fa4be27cffb, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -313,32 +313,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CueStrike.MascotSystem.BoPandaBanter
   currentReaction: 0
-  _audioSource: {fileID: 4022438871602023697}
-  _enableVoice: 1
-  _minTimeBetweenVoice: 2
-  _matchStartClips:
-  - {fileID: 8300000, guid: a428a6894b98b0f408f05ed68fda9bc6, type: 3}
-  - {fileID: 8300000, guid: b2a33032dd85e9445bf53a8be37ba2a1, type: 3}
-  _turnStartClips:
-  - {fileID: 8300000, guid: 13a07b5154b5453488e27fc8da4002c3, type: 3}
-  - {fileID: 8300000, guid: 00dbb366f4c12874bad691e9d6281afc, type: 3}
-  _potSuccessClips:
-  - {fileID: 8300000, guid: 65fe4668e6a578549b41ed3a23b90228, type: 3}
-  - {fileID: 8300000, guid: 51633710cae21e24885a2fd3c8bcd4a3, type: 3}
-  - {fileID: 8300000, guid: 823288b8c9756ca4aa180822f14eb63c, type: 3}
-  _centuryBreakClips:
-  - {fileID: 8300000, guid: faf5e2fef8470c347a5bf3a31b7865de, type: 3}
-  _highBreakClips:
-  - {fileID: 8300000, guid: 0df0ca70a0ae20d4db2f2ba813188953, type: 3}
-  _foulCalledClips:
-  - {fileID: 8300000, guid: 8012d451784d38740939a3751568221b, type: 3}
-  - {fileID: 8300000, guid: 8675f4ff112818d4ba3249c0566988e1, type: 3}
-  _foulCueBallClips:
-  - {fileID: 8300000, guid: dcf7795eb7f16c342bc50fb1aee7a2d0, type: 3}
-  _breakClips:
-  - {fileID: 8300000, guid: f76252370b69f014699f5f8432a3ad87, type: 3}
-  _clearanceClips:
-  - {fileID: 8300000, guid: 790d701a29c13aa40aa31b2147525e14, type: 3}
   OnReactionDelivered:
     m_PersistentCalls:
       m_Calls: []
