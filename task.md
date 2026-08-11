@@ -1,8 +1,7 @@
-# Task: CueStrike VR — R25 Match Flow (Current) → R26–R30 Roadmap
+# Task: CueStrike VR — R26 Mode Selection (Current) → R27–R31 Roadmap
 
-**Current Objective (coach-approved, 2026-08-11):** UI Dialog เลือกเงื่อนไขก่อนเริ่มเกม
-(Single Frame / Best of 3/5/7 / Practice) → ส่งค่าเข้า GameManager คุมเฟรมที่จะชนะ
-+ scoreboard ต่อเฟรม + WINNER screen + กลับเมนู
+**Current Objective (coach-approved, 2026-08-11):** เลือกโหมดจริงจากเมนู — SNOOKER 15/10/6 เป็นโหมดหลัก
+— ใช้ `totalRedBalls` คุมการตั้งโต๊ะ (15/10/6) + 8-Ball/9-Ball/Chinese Pool
 
 ## 🎯 R24 — FIRST-TIME TUTORIAL (MERGED ✅ — PR #19)
 
@@ -13,7 +12,15 @@
 
 ---
 
-## 🎯 R25 — MATCH FLOW (BEST-OF + WINNER) (Ready for test)
+## 🎯 R25 — MATCH FLOW (BEST-OF + WINNER) (MERGED ✅ — PR #20)
+
+### ✅ Done (merged 2026-08-11)
+- [x] Practice mode + Scoreboard frames + WINNER screen + Best-of dialog
+- [x] PR #20 merged (CI green) — main ถึง 8b048b6
+
+---
+
+## 🎯 R26 — MODE SELECTION (SNOOKER 15/10/6 หลัก) (Ready for test)
 
 ### ✅ Done
 - [x] ตรวจระบบเดิม: `CueStrikeTutorialManager` เป็น in-match validation (ต้องมีโต๊ะ/ShotManager) — ไม่เหมาะกับ Lobby onboarding
@@ -33,17 +40,26 @@
 - [x] Editor tool `ChinesePoolMatchFlowSetup` — idempotent + self-test + batchmode
 - [x] Compile 0 errors + scene load clean + self-test 3/3
 
-### 🔄 To verify in Editor (Vision audit)
-- [ ] AAA_RoomDAY → Play → เห็น panel เลือกเงื่อนไข
-- [ ] Best of 3 → เล่นจนเฟรมจบ → frame score อัปเดต
-- [ ] จบ 2 เฟรม → WINNER screen → เล่นอีกครั้ง / กลับเมนู
+### ✅ Done
+- [x] `CueStrikeWBPSRuleset.SetupRack()` — runtime rack builder (15→5 แถว/10→4/6→3)
+- [x] `CueStrikeGameModeSelector` — static mode + red balls + scene mapping
+- [x] `CueStrikeModeSelectionPanel` — 6 ปุ่มโหมด self-building UI
+- [x] `MainMenuUIController` — `SelectModeAndLoad` + `modeButtons[]`
+- [x] ผูก `ModeSelectionPanel` เข้า MainMenu.unity
+- [x] Editor tool `CueStrikeModeSelectionSetup` — idempotent + self-test + batchmode
+- [x] Compile 0 errors/0 warnings + rack test 6/10/15 PASS + self-test 3/3
 
-## ⏭️ NEXT (R26–R30, per coach)
-- **R26** เลือกโหมดจริงจากเมนู: SNOOKER 15/10/6 (หลัก) + 8-Ball/9-Ball/Chinese Pool + ต่อ Best-of dialog
+### 🔄 To verify in Editor (Vision audit)
+- [ ] MainMenu → เห็น panel เลือกโหมด (Snooker 15/10/6 หลัก)
+- [ ] เลือก Snooker 6 → Snooker_Demo → เห็นลูกแดง 6 ลูก (สามเหลี่ยม 3 แถว)
+- [ ] เลือก Chinese Pool → AAA_RoomDAY
+
+## ⏭️ NEXT (R27–R31, per coach)
 - **R27** Animation (Blender pipeline `create_character_aaa.py`): UncleNok/Bo idle/celebrate/disappointed/speak
 - **R28** Voice Pinning: `UncleNokReferee` 14 clips → prefab variant
 - **R29** Multiplayer room (Normcore host/join/sync) — แยกแผน
 - **R30** SFX จริง (พี่หาเสียง → วาง Inspector ได้ทันที)
+- **R31** (nice-to-have) ฉาก dedicated 8-Ball/9-Ball + ต่อ Best-of dialog ทุกโหมด
 
 ---
 
