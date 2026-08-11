@@ -58,7 +58,8 @@ namespace CueStrike.Gameplay.ChinesePool
         public int scorePlayer2 = 0;
         public int framesWonPlayer1 = 0;
         public int framesWonPlayer2 = 0;
-        public int maxFrames = 5; // Best of 5
+        public int maxFrames = 5; // Best of 5 (0 = practice: no match end)
+        public bool isPracticeMode = false; // R25 — practice = frames keep going, no match over
         public bool callShotRequired = true;
         public int calledBallId = -1;
         public int calledPocketId = -1;
@@ -304,14 +305,25 @@ namespace CueStrike.Gameplay.ChinesePool
 
         /// <summary>
         /// Starts a new match with the specified frame limit.
+        /// bestOfFrames = 0 → Practice mode (play indefinitely, no match end).
+        /// bestOfFrames = 1 → Single frame (Best of 1).
         /// </summary>
         public void StartNewMatch(int bestOfFrames = 5)
         {
-            maxFrames = bestOfFrames;
+            maxFrames = Mathf.Max(0, bestOfFrames);
+            isPracticeMode = maxFrames == 0;
             framesWonPlayer1 = 0;
             framesWonPlayer2 = 0;
             StartNewFrame();
-            Debug.Log($"[CueStrike] New match started — Best of {maxFrames}.");
+            Debug.Log($"[CueStrike] New match started — {(isPracticeMode ? "Practice (no end)" : $"Best of {maxFrames}")}.");
+        }
+
+        /// <summary>
+        /// Convenience: start a practice match (frames keep going, no match end).
+        /// </summary>
+        public void StartPracticeMatch()
+        {
+            StartNewMatch(0);
         }
 
         /// <summary>
@@ -332,9 +344,9 @@ namespace CueStrike.Gameplay.ChinesePool
                 OnFrameLost?.Invoke(0);
             }
 
-            // Check match end
+            // Check match end (skip in practice mode — frames keep going indefinitely)
             int framesNeeded = (maxFrames / 2) + 1;
-            if (framesWonPlayer1 >= framesNeeded || framesWonPlayer2 >= framesNeeded)
+            if (!isPracticeMode && (framesWonPlayer1 >= framesNeeded || framesWonPlayer2 >= framesNeeded))
             {
                 currentPhase = ChinesePoolMatchState.MatchOver;
                 OnMatchOver?.Invoke();
@@ -343,7 +355,7 @@ namespace CueStrike.Gameplay.ChinesePool
             else
             {
                 currentPhase = ChinesePoolMatchState.FrameOver;
-                Debug.Log($"[CueStrike] Frame over. Score: P1 {framesWonPlayer1} - P2 {framesWonPlayer2}");
+                Debug.Log($"[CueStrike] {(isPracticeMode ? "Practice" : "Frame")} over. Score: P1 {framesWonPlayer1} - P2 {framesWonPlayer2}");
             }
 
             OnPhaseChanged?.Invoke(currentPhase);

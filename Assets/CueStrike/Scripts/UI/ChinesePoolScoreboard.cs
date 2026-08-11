@@ -23,12 +23,14 @@ namespace CueStrike.UI
         [Header("Player 1")]
         [SerializeField] private Text _player1NameText;
         [SerializeField] private Text _player1ScoreText;
+        [SerializeField] private Text _player1FramesText; // R25 — frames won (match score)
         [SerializeField] private Image _player1TurnIndicator;
         [SerializeField] private Transform _player1BallsContainer;
 
         [Header("Player 2")]
         [SerializeField] private Text _player2NameText;
         [SerializeField] private Text _player2ScoreText;
+        [SerializeField] private Text _player2FramesText; // R25 — frames won (match score)
         [SerializeField] private Image _player2TurnIndicator;
         [SerializeField] private Transform _player2BallsContainer;
 
@@ -106,6 +108,16 @@ namespace CueStrike.UI
         public void StopMatch()
         {
             _timerRunning = false;
+        }
+
+        /// <summary>
+        /// R25 — updates the frames-won display (match score, e.g. Best-of).
+        /// Called by ChinesePoolUIManager on frame end.
+        /// </summary>
+        public void SetFrameScore(int player1Frames, int player2Frames)
+        {
+            if (_player1FramesText != null) _player1FramesText.text = player1Frames.ToString("D2");
+            if (_player2FramesText != null) _player2FramesText.text = player2Frames.ToString("D2");
         }
 
         public void AddScore(int playerNumber, int points)
@@ -204,6 +216,7 @@ namespace CueStrike.UI
 
             UpdateScoreText(_player1ScoreText, 0);
             UpdateScoreText(_player2ScoreText, 0);
+            SetFrameScore(0, 0);
             UpdateTimerDisplay();
             UpdateFoulDisplay();
             UpdateInningDisplay();

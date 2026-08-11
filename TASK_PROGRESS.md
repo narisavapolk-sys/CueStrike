@@ -591,10 +591,30 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 - Scene load + `-executeMethod SetupFirstTimeTutorial`: 0 errors — tool พบ component ที่ wire ไว้แล้ว → skip (idempotent)
 - หมายเหตุ: `CueStrikeTutorialManager` (in-match validation) ยังอยู่ครบ — R24 เป็น onboarding เบาๆ ใน Lobby ตามแบบโค้ช
 
+## 🏆 MATCH FLOW (BEST-OF + WINNER) — Round 25 (2026-08-11, per implementation_plan_r25_match_flow.md)
+
+**Goal (coach-approved):** UI Dialog เลือกเงื่อนไขก่อนเริ่มเกม (Single Frame / Best of 3/5/7 / Practice)
+→ ส่งค่าเข้า GameManager คุมเฟรมที่จะชนะ + scoreboard ต่อเฟรม + WINNER screen + กลับเมนู
+
+### ✅ Files changed
+- **`ChinesePoolGameManager.cs`**: `StartNewMatch(bestOf=0)` = Practice (no match end, `isPracticeMode`); `StartPracticeMatch()`; `EndFrame` ข้ามจบแมตช์ใน practice
+- **`ChinesePoolScoreboard.cs`**: เพิ่ม `SetFrameScore(p1,p2)` + ช่อง `_player1FramesText/_player2FramesText` (reset ใน ResetScoreboard)
+- **`ChinesePoolUIManager.cs`**: เพิ่ม `SetFrameScore` / `OnFrameEnded` / `ShowMatchOver` forwarder
+- **`ChinesePoolMatchSetupUI.cs`** (ใหม่): World-Space VR panel 5 ปุ่ม (Single Frame/3/5/7/Practice) — สร้าง UI ด้วยโค้ด, fail-safe, `StartNewMatch` + `InitializeGame`
+- **`ChinesePoolMatchEndScreen.cs`** (ใหม่): subscribe `OnMatchOver` → WINNER panel + ปุ่ม เล่นอีกครั้ง (Best of เดิม) / กลับเมนู (Title) — fail-safe, auto-subscribe 30 เฟรม
+- **`AAA_RoomDAY.unity`**: ผูก GameObject `MatchFlow` + `MatchEndScreen` (SceneRoots)
+- **`ChinesePoolMatchFlowSetup.cs`** (ใหม่): Editor tool `Tools/CueStrike/Room Scene/20. Setup Match Flow` — idempotent + self-test + batchmode (โหลด AAA_RoomDAY ถ้าไม่มี scene)
+
+### ✅ Verify
+- Compile gate batchmode: **0 errors** (warnings CS0618 เดิมใน GameManager/Scoreboard ไม่ได้เพิ่มใหม่)
+- Scene load AAA_RoomDAY + `-executeMethod SetupMatchFlow`: 0 errors, idempotent, self-test **3/3 ผ่าน**
+
+### ℹ️ Vision audit (manual — ยังต้องดูด้วยตา)
+- เปิด Editor → AAA_RoomDAY → Play → เห็น panel เลือกเงื่อนไข → Best of 3 → เล่นจนเฟรมจบ → frame score อัปเดต → จบ 2 เฟรม → WINNER screen → เล่นอีกครั้ง / กลับเมนู
+
 ### ⏭️ Roadmap R24+ (จัดลำดับความสำคัญ — ปรับตามโค้ช)
-1. **R25 จบเกม Best-of Flow** — UI เลือก Single Frame / Best of 3/5/7 / Practice (ตกลงกับ AI ก่อนเริ่ม) + scoreboard + WINNER screen
-2. **R26 เลือกโหมดจริงจากเมนู: SNOOKER 15/10/6 เป็นโหมดหลัก** — ใช้ `totalRedBalls` คุมการตั้งโต๊ะ (15=สามเหลี่ยมเต็ม, 10/6=เล็กลง) + 8-Ball/9-Ball/Chinese Pool
-3. **R27 Animation (Blender + Unity)** — ลุงโน๊ก/โบ idle/celebrate/disappointed/speak (มี controller อยู่แล้ว ต้องสร้าง .anim clips ผ่าน pipeline `create_character_aaa.py`)
-4. **R28 Voice Pinning** — ผูก `UncleNokReferee` 14 clips กับ prefab variant จริง (งานค้างจาก Session 3)
-5. **R29 Multiplayer room** — Normcore room flow (host/join, sync) — ใหญ่สุด ต้องแยกแผน
-6. **R30 SFX generation** — รอพี่หาเสียงจริง (รายการ 9 ช่องที่ขาดบันทึกไว้ — พี่วางไฟล์ลง Inspector ได้ทันที)
+1. **R26 เลือกโหมดจริงจากเมนู: SNOOKER 15/10/6 เป็นโหมดหลัก** — ใช้ `totalRedBalls` คุมการตั้งโต๊ะ (15=สามเหลี่ยมเต็ม, 10/6=เล็กลง) + 8-Ball/9-Ball/Chinese Pool + Best-of/Practice ต่อกับ R25 dialog
+2. **R27 Animation (Blender + Unity)** — ลุงโน๊ก/โบ idle/celebrate/disappointed/speak (มี controller อยู่แล้ว ต้องสร้าง .anim clips ผ่าน pipeline `create_character_aaa.py`)
+3. **R28 Voice Pinning** — ผูก `UncleNokReferee` 14 clips กับ prefab variant จริง (งานค้างจาก Session 3)
+4. **R29 Multiplayer room** — Normcore room flow (host/join, sync) — ใหญ่สุด ต้องแยกแผน
+5. **R30 SFX generation** — รอพี่หาเสียงจริง (รายการ 9 ช่องที่ขาดบันทึกไว้ — พี่วางไฟล์ลง Inspector ได้ทันที)
