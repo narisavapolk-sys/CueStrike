@@ -281,7 +281,7 @@ Animator:
   m_GameObject: {fileID: 4089566814128205274}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 261a1acaa5798b042a502fa4be27cffb, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -345,10 +345,10 @@ MonoBehaviour:
   _safetyPlayedClips: []
   _idleTrigger: Idle
   _speakTrigger: Speak
-  _announceTrigger: Announce
+  _announceTrigger: Speak
   _celebrateTrigger: Celebrate
-  _disapproveTrigger: Disapprove
-  _thinkingTrigger: Thinking
+  _disapproveTrigger: Disappointed
+  _thinkingTrigger: Speak
   _minTimeBetweenAnnouncements: 3
   _enableVoice: 1
   _enableAnimations: 1

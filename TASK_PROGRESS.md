@@ -12,7 +12,7 @@
 | **Phase D** | MCP Infrastructure | ✅ COMPLETE | 100% |
 | **Phase A** | 3D Models (AAA) | ✅ COMPLETE | 100% |
 | **Phase A** | Audio Assets | 🔄 IN PROGRESS | 20% |
-| **Phase B** | P9 Animator + BoPanda Banter | ⏳ PENDING | 0% |
+| **Phase B** | P9 Animator + BoPanda Banter | 🔄 IN PROGRESS (R27: 4 clips + controller + prefab wired) | 60% |
 | **Phase C** | Playability Polish | ⏳ PENDING | 0% |
 
 ---

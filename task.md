@@ -1,7 +1,21 @@
-# Task: CueStrike VR — R26 Mode Selection (Current) → R27–R31 Roadmap
+# Task: CueStrike VR — R27 Character Animation (Current) → R28+ Roadmap
 
-**Current Objective (coach-approved, 2026-08-11):** เลือกโหมดจริงจากเมนู — SNOOKER 15/10/6 เป็นโหมดหลัก
-— ใช้ `totalRedBalls` คุมการตั้งโต๊ะ (15/10/6) + 8-Ball/9-Ball/Chinese Pool
+**Current Objective (coach-approved, 2026-08-11):** สร้าง animation clips (Idle/Celebrate/Disappointed/Speak)
+สำหรับลุงโน๊กและโบผ่าน Blender pipeline แล้ว assign ลง `UncleNok.controller` — ให้ตัวละคร "มีชีวิต"
+
+---
+
+## 🎯 R27 — CHARACTER ANIMATION (Ready for test)
+
+### ✅ Done
+- [x] ตรวจของจริง: rig Rigify **706 bones ชื่อเหมือนกันทุกตัวละคร** (UncleNok = Somchay), mesh skin กับ DEF-* bones (72 vgroups), prefab เป็น Somchay variant + Animator `m_Controller: 0` (ว่าง)
+- [x] Blender script `create_character_animations_aaa.py` — pose DEF bones โดยตรง + keyframe เฉพาะที่ขยับ + prune 706→28-33 bones
+- [x] Export 4 FBX (Idle 3s loop / Celebrate / Disappointed / Speak 2s) — 180-210KB ต่อตัว
+- [x] Editor tool `CharacterAnimationSetup.cs` — remap clip paths → `Somchay_Rig/` prefix, สร้าง `.anim` 4 ตัว, อัปเดต controller (states + AnyState transitions + Idle default loop), assign ให้ UncleNok+BoPanda prefab, sync referee triggers (Announce→Speak, Disapprove→Disappointed, Thinking→Speak)
+- [x] Compile verify: batchmode **0 errors** + self-test **5/5**
+
+### ⏳ เหลือ (Vision audit — พี่ดูด้วยตา)
+- [ ] เปิดเกม → ลุงโน๊ก/โบ ขยับ Idle (หายใจ) อัตโนมัติ; พอลูกเข้าหลุม → Celebrate; พลาด/ฟาวล์ → Disappointed; พูด → Speak
 
 ## 🎯 R24 — FIRST-TIME TUTORIAL (MERGED ✅ — PR #19)
 
