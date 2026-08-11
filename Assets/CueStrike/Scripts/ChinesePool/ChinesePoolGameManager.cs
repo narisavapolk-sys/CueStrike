@@ -243,6 +243,8 @@ namespace CueStrike.Gameplay.ChinesePool
 
             OnTurnChanged?.Invoke(currentPlayerIndex);
             Debug.Log($"[CueStrike] Turn changed to Player {currentPlayerIndex + 1}.");
+
+            MaybeShowCallShotUI();
         }
 
         /// <summary>
@@ -379,6 +381,25 @@ namespace CueStrike.Gameplay.ChinesePool
 
         #region Private Helpers
 
+        /// <summary>
+        /// Shows the call-shot panel when the current player must call a shot
+        /// (call-shot rules, past the break/open-table phase, human turn only).
+        /// </summary>
+        private void MaybeShowCallShotUI()
+        {
+            if (!IsCallShotRequired()) return;
+            if (isAiTurn) return;
+
+            ChinesePoolUIManager.Instance?.ShowCallShot(false, BallGroupToPlayerGroup(GetCurrentPlayerGroup()));
+        }
+
+        private static int BallGroupToPlayerGroup(BallGroup group)
+        {
+            if (group == BallGroup.Red) return 1;
+            if (group == BallGroup.Yellow) return 2;
+            return 0;
+        }
+
     void HandleBreakOrOpenTable(ShotResult result)
     {
         bool redPotted = result.redBallsPotted > 0;
@@ -412,6 +433,9 @@ namespace CueStrike.Gameplay.ChinesePool
         }
 
         OnPhaseChanged?.Invoke(currentPhase);
+
+        // Show the call-shot panel when this turn requires a called shot (after group assignment).
+        MaybeShowCallShotUI();
     }
 
         void HandleEightBallPotted(ShotResult result)
