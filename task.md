@@ -1,4 +1,12 @@
-# Task: CueStrike VR — R42 Referee Mode (Current) → R43+ Roadmap
+# Task: CueStrike VR — R43 Pocket Detection (Current) → R44+ Roadmap
+
+## ✅ R43 — POCKET DETECTION (Ready for PR)
+- [x] PocketPhysicsSetup.cs: tags Ball+Pocket + pocket 6 จุด trigger + BallPottedTracker
+- [x] ChinesePoolBallSetup.cs: ลูก spawn ได้ tag "Ball"
+- [x] AAA_RoomDAY: Pocket ×6 + Tracker / TagManager: [Ball, Pocket]
+- [x] Compile 0 errors + self-test 4/4 + idempotent
+- [ ] รอ CI เขียว + merge
+
 
 ## ✅ R42 — REFEREE MODE SWITCHER (Ready for PR)
 - [x] BoRefereeEventBridge.cs: enum RefereeMode { ReplaceUncle, DuoWithUncle } + ApplyRefereeMode()

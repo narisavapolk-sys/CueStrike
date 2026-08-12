@@ -253,6 +253,12 @@ namespace CueStrike.Gameplay.ChinesePool
 
             col.radius = 0.5f; // Local radius (scaled by transform)
 
+            // R43 — tag "Ball" ให้ Pocket.OnTriggerEnter ตรวจจับได้ (CompareTag)
+            if (!ball.CompareTag("Ball"))
+            {
+                ball.tag = "Ball";
+            }
+
             // Add ball identifier component
             var identifier = ball.GetComponent<ChinesePoolBallIdentifier>();
             if (identifier == null)
