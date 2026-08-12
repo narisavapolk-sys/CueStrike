@@ -1,10 +1,10 @@
-# Task: CueStrike VR — R34 Practice AI (Current) → R35+ Roadmap
+# Task: CueStrike VR — R35 Bo Comedy Scoreboard (Current) → R36+ Roadmap
 
 **Current Objective (2026-08-12):** ต่อ AI opponent เข้ากับโหมด Practice — ลุงโน๊กเป็นคู่ซ้อม AI เลือกระดับ Easy/Medium/Hard/Expert จาก UI — ใช้ CueStrikeAIController ที่มีอยู่แล้ว
 
 ---
 
-## 🎯 R34 — PRACTICE AI (Ready for PR)
+## ✅ R34 — PRACTICE AI (MERGED ✅ — PR #29)
 
 ### ✅ Done
 - [x] ตรวจของจริง: `ChinesePoolAIModifier` มีครบแต่ไม่มีใครเรียก (dead), `CueStrikeAIController` ยิงผ่าน reflection แต่ฉากไม่มี ShotManager, ฉากที่มี GameManager = AAA_RoomDAY เท่านั้น
@@ -15,7 +15,14 @@
 
 ### ⏳ เหลือ (Vision audit / R35)
 - [ ] Vision audit: เปิด AAA_RoomDAY → เลือก Practice + ระดับ AI → สังเกต AI ยิงเองตอนเทิร์นมัน
-- [ ] R35: Snooker AI (WBPS) + Multiplayer room (Normcore)
+- [ ] R36: แก้ AI blocker (เพิ่ม ChinesePoolAIModifier + assign refs) — AI ยังยิงไม่ได้
+- [ ] R36: Snooker AI (WBPS) + Multiplayer room (Normcore)
+
+## 🎯 R35 — BO COMEDY SCOREBOARD (Ready for PR)
+- สร้าง `ChinesePoolScoreboard` จริงใน AAA_RoomDAY (พบว่าไม่มี — มีแค่ mesh ตกแต่ง) + ผูก `UIManager._scoreboard`
+- Bo จะ subscribe OnScoreChanged → สกอร์ P1==P2>0 → Speak "ใครชนะนะ??"
+- Editor tool `BoScoreboardSetup` (idempotent + self-test 3/3 + batchmode)
+- ✅ Verify: compile 0 errors, self-test 3/3 PASS, idempotent ผ่าน
 
 ---
 

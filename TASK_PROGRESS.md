@@ -822,4 +822,37 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 ### ⏳ หมายเหตุ
 - AI ยิงลูกจริงแล้ว (AddForce) — ระดับความยากคุม accuracy/error (ผ่าน CueStrikeAIController params)
 - Vision audit: เปิด AAA_RoomDAY → เลือก Practice + ระดับ AI → สังเกต AI ยิงเองตอนเทิร์นมัน
-- R35: Snooker AI (WBPS) + Multiplayer room (Normcore)
+- ⚠️ Vision audit พบ blocker: ฉากยังไม่มี `ChinesePoolAIModifier` component + `GameManager.aiModifier`/`bridge.aiModifier` ว่าง (`fileID: 0`) → guard `OnTurnChanged` return ทันที ไม่เริ่มยิง → ต้องเพิ่ม modifier + assign refs ก่อน AI ยิงได้จริง
+- R35: Bo Comedy ทำงานเต็มรูปแบบในห้องแข่ง (มี Scoreboard จริง)
+
+## 🐼 BO COMEDY SCOREBOARD (Bo มึนสกอร์ในห้องแข่ง) — Round 35 (2026-08-12, per implementation_plan_r35_bo_scoreboard.md)
+
+**Goal (ตามคำสั่งพี่โม่ง):** ผูก Bo Comedy Director ให้ทำงานเต็มรูปแบบในห้องแข่ง (AAA_RoomDAY) — Bo มึนสกอร์เสมอเมื่อมี Scoreboard จริง
+
+### 📋 Findings (ตรวจโค้ดจริง)
+| รายการ | สถานะ |
+|--------|--------|
+| `BoComedyDirector` ใน BoPanda prefab | ✅ (R32 merged) — logic ครบ (subscribe + retry ทุก 2s) |
+| BoPanda instance ใน AAA_RoomDAY | ✅ (R33 merged) — ยืนฝั่งตรงข้ามลุงโน๊ก (0,0,4.6) |
+| `ChinesePoolScoreboard` component ใน AAA | ❌ **ไม่มีเลย** — "Digital Scoreboard" เป็นแค่ mesh ตกแต่ง (MeshRenderer+MeshFilter+BoxCollider) |
+| `ChinesePoolUIManager` ใน AAA | ✅ มี (`fileID 1104105757`) แต่ `_scoreboard` ว่าง (`fileID: 0`) |
+| `ChinesePoolScoreboard.OnScoreChanged` | ✅ event มี (line 17) — Bo subscribe ได้ |
+| ใครเพิ่มสกอร์จริง | `BallPottedTracker` (RegisterPottedBall) + `UIManager.OnBallPotted` |
+
+**ปัญหา:** AAA ไม่มี `ChinesePoolScoreboard` component → UIManager._scoreboard ว่าง → Bo `FindAnyObjectByType` หาไม่เจอ → retry ตลอด → "มึนสกอร์" ไม่เกิด
+
+### ✅ Files changed
+- **`BoScoreboardSetup.cs`** (ใหม่, Editor): tool `Tools/CueStrike/Mascots/95. Setup Bo Comedy Scoreboard (AAA_RoomDAY)` — เปิด AAA_RoomDAY → สร้าง `CueStrike_ChinesePoolScoreboard` (component + UI structure: scores/turn indicators/ball containers — pattern จาก CueStrikeGamePolishSetup) → ผูก `ChinesePoolUIManager._scoreboard` (SerializedObject) → self-test + batchmode + idempotent
+- **`AAA_RoomDAY.unity`**: เพิ่ม `CueStrike_ChinesePoolScoreboard` GameObject + component + assign `_scoreboard` (fileID `608037973`)
+
+### ✅ Verify
+- Compile gate batchmode: **0 errors** (ไฟล์ใหม่ 0 warnings — ใช้ FindAnyObjectByType ตาม convention R15)
+- Tool รันจริง: สร้าง scoreboard + wired UIManager._scoreboard + self-test **3/3 PASS**
+- **Idempotent**: รันซ้ำ skip ทั้งคู่ ("Scoreboard already present" / "already assigned")
+- main checkout คืนสภาพสะอาด — base = main `7e19b21` (รวม R34)
+
+### ⏳ หมายเหตุ
+- Bo ใน AAA จะ subscribe `OnScoreChanged` ได้จริง → เมื่อสกอร์ P1==P2>0 → `SetTrigger("Speak")` = มึน "ใครชนะนะ??"
+- Scoreboard แสดงสกอร์/เทิร์น/ฟาวล์จริง — ประโยชน์ต่อ R25 match flow
+- Vision audit ยังต้องตาม: เล่น Practice → ทำสกอร์เสมอ → สังเกตโบทำมึน
+- R36: แก้ AI blocker จาก Vision audit (เพิ่ม ChinesePoolAIModifier + assign refs) / Snooker AI (WBPS) / Multiplayer room (Normcore)
