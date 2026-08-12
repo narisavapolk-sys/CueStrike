@@ -954,4 +954,34 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 - เกมเริ่มเฟรมได้ → 16 ลูก spawn → AI มีลูกให้ยิงจริง
 - **ยังต้อง verify:** PlayMode test ซ้ำ (AI ยิงแล้วลูกขยับ) + Vision audit manual
 - backlog: pocket detection (BallPottedTracker) / ฟิสิกส์โต๊ะ อาจยังไม่ครบใน AAA
-- R39: difficulty selector ใน UI (Snooker) / ผูกเสียงน้องโบ 14 คลิป / Multiplayer room (Normcore)
+## 🎯 TITLE SCOREBOARD (Bo Comedy มึนสกอร์ใน Lobby) — Round 39 (2026-08-12, per implementation_plan_r39_title_scoreboard.md)
+
+**Goal (ตามคำสั่งพี่โม่ง):** วาง ChinesePoolScoreboard ลง Title_NoksGrandHall ด้วย เพื่อให้ Bo Comedy "มึนสกอร์เสมอ" ทำงานใน lobby เหมือนห้องแข่ง (AAA_RoomDAY)
+
+### 📋 Findings (กฎข้อ 1 — ตรวจของจริงก่อน)
+| รายการ | สถานะ |
+|--------|--------|
+| ChinesePoolScoreboard component ใน Title | ❌ ไม่มีเลย (grep=0) — เหมือน AAA ก่อน R35 |
+| ChinesePoolUIManager ใน Title | ✅ มี |
+| BoPanda instance + BoComedyDirector | ✅ มี (R29/R33 วางไว้) |
+| Canvas ใน Title | ✅ มี 19 ref — UI แสดงได้ |
+
+**ปัญหา:** Title ไม่มี scoreboard → Bo `FindAnyObjectByType<ChinesePoolScoreboard>` หาไม่เจอ → "มึนสกอร์" ไม่เกิดใน lobby
+
+### ✅ Files changed
+- **`BoScoreboardSetup.cs`** (ขยาย R35 tool): จาก hardcode 1 ฉาก → loop 2 ฉาก `{AAA_RoomDAY, Title_NoksGrandHall}` — สร้าง scoreboard + ผูก UIManager._scoreboard + self-test ต่อฉาก — idempotent + batchmode
+- **`Title_NoksGrandHall.unity`**: เพิ่ม CueStrike_ChinesePoolScoreboard (fileID 300446121) + UIManager._scoreboard assigned
+
+### ✅ Verify
+- Compile gate batchmode: **0 errors** (Library อุ่นบน main)
+- Tool รันจริง: AAA skip (idempotent) + Title สร้าง + wired — self-test **3/3 PASS ×2 ฉาก**
+- **Idempotent**: รันซ้ำ skip ทั้ง 2 ฉาก (scoreboard + ref assigned ครบ)
+- main checkout คืนสภาพสะอาด — base = main `f30fdc0` (รวม R38)
+- Docs อัปเดตครบ 3 ไฟล์ (TASK_PROGRESS + CUESTRIKE_MASTER + task.md)
+
+### ⏳ หมายเหตุ
+- Bo ใน Title (lobby) subscribe OnScoreChanged ได้ → สกอร์ P1==P2>0 → SetTrigger("Speak") = มึน "ใครชนะนะ??"
+- Lobby มี scoreboard UI ด้วย (ต่อยอด R25)
+- ยังค้าง: Vision audit AI ยิงจริง (PlayMode test ซ้ำ) + pocket detection ใน AAA
+- R40: difficulty selector ใน UI (Snooker) / ผูกเสียงน้องโบ 14 คลิป / Multiplayer room (Normcore)
+
