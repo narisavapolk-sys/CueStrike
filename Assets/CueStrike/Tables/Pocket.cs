@@ -1,6 +1,7 @@
 using UnityEngine;
 using CueStrike;
 using CueStrike.Audio;
+using CueStrike.Gameplay;
 
 [RequireComponent(typeof(Collider))]
 public class Pocket : MonoBehaviour
@@ -41,6 +42,13 @@ public class Pocket : MonoBehaviour
                     tracker?.RegisterPotted(ballId, rules.currentPlayer);
                 }
                 // -----------------------------------------------------------------
+            }
+
+            // R44 — notify the scene tracker before deactivating the physics ball.
+            if (ballId > 0)
+            {
+                var tracker = FindFirstObjectByType<BallPottedTracker>();
+                tracker?.NotifyBallPotted(ballId);
             }
             other.gameObject.SetActive(false);
         }

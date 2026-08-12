@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using CueStrike.UI;
+using CueStrike.Gameplay.ChinesePool;
 
 namespace CueStrike.Gameplay
 {
@@ -101,6 +102,20 @@ namespace CueStrike.Gameplay
         {
             _pocketPositions = positions;
         }
+
+        /// <summary>R44 — accepts a physical Pocket trigger before the ball is deactivated.</summary>
+        public void NotifyBallPotted(int ballNumber)
+        {
+            if (ballNumber <= 0 || _pottedBalls.Contains(ballNumber)) return;
+            _pottedBalls.Add(ballNumber);
+            int currentPlayer = GetCurrentPlayerNumber();
+            OnBallPotted?.Invoke(ballNumber, currentPlayer);
+            if (_autoSyncScoreboard && _scoreboard != null)
+                _scoreboard.RegisterPottedBall(currentPlayer, ballNumber);
+            if (ballNumber == 8) OnBlackBallPotted?.Invoke();
+            CheckWinCondition();
+            Debug.Log($"[BallPottedTracker] Pocket trigger notified ball {ballNumber} for Player {currentPlayer + 1}.");
+        }
         #endregion
 
         #region Private Methods
@@ -127,21 +142,7 @@ namespace CueStrike.Gameplay
             // Detect potted
             if (isNearPocket && !wasPotted && IsBelowTableSurface(currentPos))
             {
-                _pottedBalls.Add(ballNumber);
-                int currentPlayer = GetCurrentPlayerNumber();
-                OnBallPotted?.Invoke(ballNumber, currentPlayer);
-
-                if (_autoSyncScoreboard && _scoreboard != null)
-                {
-                    _scoreboard.RegisterPottedBall(currentPlayer, ballNumber);
-                }
-
-                if (ballNumber == 8) // Black ball
-                {
-                    OnBlackBallPotted?.Invoke();
-                }
-
-                CheckWinCondition();
+                NotifyBallPotted(ballNumber);
             }
 
             // Detect returned (if ball somehow comes back up)
@@ -178,9 +179,9 @@ namespace CueStrike.Gameplay
 
         private int GetCurrentPlayerNumber()
         {
-            // Placeholder: actual implementation will depend on RulesManager API
-            // Future: integrate with ChinesePoolGameManager or ChinesePoolRules
-            return 1;
+            // R44 — use the authoritative Chinese Pool turn when available.
+            var gameManager = ChinesePoolGameManager.Instance;
+            return gameManager != null ? gameManager.currentPlayerIndex : 0;
         }
 
         private void CheckWinCondition()
