@@ -41326,6 +41326,57 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1187073786}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1187564666
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1187564668}
+  - component: {fileID: 1187564667}
+  m_Layer: 0
+  m_Name: ChinesePoolAIModifier
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1187564667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1187564666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afe3ce24ad5c2c644ab0ce8410242c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CueStrike.Gameplay.ChinesePool.ChinesePoolAIModifier
+  enableAI: 1
+  difficulty: 1
+  decisionDelay: 1
+  pottingPriority: 0.7
+  safetyPriority: 0.2
+  positionalPriority: 0.1
+  randomSeed: 0
+--- !u!4 &1187564668
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1187564666}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1189396768
 GameObject:
   m_ObjectHideFlags: 0
@@ -49531,7 +49582,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f3a1d9c8b2e4a7f0c6d9e1b3a5f7c92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CueStrike.AI.CueStrikePracticeAIBridge
-  aiModifier: {fileID: 0}
+  aiModifier: {fileID: 1187564667}
   aiController: {fileID: 1408312383}
   shotManager: {fileID: 0}
   defaultDifficulty: 1
@@ -64857,7 +64908,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CueStrike.Gameplay.ChinesePool.ChinesePoolGameManager
   ballSetup: {fileID: 0}
   callShotUI: {fileID: 0}
-  aiModifier: {fileID: 0}
+  aiModifier: {fileID: 1187564667}
   currentPhase: 0
   currentPlayerIndex: 0
   player1Group: 0
@@ -75860,3 +75911,4 @@ SceneRoots:
   - {fileID: 34771118}
   - {fileID: 1743306260}
   - {fileID: 608037974}
+  - {fileID: 1187564668}
