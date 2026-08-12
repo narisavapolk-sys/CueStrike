@@ -35,7 +35,8 @@ namespace CueStrike.EditorTools
             ("_breakClips", new[] { "bo_break_shot" }),
             ("_foulCalledClips", new[] { "bo_foul_called_01", "bo_foul_called_02" }),
             ("_foulCueBallPottedClips", new[] { "bo_foul_cueball" }),
-            ("_frameStartClips", Array.Empty<string>()),
+            // Reuse the two turn-start voice lines for frames 2+; Chinese Pool has no dedicated frame-start recordings.
+            ("_frameStartClips", new[] { "bo_turn_start_01", "bo_turn_start_02" }),
             ("_frameEndClips", Array.Empty<string>()),
             ("_matchEndClips", Array.Empty<string>()),
             ("_playerTurnEndClips", Array.Empty<string>()),
@@ -277,6 +278,7 @@ namespace CueStrike.EditorTools
 
                     LogResult("matchStart clips filled (2)", ClipArraySize(so, "_matchStartClips") == 2, ref pass, ref fail);
                     LogResult("turnStart clips filled (2)", ClipArraySize(so, "_playerTurnStartClips") == 2, ref pass, ref fail);
+                    LogResult("frameStart clips filled (2)", ClipArraySize(so, "_frameStartClips") == 2, ref pass, ref fail);
                     LogResult("potSuccess clips filled (3)", ClipArraySize(so, "_potSuccessClips") == 3, ref pass, ref fail);
                     LogResult("century clip filled (1)", ClipArraySize(so, "_centuryBreakClips") == 1, ref pass, ref fail);
                     LogResult("highBreak clip filled (1)", ClipArraySize(so, "_highBreakClips") == 1, ref pass, ref fail);

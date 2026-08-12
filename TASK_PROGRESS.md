@@ -1168,3 +1168,9 @@ Title lobby now provides Bo solo / Uncle solo / Duo selection through RefereeMod
 ## R44 (2026-08-12): Pocket Detection → GameManager Game Loop
 
 PocketGameLoopBridge now connects BallPottedTracker to ChinesePoolGameManager.ProcessPottedBall and BoReferee. Runtime ball references refresh from ChinesePoolBallSetup; compile gate and Editor setup self-test passed.
+
+---
+
+## R45/R46 (2026-08-12): Bo Referee Voice Audit + Frame-Start Voice
+
+Permanent BoRefereeVoiceAuditTests cover AAA wiring, 14 clips, bridge subscription, and match-start/foul/pot voice and animation paths. Bo frame-start clips now reuse bo_turn_start_01/02; compile and self-tests passed.
