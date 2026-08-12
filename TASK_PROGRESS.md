@@ -855,4 +855,41 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 - Bo ใน AAA จะ subscribe `OnScoreChanged` ได้จริง → เมื่อสกอร์ P1==P2>0 → `SetTrigger("Speak")` = มึน "ใครชนะนะ??"
 - Scoreboard แสดงสกอร์/เทิร์น/ฟาวล์จริง — ประโยชน์ต่อ R25 match flow
 - Vision audit ยังต้องตาม: เล่น Practice → ทำสกอร์เสมอ → สังเกตโบทำมึน
-- R36: แก้ AI blocker จาก Vision audit (เพิ่ม ChinesePoolAIModifier + assign refs) / Snooker AI (WBPS) / Multiplayer room (Normcore)
+- R36: Snooker AI (WBPS) — AI เล่นสนุกเกอร์ได้ (ทำแล้ว — ดู section ด้านล่าง)
+
+## 🎱 SNOOKER AI (WBPS) — Round 36 (2026-08-12, per implementation_plan_r36_snooker_ai.md)
+
+**Goal (ตามคำสั่งพี่โม่ง):** ต่อ AI opponent เข้ากับ WBPS ruleset (Snooker_Demo) — AI เล่นสนุกเกอร์ได้จริง
+
+### 📋 Findings (ตรวจโค้ดจริง)
+| รายการ | สถานะ |
+|--------|--------|
+| `CueStrikeWBPSRuleset` instance ใน Snooker_Demo | ✅ (Awake → ResetFrame → SetupRack) |
+| ลูก 22 ตัว (Red 1-15 + สี 16-21 + Cue 0) | ✅ มี (BallIdentity ×23) |
+| **ลูกมี Rigidbody/Collider** | ❌ **ไม่มีเลย** — physics ไม่ทำงาน ยิงไม่ได้ |
+| **พื้นโต๊ะ/rail/cushion** | ❌ ไม่มี — ลูกจะตกทะลุ |
+| **Pocket positions** | ❌ ไม่มี — AI ไม่มีเป้าหมายหลุม |
+| WBPS events (OnBallPotted/OnFoulCommitted/OnFrameWon) | ✅ มี |
+| WBPS turn system | ❌ ไม่มี — ต้องสร้างใน bridge |
+| `CueStrikeShotManager.ExecuteShot` | ✅ API มี แต่ Snooker_Demo ไม่มี instance |
+
+**ปัญหา:** Snooker_Demo เป็นแค่ "ลูก + ruleset" ไม่มีฟิสิกส์/โต๊ะ/หลุม → ต้องสร้าง environment + bridge ให้ครบ
+
+### ✅ Files changed
+- **`CueStrikeWBPSRuleset.cs`** (แก้): `SpawnSnookerBall()` เพิ่ม Rigidbody (mass 0.14, drag, ContinuousDynamic, Interpolate) + ensure SphereCollider + public accessors (ColorSequenceIndex / IsColorPhaseActive / AwaitingRespotColorState / RedsRemaining) สำหรับ AI
+- **`CueStrikeSnookerAIBridge.cs`** (ใหม่, runtime): turn system (P1 human ↔ P2 AI) + เลือกลูกตามกฎ WBPS (red phase → เลือกลูกแดงใกล้หลุม; awaiting color → สีค่ามากสุด; color phase → สีตาม sequence) + ghost-ball aim + AddForce จริง + error ตาม difficulty (Easy→Expert) + ประเมินผล (ใกล้หลุม + ต่ำกว่าโต๊ะ) → RegisterPot/ValidateShotFull + fail-safe retry
+- **`SnookerAISetup.cs`** (ใหม่, Editor): tool `Tools/CueStrike/Snooker/100. Setup Snooker AI` — สร้างโต๊ะ (bed + 4 rails) + 6 pockets + เพิ่ม Rigidbody/SphereCollider ให้ลูก 22 ตัว + ผูก bridge (ruleset + pockets) — idempotent + self-test + batchmode
+- **`Snooker_Demo.unity`**: เพิ่ม SnookerTable_Physics + SnookerPockets + Rigidbody ×22 + SnookerAI_Bridge
+
+### ✅ Verify
+- Compile gate batchmode: **0 errors** (ไฟล์ใหม่ 0 warnings)
+- Tool รันจริง: โต๊ะ + 6 หลุม + 22 ลูก (44 physics fixes) + bridge — self-test **6/6 PASS**
+- **Idempotent**: รันซ้ำ skip ทั้งหมด (Table/Pockets/Bridge)
+- main checkout คืนสภาพสะอาด — base = main `d498a0d` (รวม R35)
+
+### ⏳ หมายเหตุ
+- AI เล่นสนุกเกอร์ได้: เลือกลูกถูกตามกฎ (red→color→color phase), ยิงจริงด้วย physics, ฟาวล์/สกอร์ผ่าน WBPS
+- Difficulty เริ่ม Medium — เปลี่ยนได้ที่ Inspector ของ bridge (Easy/Medium/Hard/Expert)
+- Aim เป็น heuristic (nearest pocket + ghost-ball) — ไม่ perfect แต่เล่นได้สมเหตุสมผล
+- Vision audit: เปิด Snooker_Demo → เลือก AI เทิร์น → สังเกต AI ยิง + เลือกลูกตามกฎ
+- R37: ใส่ AI difficulty selector ใน UI / ChinesePool AIModifier blocker จาก R34 audit / Multiplayer room (Normcore)
