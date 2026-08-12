@@ -1050,7 +1050,42 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 - ผู้เล่นเลือก Easy/Medium/Hard/Expert จากจอ Snooker ได้ → `bridge.SetDifficulty` ทันที + PlayerPrefs จำค่า
 - Highlight ปุ่มที่เลือก (เขียว) — เห็นระดับปัจจุบันชัดเจน
 - ยังค้าง: Vision audit Bo กรรมการเสียงจริง + pocket detection ใน AAA
-- R42: Multiplayer room (Normcore) / Snooker difficulty UI → ต่อ Snooker AI setup เต็ม
+## 🎯 REFEREE MODE SWITCHER (Bo กรรมการ คู่ลุง / แทนลุง) — Round 42 (2026-08-12, per implementation_plan_r42_referee_mode.md)
+
+**Goal (ตามคำสั่งพี่โม่ง):** "Bo เป็นกรรมการได้ด้วย (ไม่ใช่ผู้เล่น) — ผูก Bo clips กับ game events คู่กับลุงหรือแทนลุงได้" → เพิ่มโหมดเลือก: ReplaceUncle (Bo คนเดียว — R40 ทำแล้ว) / DuoWithUncle (Bo + ลุง กรรมการคู่)
+
+### 📋 Findings (กฎข้อ 1 — ตรวจของจริงก่อน)
+| รายการ | สถานะ |
+|--------|--------|
+| Bo เป็นกรรมการ (R40 merged) | ✅ BoReferee + Bridge + 14 clips ใน prefab |
+| ลุง bridge | ❌ disabled (R40 ทำ "แทนลุง" แล้ว) |
+| **ตัวเลือก "คู่กับลุง"** | ❌ ไม่มี — ต้องเพิ่ม RefereeMode |
+| **🐛 บั๊กจาก R40 ที่เจอระหว่างทาง** | ❌ **meta GUID ใน git ไม่ตรงกับ prefab!** — prefab อ้าง `fa95f5cc`/`ae982d94` แต่ meta ใน git เป็น `3f9a1b2c`/`4a1b2c3d` (ผมเขียนมือตอน R40 → component หายจาก prefab เมื่อโหลดใหม่) → แก้ meta ให้ตรง prefab |
+
+**ปัญหา:** R40 ทำ "แทนลุง" อย่างเดียว — เลือก "คู่กับลุง" ไม่ได้ + meta GUID ผิดทำให้ BoReferee/Bridge หายจาก prefab ในเกมจริง
+
+### ✅ Files changed
+- **`BoRefereeEventBridge.cs`** (แก้): เพิ่ม `enum RefereeMode { ReplaceUncle, DuoWithUncle }` + `public RefereeMode refereeMode` + `ApplyRefereeMode()` (Start/Update retry — DuoWithUncle → enable ลุง bridge / ReplaceUncle → disable)
+- **`RefereeModeSetup.cs`** (ใหม่, Editor): tool `Tools/CueStrike/Mascots/145-146. Set Referee Mode` — ตั้ง refereeMode บน prefab + batchmode (`-refereeMode 0/1`) + self-test 6/6
+- **`BoReferee.cs.meta` + `BoRefereeEventBridge.cs.meta`** (fix บั๊ก R40): GUID ตรงกับ prefab (`fa95f5cc`/`ae982d94`) — component โผล่กลับใน prefab
+- **`BoPanda_Prefab.prefab`**: refereeMode field (default ReplaceUncle)
+
+### ✅ Verify
+- Compile gate batchmode: **0 errors** (Library อุ่นบน main)
+- Tool รันจริง: ตั้ง DuoWithUncle (`refereeMode: 1`) + ตั้งกลับ ReplaceUncle (`refereeMode: 0`) — self-test **6/6 PASS**
+- **Idempotent**: รันซ้ำ skip (already = ReplaceUncle)
+- **Meta fix verify**: prefab อ้าง GUID = meta GUID → BoReferee + Bridge โผล่ใน prefab (ก่อน fix หาย)
+- main checkout คืนสภาพสะอาด — base = main `66c3d7a` (รวม R41)
+- Docs อัปเดตครบ 3 ไฟล์ (TASK_PROGRESS + CUESTRIKE_MASTER + task.md)
+
+### ⏳ หมายเหตุ
+- **ReplaceUncle (default):** Bo กรรมการคนเดียว — ลุงเงียบ (พฤติกรรมเดิม R40)
+- **DuoWithUncle:** Bo + ลุง กรรมการคู่ — ลุง bridge re-enable ตอน runtime (subscribe same events)
+- เลือกได้จาก Inspector หรือ Editor tool — ต่อยอดเป็น UI ได้ภายหลัง
+- 🐛 **สำคัญ:** meta GUID fix นี้สำคัญมาก — เป็นการซ่อมบั๊กที่ทำให้ BoReferee/Bridge หายจาก prefab เมื่อคนอื่นโหลดโปรเจกต์ (CI compile ผ่านเพราะ Library cache แต่เกมจริงพัง)
+- ยังค้าง: Vision audit Bo กรรมการเสียงจริง
+- R43: Multiplayer room (Normcore) / Snooker difficulty UI → ต่อ Snooker AI setup เต็ม
+
 
 
 

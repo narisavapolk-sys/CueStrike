@@ -505,3 +505,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CueStrike.MascotSystem.BoRefereeEventBridge
   verbose: 0
+  refereeMode: 0
