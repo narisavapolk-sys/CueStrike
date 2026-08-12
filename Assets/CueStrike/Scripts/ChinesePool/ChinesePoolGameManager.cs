@@ -164,6 +164,25 @@ namespace CueStrike.Gameplay.ChinesePool
         }
 
         /// <summary>
+        /// R44 — Processes a real pocket detection as a completed shot.
+        /// The ruleset determines the ball group so break/open-table logic,
+        /// score updates, fouls, and turn changes use the same path as manual shots.
+        /// </summary>
+        public void ProcessPottedBall(int ballId)
+        {
+            if (ballId <= 0) return;
+            var result = new ShotResult { ballPottedId = ballId, callShotMatched = true };
+            if (currentPhase == ChinesePoolMatchState.Break || currentPhase == ChinesePoolMatchState.OpenTable)
+            {
+                var group = GetBallGroup(ballId);
+                result.redBallsPotted = group == BallGroup.Red ? 1 : 0;
+                result.yellowBallsPotted = group == BallGroup.Yellow ? 1 : 0;
+            }
+            ProcessShotResult(result);
+            Debug.Log($"[CueStrike] Pocket detection processed ball {ballId}; current player={currentPlayerIndex + 1}.");
+        }
+
+        /// <summary>
         /// Processes the result of a completed shot.
         /// </summary>
         public void ProcessShotResult(ShotResult result)

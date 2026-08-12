@@ -1162,3 +1162,9 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 ## R43 (2026-08-12): Referee Mode Selector UI — merged PR #40
 
 Title lobby now provides Bo solo / Uncle solo / Duo selection through RefereeModeSwitcher and RefereeModeUI. CI passed and this PR is ready for protected-main merge.
+
+---
+
+## R44 (2026-08-12): Pocket Detection → GameManager Game Loop
+
+PocketGameLoopBridge now connects BallPottedTracker to ChinesePoolGameManager.ProcessPottedBall and BoReferee. Runtime ball references refresh from ChinesePoolBallSetup; compile gate and Editor setup self-test passed.
