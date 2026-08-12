@@ -1,4 +1,12 @@
-# Task: CueStrike VR — R41 Snooker Difficulty UI (Current) → R42+ Roadmap
+# Task: CueStrike VR — R42 Referee Mode (Current) → R43+ Roadmap
+
+## ✅ R42 — REFEREE MODE SWITCHER (Ready for PR)
+- [x] BoRefereeEventBridge.cs: enum RefereeMode { ReplaceUncle, DuoWithUncle } + ApplyRefereeMode()
+- [x] RefereeModeSetup.cs (Editor tool: ตั้งโหมด + batchmode + self-test 6/6)
+- [x] 🐛 fix meta GUID R40 (BoReferee/Bridge ตรง prefab — component กลับมา)
+- [x] Compile 0 errors + self-test 6/6 + idempotent
+- [ ] รอ CI เขียว + merge
+
 
 ## ✅ R41 — SNOOKER AI DIFFICULTY UI (Ready for PR)
 - [x] SnookerDifficultyUI.cs (ลอก R34: Canvas + 4 ปุ่ม + bridge.SetDifficulty + PlayerPrefs + highlight)

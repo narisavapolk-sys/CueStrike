@@ -4,17 +4,32 @@ using CueStrike.Gameplay.ChinesePool;
 namespace CueStrike.MascotSystem
 {
     /// <summary>
-    /// R40 — Bo เป็นกรรมการจริง: ผูก BoReferee กับ game events
+    /// R40 + R42 — Bo เป็นกรรมการจริง: ผูก BoReferee กับ game events
     /// เชื่อม events ของ ChinesePoolGameManager / CueStrikeWBPSRuleset
     /// → เรียก BoReferee methods (ประกาศคะแนน / ฟาวล์ / เริ่ม-จบเฟรม / จบแมตช์)
     ///
     /// วาง component ที่ BoPanda_Prefab → ฉากไหนมีโบ + game manager ได้ผลอัตโนมัติ
     /// Fail-safe: หา manager/referee ไม่เจอ → log + retry (คล้าย BoComedy)
+    ///
+    /// R42 — Referee Mode:
+    ///   ReplaceUncle (default): Bo กรรมการคนเดียว — ลุง bridge ถูกปิด (R40)
+    ///   DuoWithUncle: Bo + ลุง กรรมการคู่ — ลุง bridge ถูกเปิดตอน runtime
     /// </summary>
     public class BoRefereeEventBridge : MonoBehaviour
     {
+        /// <summary>R42 — โหมดกรรมการ: แทนลุง (default) หรือคู่กับลุง</summary>
+        public enum RefereeMode
+        {
+            ReplaceUncle,
+            DuoWithUncle
+        }
+
         [Header("Debug")]
         public bool verbose = false;
+
+        [Header("Referee Mode (R42)")]
+        [Tooltip("ReplaceUncle: Bo กรรมการคนเดียว (ลุงเงียบ) | DuoWithUncle: Bo + ลุง กรรมการคู่")]
+        public RefereeMode refereeMode = RefereeMode.ReplaceUncle;
 
         private BoReferee _referee;
         private bool _subscribedCp;
@@ -34,6 +49,7 @@ namespace CueStrike.MascotSystem
                 Debug.LogWarning("[BoRefereeBridge] No BoReferee found — bridge disabled (fail-safe).");
             }
 
+            ApplyRefereeMode();
             TrySubscribe();
         }
 
@@ -43,6 +59,32 @@ namespace CueStrike.MascotSystem
             if (!_subscribedCp || !_subscribedWbps)
             {
                 TrySubscribe();
+            }
+
+            // R42 — retry referee mode (ลุง bridge อาจโหลดทีหลัง)
+            ApplyRefereeMode();
+        }
+
+        // ============ R42: Referee Mode ============
+
+        /// <summary>
+        /// R42 — ควบคุมลุง bridge ตามโหมด:
+        /// ReplaceUncle → disable (ลุงเงียบ — R40 default)
+        /// DuoWithUncle → enable (ลุงประกาศคู่กับโบ)
+        /// </summary>
+        private void ApplyRefereeMode()
+        {
+            var uncleBridge = FindAnyObjectByType<UncleNokRefereeEventBridge>();
+            if (uncleBridge == null) return;
+
+            bool wantEnabled = refereeMode == RefereeMode.DuoWithUncle;
+            if (uncleBridge.enabled != wantEnabled)
+            {
+                uncleBridge.enabled = wantEnabled;
+                if (verbose)
+                {
+                    Debug.Log($"[BoRefereeBridge] Uncle bridge {(wantEnabled ? "ENABLED — Bo + Uncle duo referees." : "DISABLED — Bo solo referee.")}");
+                }
             }
         }
 
