@@ -13,9 +13,24 @@
 - [x] Compile verify: batchmode **0 errors** + tool **2/2 ฉาก** + idempotent (รันซ้ำ skip) + self-test **4/4**
 
 ### ⏳ เหลือ (R31/R34 กรรมการ + คู่ซ้อม AI)
-- [ ] ผูก UncleNokReferee กับ game events — ประกาศคะแนน/ฟาวล์จริง (R31)
+- [ ] ผูก UncleNokReferee กับ game events — ประกาศคะแนน/ฟาวล์จริง (R31 — PR #28 เปิดอยู่)
 - [ ] ต่อ AI opponent กับโหมด Practice (R34)
 - [ ] Vision audit: เปิด AAA_RoomDAY → เห็นลุงโน๊ก (0,0,-4.6) + โบ (0,0,4.6) ยืนคนละฝั่งโต๊ะ
+
+---
+
+## 🎯 R32 — BO COMEDY DIRECTOR (MERGED ✅ — PR #26)
+
+### ✅ Done
+- [x] ตรวจของจริง: BoPanda prefab มี Animator + controller (triggers Disappointed/Speak/IsIdle) + `BoPandaBanter` + Scoreboard มี `OnScoreChanged`
+- [x] `BoComedyDirector.cs` — Bo หลับ (idle 30s → Disappointed, ตื่นเมื่อลูกขยับ) + Bo มึนสกอร์เสมอ (OnScoreChanged → Speak + cooldown)
+- [x] Editor tool `BoComedySetup.cs` — `Tools/CueStrike/Mascots/70. Setup Bo Comedy Director` (PrefabUtility + idempotent + self-test + batchmode)
+- [x] ผูกเข้า BoPanda_Prefab — ฉากไหนมี Bo instance ได้ผลอัตโนมัติ
+- [x] Compile verify: batchmode **0 errors** + self-test **7/7**
+
+### ⏳ เหลือ (โมเมนต์ตลกขั้นสูง)
+- [ ] ท่า animation ใหม่ (Sleep/Gasp/Dance) ผ่าน Blender — Bo ขโมยชอล์ก / กลัวลูกพุ่ง / กองเชียร์พลาด
+- [ ] ใส่ BoPanda ในห้องแข่ง → Comedy มึนสกอร์ทำงานเต็มรูปแบบ (ตอนนี้ Bo อยู่ใน Title อย่างเดียว)
 
 ---
 

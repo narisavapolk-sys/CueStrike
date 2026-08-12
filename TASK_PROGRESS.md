@@ -721,6 +721,28 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 - ยังไม่ผูก referee กับ game events (R31 กรรมการจริง — ประกาศคะแนน/ฟาวล์) — ตอนนี้พร้อมรับ event แล้ว
 - `_homePosition` = root Transform → `Start()` ล็อกตำแหน่ง + `Update()` หมุนหันเข้าหา home position (referee หันหน้าเข้าหาโต๊ะตลอด)
 
+## 🐼 BO COMEDY DIRECTOR (โมเมนต์ตลก 2 ตัว) — Round 32 (2026-08-12, per implementation_plan_r32_bo_comedy.md)
+
+**Goal (ตามคำสั่งพี่โม่ง):** ระบบ Bo Comedy Director — โมเมนต์ตลกง่ายๆ 2 ตัวก่อน ใช้ animation ที่มีอยู่แล้ว (R27)
+
+### ✅ Files changed
+- **`BoComedyDirector.cs`** (ใหม่): runtime — 2 ทริกเกอร์:
+  1. **Bo หลับ** — ผู้เล่นไม่ขยับเกิน 30s → `SetTrigger("Disappointed")` (ก้มหน้า = หลับ) + "zzz..."; พอลูกขยับ → `SetBool("IsIdle", true)` + ตื่น (ตรวจผ่าน `BallActivityDetector` — หา Rigidbody ที่ velocity > 0)
+  2. **Bo มึนสกอร์เสมอ** — subscribe `ChinesePoolScoreboard.OnScoreChanged` → p1 == p2 > 0 → `SetTrigger("Speak")` + cooldown 20s
+  - Fail-safe: หา Animator/Scoreboard ไม่เจอ → log + ข้าม ไม่พัง; retry subscribe ทุก 2s
+- **`BoComedySetup.cs`** (ใหม่): Editor tool `Tools/CueStrike/Mascots/70. Setup Bo Comedy Director` — `PrefabUtility.LoadPrefabContents` + idempotent + self-test + batchmode
+- **`BoPanda_Prefab.prefab`**: เพิ่ม `BoComedyDirector` component — ฉากไหนมี Bo instance (เช่น Title) ได้ผลอัตโนมัติ
+
+### ✅ Verify
+- Compile gate batchmode: **0 errors** (ไฟล์ใหม่ 0 warnings)
+- Tool รันจริง: เพิ่ม component + save prefab
+- Self-test **7/7 ผ่าน** (component + Animator + controller + triggers Disappointed/Speak/IsIdle ใน controller)
+- หมายเหตุ: แก้ระหว่างทาง — meta GUID ต้องเป็น 32 hex เป๊ะ (GUID ยาวเกิน 32 → Unity ละเลยไฟล์ทั้งไฟล์ — CS0246 class not found) + `FindObjectsByType` ต้องเรียกผ่าน `UnityEngine.Object` ใน static class
+
+### ⏳ หมายเหตุ
+- โมเมนต์ตลกขั้นสูง (Bo ขโมยชอล์ก / กลัวลูกพุ่ง / กองเชียร์พลาด) — ต้องทำท่า animation ใหม่ (Blender) — roadmap ไว้ทีหลัง
+- ใช้ได้เฉพาะฉากที่มี BoPanda + Scoreboard (Title มี Bo แต่ไม่มี Scoreboard → ทริกเกอร์มึนสกอร์ต้องรอเมื่อ Bo อยู่ในห้องแข่ง)
+
 ## 🐼 BOPANDA ลงห้องแข่ง (คู่พิธีกรครบ) — Round 33 (2026-08-12, per implementation_plan_r33_bopanda_match_scenes.md)
 
 **Goal (ตามคำสั่งพี่โม่ง):** วาง BoPanda ลง AAA_RoomDAY + Snooker_Demo ด้วย — ให้ห้องแข่งมีคู่พิธีกรครบ (ลุงโน๊ก referee + โบกองเชียร์)
@@ -737,9 +759,9 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 
 ### ⏳ หมายเหตุ
 - Title ไม่ถูกแตะ (มี Bo อยู่แล้ว) — tool ข้ามอัตโนมัติ
-- ฉากห้องแข่งตอนนี้มีลุงโน๊ก + โบครบคู่ — พร้อมให้ R32 Bo Comedy (เมื่อ merge) ทำงานเต็มรูปแบบ (มี Scoreboard ในห้อง)
+- ฉากห้องแข่งตอนนี้มีลุงโน๊ก + โบครบคู่ — พร้อมให้ Bo Comedy (R32 merged) ทำงานเต็มรูปแบบ (มี Scoreboard ในห้อง)
 
 ### ⏭️ Roadmap R24+ (จัดลำดับความสำคัญ — ปรับตามโค้ช)
-1. **R31 กรรมการจริง** — ผูก UncleNokReferee กับ game events (OnFrameStart/OnBallPotted/OnFoulCommitted) — ประกาศคะแนน/ฟาวล์จริง
+1. **R31 กรรมการจริง** — ผูก UncleNokReferee กับ game events (OnFrameStart/OnBallPotted/OnFoulCommitted) — ประกาศคะแนน/ฟาวล์จริง (PR #28 เปิดอยู่)
 2. **R34 ลุงโน๊กคู่ซ้อม AI** — ต่อ AI opponent (CueStrikeAIController มีอยู่แล้ว) กับโหมด Practice + เลือกระดับ Easy/Medium/Hard/Expert
 3. **R35 (nice-to-have)** — Multiplayer room (Normcore)
