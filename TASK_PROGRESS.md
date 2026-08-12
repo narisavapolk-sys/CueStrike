@@ -983,5 +983,41 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 - Bo ใน Title (lobby) subscribe OnScoreChanged ได้ → สกอร์ P1==P2>0 → SetTrigger("Speak") = มึน "ใครชนะนะ??"
 - Lobby มี scoreboard UI ด้วย (ต่อยอด R25)
 - ยังค้าง: Vision audit AI ยิงจริง (PlayMode test ซ้ำ) + pocket detection ใน AAA
-- R40: difficulty selector ใน UI (Snooker) / ผูกเสียงน้องโบ 14 คลิป / Multiplayer room (Normcore)
+## 🎙️ BO REFEREE (Bo เป็นกรรมการ + ลุงเป็นกองเชียร์) — Round 40 (2026-08-12, per implementation_plan_r40_bo_referee.md)
+
+**Goal (ตามคำสั่งพี่โม่ง):** ผูกเสียงน้องโบ 14 คลิปเข้า BoPanda_Prefab (ลอกแบบ R30 ที่ทำลุง) + **ให้ Bo เป็นกรรมการ (Random voice), ลุงโน๊ะเป็นกองเชียร์** — สลับบทบาท
+
+### 📋 Findings (กฎข้อ 1 — ตรวจของจริงก่อน)
+| รายการ | สถานะ |
+|--------|--------|
+| เสียงโบ 14 ไฟล์บนดิสก์ (`Audio/Clips/Voice/NongBo/bo_*.wav`) | ✅ มีครบ |
+| เสียงโบผูกใน prefab (GUID อ้าง) | ❌ ไม่มีเลย — ไฟล์ถูกสร้างไว้แต่ไม่ถูกผูก |
+| `BoPandaBanter.cs` มีระบบเสียง (PlayVoice + cooldown) | ❌ ไม่มี — เป็นแค่ UnityEvent + Debug.Log (AI ตัวก่อนอ้างเท็จ) |
+| BoPanda prefab: AudioSource | ✅ มีแต่ `m_audioClip` ว่าง |
+| BoPanda prefab: referee component | ❌ ไม่มี (มีแค่ BoPandaBanter + BoComedyDirector) |
+| UncleNok prefab: UncleNokReferee + EventBridge | ✅ มี (กรรมการคนปัจจุบัน — ต้องปิด bridge ให้เป็นกองเชียร์) |
+| หมายเหตุชื่อ R | พี่สั่ง "R37" แต่ R37 ถูกใช้แล้ว (ChinesePool AI fix = PR #32) → งานนี้คือ **R40** |
+
+**ปัญหา:** Bo มีเสียงครบแต่ไม่ถูกผูก → Bo เป็นแค่กองเชียร์เงียบ (ไม่มี referee system)
+
+### ✅ Files changed
+- **`BoReferee.cs`** (ใหม่, runtime): ลอก UncleNokReferee — PlayRandomClip + CanAnnounce (cooldown 3s) + FoulType enum + OnFrameStart/OnMatchStart/OnPlayerTurnStart/OnBallPotted (potSuccess/century/highBreak/clearance)/OnFoulCommitted/OnCueBallPotted/OnBreakShot + animation triggers (Speak/Celebrate/Disappointed)
+- **`BoRefereeEventBridge.cs`** (ใหม่, runtime): ลอก UncleNokRefereeEventBridge — subscribe ChinesePoolGameManager + WBPS events (signature ตาม R31 จริง: GetFrameWinner, OnBallPotted(int), OnFoulCommitted(int,string)) + fail-safe retry + OnDestroy unsubscribe
+- **`BoVoicePinSetup.cs`** (ใหม่, Editor): tool `Tools/CueStrike/Mascots/130. Pin Bo Referee Voice & Refs` — เพิ่ม BoReferee + AudioSource (3D spatial) + assign refs (_animator/_audioSource/_homePosition) + assign 14 clips (mapping: matchStart 2/turnStart 2/potSuccess 3/century 1/highBreak 1/clearance 1/break 1/foulCalled 2/foulCueBall 1) + เพิ่ม bridge + **disable UncleNokRefereeEventBridge** (ลุงเป็นกองเชียร์) — idempotent + self-test + batchmode
+- **`BoPanda_Prefab.prefab`**: BoReferee (fileID `fa95f5cc...`) + refs + 14 clips + BoRefereeEventBridge
+- **`UncleNok_Prefab.prefab`**: `UncleNokRefereeEventBridge.m_Enabled = 0` (ลุงไม่ประกาศคะแนน/ฟาวล์อีกต่อไป)
+
+### ✅ Verify
+- Compile gate batchmode: **0 errors** (Library อุ่นบน main)
+- Tool รันจริง: BoReferee + clips 14/14 + bridge + ลุง bridge disabled — self-test **18/18 PASS**
+- **Idempotent**: รันซ้ำ skip ทั้งคู่ (BoPanda already wired + Uncle bridge already disabled)
+- main checkout คืนสภาพสะอาด — base = main `eda93f3` (รวม R39)
+- Docs อัปเดตครบ 3 ไฟล์ (TASK_PROGRESS + CUESTRIKE_MASTER + task.md)
+
+### ⏳ หมายเหตุ
+- **Bo เป็นกรรมการจริง**: ประกาศคะแนน/ฟาวล์/เริ่มเฟรมด้วยเสียงโบ (Random) + animation Speak/Celebrate/Disappointed — 3 ฉาก (Title/AAA_RoomDAY/Snooker_Demo) เป็น prefab instance → ได้ผลอัตโนมัติ
+- **ลุงเป็นกองเชียร์**: bridge disabled → ไม่ประกาศคะแนน — ยืนดูข้างสนาม (ยังมี idle animation)
+- ยังค้าง: Vision audit AI ยิงจริง (PlayMode test ซ้ำ) + pocket detection ใน AAA
+- R41: difficulty selector ใน UI (Snooker) / Multiplayer room (Normcore) / Snooker AI difficulty UI
+
 
