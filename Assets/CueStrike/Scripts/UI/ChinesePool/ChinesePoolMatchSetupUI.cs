@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using CueStrike.Gameplay.ChinesePool;
+using CueStrike.AI;
 
 namespace CueStrike.UI.ChinesePool
 {
@@ -9,6 +10,7 @@ namespace CueStrike.UI.ChinesePool
     /// R25 — Match setup dialog (World-Space VR panel) shown before a match starts.
     /// Lets the player agree with the AI on the match condition:
     ///   Single Frame (= Best of 1) / Best of 3 / Best of 5 / Best of 7 / Practice (no end)
+    /// R34 — เพิ่มแถวเลือกระดับ AI (Easy/Medium/Hard/Expert) สำหรับคู่ซ้อมในโหมด Practice
     /// Coach-approved: "UI Dialog หน้าต่างเลือกก่อนเริ่มเกม ... ผู้เล่นกดยืนยันเลือกได้เองผ่านปุ่ม VR"
     ///
     /// Fail-safe: no GameManager / no Canvas → log warning, never block the scene.
@@ -25,6 +27,9 @@ namespace CueStrike.UI.ChinesePool
 
         [Tooltip("ป้ายชื่อปุ่ม ตามลำดับเดียวกับ bestOfOptions")]
         public string[] optionLabels = { "Single Frame", "Best of 3", "Best of 5", "Best of 7", "Practice" };
+
+        [Tooltip("ระดับ AI เริ่มต้น (R34) — Easy/Medium/Hard/Expert")]
+        public SkillLevel selectedDifficulty = SkillLevel.Medium;
 
         private GameObject _panelRoot;
         private bool _shown;
@@ -89,9 +94,28 @@ namespace CueStrike.UI.ChinesePool
                 return;
             }
 
+            // R34 — ตั้งระดับ AI ให้ bridge (ถ้ามีในฉาก) ก่อนเริ่มแมตช์
+            ApplySelectedDifficulty();
+
             gm.StartNewMatch(bestOf);
             ChinesePoolUIManager.Instance?.InitializeGame();
-            Debug.Log($"[ChinesePoolMatchSetupUI] Match started: {(bestOf == 0 ? "Practice" : $"Best of {bestOf}")}.");
+            Debug.Log($"[ChinesePoolMatchSetupUI] Match started: {(bestOf == 0 ? "Practice" : $"Best of {bestOf}")} (AI: {selectedDifficulty}).");
+        }
+
+        /// <summary>R34 — ตั้งระดับ AI ที่เลือกให้ CueStrikePracticeAIBridge ในฉาก</summary>
+        private void ApplySelectedDifficulty()
+        {
+            var bridge = FindFirstObjectByType<CueStrikePracticeAIBridge>();
+            if (bridge != null)
+            {
+                bridge.SetAIDifficulty(selectedDifficulty);
+            }
+            else
+            {
+                // ยังไม่มี bridge ในฉาก — เก็บไว้ใน PlayerPrefs ให้ bridge อ่านตอน Start
+                PlayerPrefs.SetInt("CueStrike_AIDifficulty", (int)selectedDifficulty);
+                PlayerPrefs.Save();
+            }
         }
 
         // ---- UI building ----
@@ -189,6 +213,31 @@ namespace CueStrike.UI.ChinesePool
                     CreateButton(root.transform, $"Option_{i}", label, new Vector2(0.5f, y), () => OnOptionSelected(bestOf));
                 }
 
+                // R34 — AI difficulty selector (4 ปุ่มแถวเดียว)
+                var aiLabelGO = new GameObject("AIDifficultyLabel");
+                aiLabelGO.transform.SetParent(root.transform, false);
+                var aiLabel = aiLabelGO.AddComponent<Text>();
+                aiLabel.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+                aiLabel.fontSize = 18;
+                aiLabel.color = new Color(0.8f, 0.8f, 0.85f);
+                aiLabel.alignment = TextAnchor.MiddleCenter;
+                aiLabel.text = "ระดับ AI (คู่ซ้อม):";
+                var aiLabelRect = aiLabel.rectTransform;
+                aiLabelRect.anchorMin = new Vector2(0f, 0.135f);
+                aiLabelRect.anchorMax = new Vector2(1f, 0.175f);
+                aiLabelRect.offsetMin = Vector2.zero;
+                aiLabelRect.offsetMax = Vector2.zero;
+
+                string[] diffLabels = { "Easy", "Medium", "Hard", "Expert" };
+                SkillLevel[] diffValues = { SkillLevel.Easy, SkillLevel.Medium, SkillLevel.Hard, SkillLevel.Expert };
+                for (int d = 0; d < diffValues.Length; d++)
+                {
+                    int idx = d;
+                    float x = 0.22f + d * 0.18f;
+                    CreateDifficultyButton(root.transform, $"Diff_{d}", diffLabels[d], new Vector2(x, 0.09f),
+                        () => OnDifficultySelected(diffValues[idx]));
+                }
+
                 // Hint
                 var hintGO = new GameObject("Hint");
                 hintGO.transform.SetParent(root.transform, false);
@@ -199,8 +248,8 @@ namespace CueStrike.UI.ChinesePool
                 hint.alignment = TextAnchor.MiddleCenter;
                 hint.text = "เลือกเงื่อนไขเพื่อเริ่มแมตช์";
                 var hintRect = hint.rectTransform;
-                hintRect.anchorMin = new Vector2(0f, 0.03f);
-                hintRect.anchorMax = new Vector2(1f, 0.09f);
+                hintRect.anchorMin = new Vector2(0f, 0.02f);
+                hintRect.anchorMax = new Vector2(1f, 0.06f);
                 hintRect.offsetMin = Vector2.zero;
                 hintRect.offsetMax = Vector2.zero;
 
@@ -244,6 +293,49 @@ namespace CueStrike.UI.ChinesePool
             labelRect.anchorMax = Vector2.one;
             labelRect.offsetMin = Vector2.zero;
             labelRect.offsetMax = Vector2.zero;
+        }
+
+        /// <summary>R34 — ปุ่มเลือกระดับ AI (แถวสั้นกว่า)
+        private void CreateDifficultyButton(Transform parent, string name, string label, Vector2 anchor, UnityEngine.Events.UnityAction onClick)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+
+            var rect = go.AddComponent<RectTransform>();
+            rect.anchorMin = anchor;
+            rect.anchorMax = anchor;
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.sizeDelta = new Vector2(110f, 46f);
+
+            var img = go.AddComponent<Image>();
+            img.color = new Color(0.35f, 0.45f, 0.65f, 1f);
+
+            var btn = go.AddComponent<Button>();
+            btn.targetGraphic = img;
+            btn.onClick.AddListener(onClick);
+
+            var labelGO = new GameObject("Label");
+            labelGO.transform.SetParent(go.transform, false);
+            var labelText = labelGO.AddComponent<Text>();
+            labelText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            labelText.fontSize = 20;
+            labelText.color = Color.white;
+            labelText.alignment = TextAnchor.MiddleCenter;
+            labelText.text = label;
+            var labelRect = labelText.rectTransform;
+            labelRect.anchorMin = Vector2.zero;
+            labelRect.anchorMax = Vector2.one;
+            labelRect.offsetMin = Vector2.zero;
+            labelRect.offsetMax = Vector2.zero;
+        }
+
+        /// <summary>R34 — จำระดับ AI ที่เลือก (เก็บใน PlayerPrefs เพื่อให้ bridge ใช้)
+        private void OnDifficultySelected(SkillLevel level)
+        {
+            selectedDifficulty = level;
+            PlayerPrefs.SetInt("CueStrike_AIDifficulty", (int)level);
+            PlayerPrefs.Save();
+            Debug.Log($"[ChinesePoolMatchSetupUI] AI difficulty selected: {level}.");
         }
     }
 }

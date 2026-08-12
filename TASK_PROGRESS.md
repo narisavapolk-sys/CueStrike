@@ -789,6 +789,37 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 - ฉากห้องแข่งตอนนี้มีลุงโน๊ก + โบครบคู่ — พร้อมให้ Bo Comedy (R32 merged) ทำงานเต็มรูปแบบ (มี Scoreboard ในห้อง)
 
 ### ⏭️ Roadmap R24+ (จัดลำดับความสำคัญ — ปรับตามโค้ช)
-1. **R31 กรรมการจริง** — ผูก UncleNokReferee กับ game events (OnFrameStart/OnBallPotted/OnFoulCommitted) — ประกาศคะแนน/ฟาวล์จริง (PR #28 เปิดอยู่)
-2. **R34 ลุงโน๊กคู่ซ้อม AI** — ต่อ AI opponent (CueStrikeAIController มีอยู่แล้ว) กับโหมด Practice + เลือกระดับ Easy/Medium/Hard/Expert
+1. **R31 กรรมการจริง** — ผูก UncleNokReferee กับ game events (OnFrameStart/OnBallPotted/OnFoulCommitted) — ประกาศคะแนน/ฟาวล์จริง (MERGED ✅ — PR #28)
+2. **R34 ลุงโน๊กคู่ซ้อม AI** — ต่อ AI opponent กับโหมด Practice + เลือกระดับ Easy/Medium/Hard/Expert (อยู่ระหว่าง PR)
 3. **R35 (nice-to-have)** — Multiplayer room (Normcore)
+
+## 🦣 PRACTICE AI (ลุงโน๊กคู่ซ้อม) — Round 34 (2026-08-12, per implementation_plan_r34_practice_ai.md)
+
+**Goal (ตามคำสั่งพี่โม่ง):** ต่อ AI opponent เข้ากับโหมด Practice — ลุงโน๊กเป็นคู่ซ้อม AI เลือกระดับ Easy/Medium/Hard/Expert ได้จาก UI — ใช้ CueStrikeAIController ที่มีอยู่แล้ว
+
+*หมายเหตุ: พี่โม่งสั่งว่า "R31" แต่ R31 ถูกใช้ไปแล้ว (Referee Event Bridge, PR #28) → งานนี้คือ R34 ตาม roadmap*
+
+### 📋 Findings (ตรวจโค้ดจริง)
+| รายการ | สถานะ |
+|--------|--------|
+| `ChinesePoolAIModifier` (stub) | ✅ มีอยู่ (AAA 2 ตัว) — `DecideCallShot()` + `DecideShotParameters()` + `SetDifficulty()` — **แต่ไม่มีใครเรียก (dead)** |
+| `CueStrikeAIController` | ✅ มีอยู่ (AAA 2 ตัว) — `SetSkillLevel()` 4 ระดับ — แต่ยิงผ่าน reflection `shotManager.currentForce` → **ฉากไม่มี CueStrikeShotManager → ยิงไม่ทำงาน** |
+| `ChinesePoolGameManager.NextPlayer()` | ✅ ตั้ง `isAiTurn = (playerIndex==1 && aiModifier!=null)` — **แต่ไม่มีโค้ดให้ AI ตัดสินใจ/ยิง** |
+| ฉากที่มี GameManager | ✅ **AAA_RoomDAY เท่านั้น** (Title = lobby, Snooker_Demo = WBPS คนละระบบ) |
+
+### ✅ Files changed
+- **`CueStrikePracticeAIBridge.cs`** (ใหม่, runtime): subscribe `OnTurnChanged` → เมื่อ `isAiTurn`: ① `DecideCallShot()` → `SetCallShot()` ② `DecideShotParameters()` → ยิงจริง (`Rigidbody.AddForce`, pattern CueStrikeCue.cs:220 / `CueStrikeShotManager.ExecuteShot` ถ้ามี) ③ รอลูกหยุด → ประเมินผล → `ProcessShotResult()` — fail-safe: หา refs ไม่เจอ → retry ทุก 2s + `SetAIDifficulty()` (sync modifier + controller + PlayerPrefs)
+- **`ChinesePoolMatchSetupUI.cs`** (แก้): เพิ่มแถวเลือกระดับ AI (Easy/Medium/Hard/Expert) ใต้ปุ่มเงื่อนไข + เก็บ PlayerPrefs + เรียก bridge `SetAIDifficulty()` ก่อนเริ่มแมตช์
+- **`PracticeAISetup.cs`** (ใหม่, Editor): tool `Tools/CueStrike/AI/90. Setup Practice AI` — เพิ่ม bridge ลง AAA_RoomDAY + assign refs + idempotent + self-test + batchmode
+- **`AAA_RoomDAY.unity`**: เพิ่ม `CueStrikePracticeAIBridge` (บน node CueStrikeAIController)
+
+### ✅ Verify
+- Compile gate batchmode: **0 errors** (ไฟล์ใหม่ 0 warnings)
+- Tool รันจริง: AAA_RoomDAY wired (bridge บน node CueStrikeAIController) — Snooker_Demo skip (fail-safe, ไม่มี GameManager)
+- Self-test **10/10 ผ่าน** (class + API + difficulty + scene)
+- main checkout คืนสภาพสะอาด — base = main `6f756f8` (รวม R33)
+
+### ⏳ หมายเหตุ
+- AI ยิงลูกจริงแล้ว (AddForce) — ระดับความยากคุม accuracy/error (ผ่าน CueStrikeAIController params)
+- Vision audit: เปิด AAA_RoomDAY → เลือก Practice + ระดับ AI → สังเกต AI ยิงเองตอนเทิร์นมัน
+- R35: Snooker AI (WBPS) + Multiplayer room (Normcore)

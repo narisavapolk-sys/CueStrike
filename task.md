@@ -1,10 +1,25 @@
-# Task: CueStrike VR — R33 BoPanda ลงห้องแข่ง (Current) → R34+ Roadmap
+# Task: CueStrike VR — R34 Practice AI (Current) → R35+ Roadmap
 
-**Current Objective (2026-08-12):** วาง BoPanda ลง AAA_RoomDAY + Snooker_Demo — ให้ห้องแข่งมีคู่พิธีกรครบ (ลุงโน๊ก referee + โบกองเชียร์)
+**Current Objective (2026-08-12):** ต่อ AI opponent เข้ากับโหมด Practice — ลุงโน๊กเป็นคู่ซ้อม AI เลือกระดับ Easy/Medium/Hard/Expert จาก UI — ใช้ CueStrikeAIController ที่มีอยู่แล้ว
 
 ---
 
-## 🎯 R33 — BOPANDA ลงห้องแข่ง (Ready for PR)
+## 🎯 R34 — PRACTICE AI (Ready for PR)
+
+### ✅ Done
+- [x] ตรวจของจริง: `ChinesePoolAIModifier` มีครบแต่ไม่มีใครเรียก (dead), `CueStrikeAIController` ยิงผ่าน reflection แต่ฉากไม่มี ShotManager, ฉากที่มี GameManager = AAA_RoomDAY เท่านั้น
+- [x] `CueStrikePracticeAIBridge.cs` — subscribe OnTurnChanged → isAiTurn → DecideCallShot → SetCallShot → DecideShotParameters → ยิงจริง (AddForce/ShotManager) → รอลูกหยุด → ProcessShotResult + fail-safe + SetAIDifficulty
+- [x] `ChinesePoolMatchSetupUI.cs` — เพิ่มแถวเลือกระดับ AI (Easy/Medium/Hard/Expert) + PlayerPrefs + เรียก bridge ก่อนเริ่มแมตช์
+- [x] `PracticeAISetup.cs` (Editor tool `Tools/CueStrike/AI/90. Setup Practice AI`) — ผูก bridge ลง AAA_RoomDAY + idempotent + self-test + batchmode
+- [x] Compile verify: batchmode **0 errors** + self-test **10/10**
+
+### ⏳ เหลือ (Vision audit / R35)
+- [ ] Vision audit: เปิด AAA_RoomDAY → เลือก Practice + ระดับ AI → สังเกต AI ยิงเองตอนเทิร์นมัน
+- [ ] R35: Snooker AI (WBPS) + Multiplayer room (Normcore)
+
+---
+
+## 🎯 R33 — BOPANDA ลงห้องแข่ง (MERGED ✅ — PR #27)
 
 ### ✅ Done
 - [x] ตรวจของจริง: BoPanda อยู่ในแค่ Title, tool R29 จัดการแค่ UncleNok
