@@ -1133,3 +1133,11 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 - Added `BoRefereeVoiceAuditTests.cs` PlayMode automation for AAA_RoomDAY.
 - Checks BoReferee + bridge + AudioSource + 14 clips, bridge subscription, and match-start/foul/ball-potted voice + animation paths.
 - Verify: compile 0 errors; PlayMode exit 0; console evidence shows all three announcements and animation states true.
+
+---
+
+## R46 (2026-08-12): Bo Frame-Start Voice Repair
+
+- Finding: `BoReferee.OnFrameStart()` existed but `_frameStartClips` was empty, so Chinese Pool frames 2+ had no start announcement.
+- Fix: `BoVoicePinSetup` now reuses existing `bo_turn_start_01.wav` and `bo_turn_start_02.wav` for `_frameStartClips`; no new audio asset required.
+- Verify: compile gate 0 errors; Editor pin tool and prefab self-test verify 2 frame-start references.
