@@ -34387,6 +34387,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1408312384}
   - component: {fileID: 1408312383}
+  - component: {fileID: 1408312385}
   m_Layer: 0
   m_Name: CueStrikeAIController
   m_TagString: Untagged
@@ -34430,6 +34431,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1408312385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1408312382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f3a1d9c8b2e4a7f0c6d9e1b3a5f7c92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CueStrike.AI.CueStrikePracticeAIBridge
+  aiModifier: {fileID: 0}
+  aiController: {fileID: 1408312383}
+  shotManager: {fileID: 0}
+  defaultDifficulty: 1
 --- !u!21 &1408940818
 Material:
   serializedVersion: 8
@@ -51977,6 +51994,7 @@ MonoBehaviour:
   - Best of 7
   - Practice
   - 
+  selectedDifficulty: 1
 --- !u!1 &2147483613
 GameObject:
   m_ObjectHideFlags: 0
