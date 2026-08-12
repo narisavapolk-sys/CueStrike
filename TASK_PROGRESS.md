@@ -1125,3 +1125,20 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 
 
 
+
+---
+
+## R43 (2026-08-12): Referee Mode Selector UI
+
+**Goal:** เพิ่มเมนูให้เลือกกรรมการ Bo คนเดียว / ลุงคนเดียว / คู่กัน และผูกกับ `RefereeModeSwitcher`.
+
+### สิ่งที่ทำ
+- `RefereeModeSwitcher.cs`: runtime service อ่าน/บันทึก PlayerPrefs และเปิด/ปิด Bo/Uncle bridges ตามโหมด โดย default = Bo คนเดียวเพื่อคง behavior R40.
+- `RefereeModeUI.cs`: UI สร้างปุ่ม 3 ตัว พร้อม highlight โหมดปัจจุบันและ retry bridge ที่โหลดช้า.
+- `RefereeModeUISetup.cs`: Editor tool ผูก `RefereeModeMenu` ใน `Title_NoksGrandHall` แบบ idempotent.
+- `Title_NoksGrandHall.unity`: มี `RefereeModeSwitcher` + `RefereeModeUI` และ Bo bridge reference.
+
+### Verify
+- Compile gate: **0 errors** (มี warnings เดิม CS0414 เท่านั้น).
+- Editor setup batchmode: **Self-Test PASS 4/4**.
+- Scene saved และตรวจ serialized refs แล้ว.
