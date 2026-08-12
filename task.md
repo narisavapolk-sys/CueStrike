@@ -1,4 +1,12 @@
-# Task: CueStrike VR — R40 Bo Referee (Current) → R41+ Roadmap
+# Task: CueStrike VR — R41 Snooker Difficulty UI (Current) → R42+ Roadmap
+
+## ✅ R41 — SNOOKER AI DIFFICULTY UI (Ready for PR)
+- [x] SnookerDifficultyUI.cs (ลอก R34: Canvas + 4 ปุ่ม + bridge.SetDifficulty + PlayerPrefs + highlight)
+- [x] SnookerDifficultyUISetup.cs (Editor tool: ผูก component + bridge ref + idempotent + self-test 5/5)
+- [x] Snooker_Demo.unity: SnookerDifficultyUI_Controller + _bridge ref
+- [x] Compile 0 errors + self-test 5/5 + idempotent
+- [ ] รอ CI เขียว + merge
+
 
 **Current Objective (2026-08-12):** ต่อ AI opponent เข้ากับโหมด Practice — ลุงโน๊กเป็นคู่ซ้อม AI เลือกระดับ Easy/Medium/Hard/Expert จาก UI — ใช้ CueStrikeAIController ที่มีอยู่แล้ว
 
