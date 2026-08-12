@@ -9,18 +9,22 @@ using CueStrike.UI.ChinesePool;
 namespace CueStrike.Editor
 {
     /// <summary>
-    /// R35 — Bo Comedy Scoreboard Setup (AAA_RoomDAY)
-    /// วาง ChinesePoolScoreboard จริงลงห้องแข่ง + ผูก ChinesePoolUIManager._scoreboard
+    /// R35 (AAA_RoomDAY) + R39 (Title_NoksGrandHall) — Bo Comedy Scoreboard Setup
+    /// วาง ChinesePoolScoreboard จริงลงห้องแข่ง + lobby แล้วผูก ChinesePoolUIManager._scoreboard
     /// เพื่อให้ BoComedyDirector (R32) subscribe OnScoreChanged ได้ → โมเมนต์ "มึนสกอร์เสมอ" ทำงานจริง.
     ///
     /// Idempotent: รันซ้ำไม่สร้างซ้ำ / skip ถ้ามีครบ. Self-test + batchmode พร้อม.
     /// </summary>
     public static class BoScoreboardSetup
     {
-        private const string ScenePath = "Assets/CueStrike/Scenes/AAA DAY/AAA_RoomDAY.unity";
+        private static readonly string[] ScenePaths =
+        {
+            "Assets/CueStrike/Scenes/AAA DAY/AAA_RoomDAY.unity",
+            "Assets/CueStrike/Scenes/Title_NoksGrandHall.unity",
+        };
         private const string ScoreboardGOName = "CueStrike_ChinesePoolScoreboard";
 
-        [MenuItem("Tools/CueStrike/Mascots/95. Setup Bo Comedy Scoreboard (AAA_RoomDAY)")]
+        [MenuItem("Tools/CueStrike/Mascots/95. Setup Bo Comedy Scoreboard (AAA + Title)")]
         public static void SetupFromMenu()
         {
             if (Application.isPlaying)
@@ -30,7 +34,7 @@ namespace CueStrike.Editor
             }
 
             bool ok = Run();
-            Debug.Log(ok ? "[BoScoreboardSetup] ✅ Setup complete — Bo will react to tied scores in AAA_RoomDAY."
+            Debug.Log(ok ? "[BoScoreboardSetup] ✅ Setup complete — Bo will react to tied scores in all scenes."
                           : "[BoScoreboardSetup] ❌ Setup failed — see errors above.");
         }
 
@@ -47,10 +51,26 @@ namespace CueStrike.Editor
 
         public static bool Run()
         {
-            var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            bool allPass = true;
+
+            foreach (var scenePath in ScenePaths)
+            {
+                Debug.Log($"[BoScoreboardSetup] === Processing scene: {scenePath} ===");
+                allPass &= RunForScene(scenePath);
+            }
+
+            Debug.Log(allPass
+                ? $"[BoScoreboardSetup] ✅ All {ScenePaths.Length} scenes processed successfully."
+                : "[BoScoreboardSetup] ❌ One or more scenes failed — see errors above.");
+            return allPass;
+        }
+
+        private static bool RunForScene(string scenePath)
+        {
+            var scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
             if (scene == null || !scene.IsValid())
             {
-                Debug.LogError($"[BoScoreboardSetup] Cannot open scene: {ScenePath}");
+                Debug.LogError($"[BoScoreboardSetup] Cannot open scene: {scenePath}");
                 return false;
             }
 
@@ -110,7 +130,7 @@ namespace CueStrike.Editor
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
-            Debug.Log($"[BoScoreboardSetup] Scene saved: {ScenePath}");
+            Debug.Log($"[BoScoreboardSetup] Scene saved: {scenePath}");
 
             bool selfTestOk = RunSelfTest();
             return pass && selfTestOk;
