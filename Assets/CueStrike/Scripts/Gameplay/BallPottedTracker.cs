@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using CueStrike.UI;
+using CueStrike.Gameplay.ChinesePool;
 
 namespace CueStrike.Gameplay
 {
@@ -178,9 +179,9 @@ namespace CueStrike.Gameplay
 
         private int GetCurrentPlayerNumber()
         {
-            // Placeholder: actual implementation will depend on RulesManager API
-            // Future: integrate with ChinesePoolGameManager or ChinesePoolRules
-            return 1;
+            // R44 — use the authoritative Chinese Pool turn when available.
+            var gameManager = ChinesePoolGameManager.Instance;
+            return gameManager != null ? gameManager.currentPlayerIndex : 0;
         }
 
         private void CheckWinCondition()
