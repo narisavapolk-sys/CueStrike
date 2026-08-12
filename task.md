@@ -1,4 +1,4 @@
-# Task: CueStrike VR — R36 Snooker AI (Current) → R37+ Roadmap
+# Task: CueStrike VR — R37 ChinesePool AI Fix (Current) → R38+ Roadmap
 
 **Current Objective (2026-08-12):** ต่อ AI opponent เข้ากับโหมด Practice — ลุงโน๊กเป็นคู่ซ้อม AI เลือกระดับ Easy/Medium/Hard/Expert จาก UI — ใช้ CueStrikeAIController ที่มีอยู่แล้ว
 
@@ -15,19 +15,24 @@
 
 ### ⏳ เหลือ (Vision audit / R35)
 - [ ] Vision audit: เปิด AAA_RoomDAY → เลือก Practice + ระดับ AI → สังเกต AI ยิงเองตอนเทิร์นมัน
-- [ ] R36: แก้ AI blocker (เพิ่ม ChinesePoolAIModifier + assign refs) — AI ยังยิงไม่ได้
+- [x] R37: แก้ AI blocker (เพิ่ม ChinesePoolAIModifier + assign refs) — ทำแล้ว (ดู section R37)
 - [x] R36: Snooker AI (WBPS) — ทำแล้ว (ดู section R36)
 
-## 🎯 R36 — SNOOKER AI (WBPS) (Ready for PR)
+## ✅ R36 — SNOOKER AI (WBPS) (MERGED ✅ — PR #31)
 - AI เล่นสนุกเกอร์ได้: turn system P1↔P2 + เลือกลูกตามกฎ (red→color→color phase) + ghost-ball aim + AddForce + difficulty error
 - แก้ WBPS: Rigidbody ให้ลูก + public accessors
 - Editor tool `SnookerAISetup`: สร้างโต๊ะ + 6 หลุม + physics 22 ลูก + ผูก bridge (idempotent + self-test 6/6)
 - ✅ Verify: compile 0 errors, self-test 6/6 PASS, idempotent ผ่าน
 
-### ⏳ เหลือ (Vision audit / R37)
-- [ ] R37: ใส่ AI difficulty selector ใน UI (Snooker)
-- [ ] R37: แก้ ChinesePool AI blocker (เพิ่ม ChinesePoolAIModifier + assign refs — จาก R34 audit)
-- [ ] R37: Multiplayer room (Normcore)
+## 🎯 R37 — CHINESEPOOL AI FIX (Ready for PR)
+- เพิ่ม ChinesePoolAIModifier ลง AAA_RoomDAY + assign GameManager.aiModifier + bridge.aiModifier
+- Editor tool `ChinesePoolAIModifierSetup` (idempotent + self-test 3/3 + batchmode)
+- ✅ Verify: compile 0 errors, self-test 3/3 PASS, idempotent ผ่าน
+
+### ⏳ เหลือ (Vision audit / R38)
+- [ ] R38: ใส่ AI difficulty selector ใน UI (Snooker)
+- [ ] R38: ผูกเสียงน้องโบ 14 คลิปเข้า BoPanda_Prefab (ตรวจแล้ว: มีไฟล์แต่ยังไม่ผูก, BoPandaBanter ไม่มีระบบเสียง)
+- [ ] R38: Multiplayer room (Normcore)
 
 ## ✅ R35 — BO COMEDY SCOREBOARD (MERGED ✅ — PR #30)
 - สร้าง `ChinesePoolScoreboard` จริงใน AAA_RoomDAY (พบว่าไม่มี — มีแค่ mesh ตกแต่ง) + ผูก `UIManager._scoreboard`

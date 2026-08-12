@@ -892,4 +892,36 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 - Difficulty เริ่ม Medium — เปลี่ยนได้ที่ Inspector ของ bridge (Easy/Medium/Hard/Expert)
 - Aim เป็น heuristic (nearest pocket + ghost-ball) — ไม่ perfect แต่เล่นได้สมเหตุสมผล
 - Vision audit: เปิด Snooker_Demo → เลือก AI เทิร์น → สังเกต AI ยิง + เลือกลูกตามกฎ
-- R37: ใส่ AI difficulty selector ใน UI / ChinesePool AIModifier blocker จาก R34 audit / Multiplayer room (Normcore)
+- R37: แก้ ChinesePool AI blocker (ทำแล้ว — ดู section ด้านล่าง)
+
+## 🎯 CHINESEPOOL AI FIX (AI ยิงได้จริง) — Round 37 (2026-08-12, per implementation_plan_r37_cnpool_ai_fix.md)
+
+**Goal (ตามคำสั่งพี่โม่ง):** เพิ่ม ChinesePoolAIModifier component ลง AAA_RoomDAY + assign refs ให้ GameManager.aiModifier และ CueStrikePracticeAIBridge.aiModifier — แก้ Vision audit blocker ที่ AI ยิงไม่ได้
+
+*หมายเหตุ: พี่โม่งสั่งว่า "R36" แต่ R36 ถูกใช้ไปแล้ว (Snooker AI — PR #31 merged) → งานนี้คือ R37 ตาม roadmap*
+
+### 📋 Findings (ตรวจโค้ดจริง)
+| รายการ | สถานะ |
+|--------|--------|
+| `ChinesePoolAIModifier` class (DecideCallShot/DecideShotParameters/SetDifficulty) | ✅ มีครบ (namespace CueStrike.Gameplay.ChinesePool) |
+| **`ChinesePoolAIModifier` component ใน AAA** | ❌ **ไม่มีเลย** (grep=0) |
+| `ChinesePoolGameManager.aiModifier` | ❌ ว่าง (fileID: 0) |
+| `CueStrikePracticeAIBridge.aiModifier` | ❌ ว่าง (fileID: 0) — aiController มีแล้ว |
+| Guard bridge: `if (_gm == null || _gm.aiModifier == null) return;` | ⚠️ return ทันที → AI ไม่ยิง |
+
+**ปัญหา:** modifier หายจากฉาก → FindFirstObjectByType หาไม่เจอ → refs ว่าง → guard return → AI ไม่ยิง
+
+### ✅ Files changed
+- **`ChinesePoolAIModifierSetup.cs`** (ใหม่, Editor): tool `Tools/CueStrike/AI/110. Setup ChinesePool AI Modifier` — เพิ่ม component + assign refs (SerializedObject) + idempotent + self-test + batchmode
+- **`AAA_RoomDAY.unity`**: เพิ่ม ChinesePoolAIModifier (fileID 1187564667) + assign GameManager.aiModifier + bridge.aiModifier
+
+### ✅ Verify
+- Compile gate batchmode: **0 errors**
+- Tool รันจริง: modifier สร้าง + wired refs ทั้ง 2 + self-test **3/3 PASS**
+- **Idempotent**: รันซ้ำ skip ทั้ง 3
+- main checkout คืนสภาพสะอาด — base = main `be5cc83` (รวม R36)
+
+### ⏳ หมายเหตุ
+- AI (Chinese Pool Practice) จะยิงได้จริงแล้ว: `isAiTurn` ทำงาน + DecideCallShot/DecideShotParameters ครบ
+- Vision audit: เปิด AAA_RoomDAY → เลือก Practice + ระดับ AI → สังเกต AI ยิง
+- R38: difficulty selector ใน UI (Snooker) / ผูกเสียงน้องโบ 14 คลิป (ตรวจแล้วยังไม่ผูก) / Multiplayer room (Normcore)
