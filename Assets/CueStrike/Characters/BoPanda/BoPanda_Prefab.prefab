@@ -241,6 +241,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 983447910857cc44cbcd223eeeedd491, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2504254829362922011}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 983447910857cc44cbcd223eeeedd491, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7431158983374635775}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 983447910857cc44cbcd223eeeedd491, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8430530111154579621}
   m_SourcePrefab: {fileID: 100100000, guid: 983447910857cc44cbcd223eeeedd491, type: 3}
 --- !u!4 &8525780211204502854 stripped
 Transform:
@@ -379,7 +385,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -434,4 +440,68 @@ MonoBehaviour:
   sleepAfterIdleSeconds: 30
   sleepCooldownSeconds: 15
   tieCooldownSeconds: 20
+  verbose: 0
+--- !u!114 &7431158983374635775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9014648732227366908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa95f5cc44b35ff4386d70c92968a4ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CueStrike.MascotSystem.BoReferee
+  _animator: {fileID: 8716542968531986727}
+  _audioSource: {fileID: 4022438871602023697}
+  _homePosition: {fileID: 8525780211204502854}
+  _frameStartClips: []
+  _matchStartClips:
+  - {fileID: 8300000, guid: a428a6894b98b0f408f05ed68fda9bc6, type: 3}
+  - {fileID: 8300000, guid: b2a33032dd85e9445bf53a8be37ba2a1, type: 3}
+  _matchEndClips: []
+  _playerTurnStartClips:
+  - {fileID: 8300000, guid: 13a07b5154b5453488e27fc8da4002c3, type: 3}
+  - {fileID: 8300000, guid: 00dbb366f4c12874bad691e9d6281afc, type: 3}
+  _playerTurnEndClips: []
+  _potSuccessClips:
+  - {fileID: 8300000, guid: 65fe4668e6a578549b41ed3a23b90228, type: 3}
+  - {fileID: 8300000, guid: 51633710cae21e24885a2fd3c8bcd4a3, type: 3}
+  - {fileID: 8300000, guid: 823288b8c9756ca4aa180822f14eb63c, type: 3}
+  _centuryBreakClips:
+  - {fileID: 8300000, guid: faf5e2fef8470c347a5bf3a31b7865de, type: 3}
+  _highBreakClips:
+  - {fileID: 8300000, guid: 0df0ca70a0ae20d4db2f2ba813188953, type: 3}
+  _maximumBreakClips: []
+  _clearanceClips:
+  - {fileID: 8300000, guid: 790d701a29c13aa40aa31b2147525e14, type: 3}
+  _breakClips:
+  - {fileID: 8300000, guid: f76252370b69f014699f5f8432a3ad87, type: 3}
+  _foulCalledClips:
+  - {fileID: 8300000, guid: 8012d451784d38740939a3751568221b, type: 3}
+  - {fileID: 8300000, guid: 8675f4ff112818d4ba3249c0566988e1, type: 3}
+  _foulCueBallPottedClips:
+  - {fileID: 8300000, guid: dcf7795eb7f16c342bc50fb1aee7a2d0, type: 3}
+  _idleTrigger: Idle
+  _speakTrigger: Speak
+  _announceTrigger: Speak
+  _celebrateTrigger: Celebrate
+  _disapproveTrigger: Disappointed
+  _thinkingTrigger: Speak
+  _minTimeBetweenAnnouncements: 3
+  _enableVoice: 1
+  _enableAnimations: 1
+--- !u!114 &8430530111154579621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9014648732227366908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae982d94b89fb434ba520220b426da0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CueStrike.MascotSystem.BoRefereeEventBridge
   verbose: 0

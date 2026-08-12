@@ -1,4 +1,4 @@
-# Task: CueStrike VR — R39 Title Scoreboard (Current) → R40+ Roadmap
+# Task: CueStrike VR — R40 Bo Referee (Current) → R41+ Roadmap
 
 **Current Objective (2026-08-12):** ต่อ AI opponent เข้ากับโหมด Practice — ลุงโน๊กเป็นคู่ซ้อม AI เลือกระดับ Easy/Medium/Hard/Expert จาก UI — ใช้ CueStrikeAIController ที่มีอยู่แล้ว
 
@@ -34,10 +34,19 @@
 - Editor tool `ChinesePoolBallSetupFixer`: เพิ่ม component + prefabs (Pool_CueBall/01/08/09) + assign GameManager.ballSetup
 - ✅ Verify: compile 0 errors, self-test 6/6 PASS, idempotent ผ่าน
 
-### ⏳ เหลือ (Vision audit / R40)
-- [ ] R40: Vision audit ซ้ำ — AI ยิงแล้วลูกขยับจริง (PlayMode test + manual)
-- [ ] R40: pocket detection / ฟิสิกส์โต๊ะใน AAA
-- [ ] R40: difficulty selector ใน UI (Snooker) / ผูกเสียงน้องโบ 14 คลิป / Multiplayer room (Normcore)
+### ⏳ เหลือ (Vision audit / R41)
+- [ ] R41: Vision audit ซ้ำ — AI ยิงแล้วลูกขยับจริง (PlayMode test + manual)
+- [ ] R41: pocket detection / ฟิสิกส์โต๊ะใน AAA
+- [ ] R41: difficulty selector ใน UI (Snooker) / Multiplayer room (Normcore) / Snooker AI difficulty UI
+
+
+## ✅ R40 — BO REFEREE (Ready for PR)
+- [x] BoReferee.cs (ลอก UncleNokReferee — PlayRandomClip + cooldown + FoulType)
+- [x] BoRefereeEventBridge.cs (ลอก R31 signature จริง — GetFrameWinner + WBPS events)
+- [x] BoVoicePinSetup tool: AudioSource 3D + refs + 14 clips + bridge + disable ลุง bridge
+- [x] BoPanda_Prefab: BoReferee + 14 clips + bridge; UncleNok bridge disabled (ลุงกองเชียร์)
+- [x] Compile 0 errors + self-test 18/18 + idempotent
+- [ ] รอ CI เขียว + merge
 
 ## ✅ R39 — TITLE SCOREBOARD (Ready for PR)
 - [x] ขยาย BoScoreboardSetup → loop 2 ฉาก (AAA_RoomDAY + Title_NoksGrandHall)
