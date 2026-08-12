@@ -515,6 +515,22 @@ public class CueStrikeWBPSRuleset : MonoBehaviour
         ball.transform.localScale = Vector3.one * 0.052f; // 52mm diameter
         ball.transform.SetParent(transform, true);
 
+        // R36 — physics for Snooker AI: ensure collider + Rigidbody (balls must roll)
+        if (ball.GetComponent<Collider>() == null)
+        {
+            ball.AddComponent<SphereCollider>();
+        }
+        var rb = ball.GetComponent<Rigidbody>();
+        if (rb == null)
+        {
+            rb = ball.AddComponent<Rigidbody>();
+        }
+        rb.mass = 0.14f;            // snooker ball ~140g
+        rb.drag = 0.35f;            // table friction
+        rb.angularDrag = 0.6f;
+        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+
         var renderer = ball.GetComponent<Renderer>();
         if (renderer != null) renderer.sharedMaterial.color = color;
 
@@ -525,6 +541,22 @@ public class CueStrikeWBPSRuleset : MonoBehaviour
             : ballId >= 1 && ballId <= 15 ? BallIdentity.BallType.RedBall
             : BallIdentity.BallType.ColorBall;
     }
+
+    // ============================================================
+    //  R36 — Public state accessors for AI (Snooker AI bridge)
+    // ============================================================
+
+    /// <summary>Current color-phase sequence index (0=Yellow .. 5=Black).</summary>
+    public int ColorSequenceIndex => _colorSequenceIndex;
+
+    /// <summary>True when we are in the color phase (all reds cleared).</summary>
+    public bool IsColorPhaseActive => isColorPhase;
+
+    /// <summary>True when the next shot must strike a color (after a red pot).</summary>
+    public bool AwaitingRespotColorState => awaitingRespotColor;
+
+    /// <summary>Reds remaining on the table.</summary>
+    public int RedsRemaining => redsRemaining;
 
     /// <summary>
     /// Checks if color phase should start (reds cleared)
