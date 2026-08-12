@@ -1126,19 +1126,39 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 
 
 
+
 ---
 
-## R43 (2026-08-12): Referee Mode Selector UI
+## R44 (2026-08-12): AI Vision Audit Tests — Automation QA ถาวร
 
-**Goal:** เพิ่มเมนูให้เลือกกรรมการ Bo คนเดียว / ลุงคนเดียว / คู่กัน และผูกกับ `RefereeModeSwitcher`.
+**Goal (ตามคำสั่งพี่โม่ง):** เปิด PR เก็บ `AIVisionAuditTests.cs` เป็น automation audit ถาวร (AI ยิงจริง + prerequisites) — ลดการพึ่ง manual Vision audit
 
-### สิ่งที่ทำ
-- `RefereeModeSwitcher.cs`: runtime service อ่าน/บันทึก PlayerPrefs และเปิด/ปิด Bo/Uncle bridges ตามโหมด โดย default = Bo คนเดียวเพื่อคง behavior R40.
-- `RefereeModeUI.cs`: UI สร้างปุ่ม 3 ตัว พร้อม highlight โหมดปัจจุบันและ retry bridge ที่โหลดช้า.
-- `RefereeModeUISetup.cs`: Editor tool ผูก `RefereeModeMenu` ใน `Title_NoksGrandHall` แบบ idempotent.
-- `Title_NoksGrandHall.unity`: มี `RefereeModeSwitcher` + `RefereeModeUI` และ Bo bridge reference.
+### 📋 Findings (กฎข้อ 1 — ตรวจของจริงก่อน)
+| รายการ | สถานะ |
+|--------|--------|
+| `AIVisionAuditTests.cs` (PlayMode test เขียนไว้ตอน Vision audit) | ✅ ผ่าน 3 รอบซ้ำบน main (R37→R43) |
+| ผล test | ✅ AI ยิงจริง `cueMoved=True distance≈5.59` + `AI shot: ball=1 → pocket=0` — assertion failures 0 |
+| Test ถูก commit ไว้ใน main หรือยัง | ❌ ยัง untracked — ต้องเปิด PR เก็บเป็นถาวร |
 
-### Verify
-- Compile gate: **0 errors** (มี warnings เดิม CS0414 เท่านั้น).
-- Editor setup batchmode: **Self-Test PASS 4/4**.
-- Scene saved และตรวจ serialized refs แล้ว.
+### ✅ Files changed
+- **`Assets/CueStrike/Tests/PlayMode/AIVisionAuditTests.cs`** (ใหม่): PlayMode test — โหลด AAA_RoomDAY → ตั้ง Practice + Expert → StartNewFrame → NextPlayer (AI เทิร์น) → รอ AI คิด+ยิง → ตรวจลูก cue ขยับ (distance > 0.5) + ตรวจ prerequisites (GameManager + BallSetup + AIModifier + bridge wired) — reflection (asmdef autoReferenced: false)
+- **`Assets/CueStrike/Tests/PlayMode/AIVisionAuditTests.cs.meta`**: GUID 32 hex + LF (Unity YAML parser)
+- **`implementation_plan_ai_vision_audit_tests.md`**: plan
+
+### ✅ Verify
+- Test รันผ่านจริง 3 รอบบน main (audit1/2/3_test.log): prerequisites OK + AI ยิง + ลูกขยับ ~5.6 หน่วย — assertion failures 0
+- Compile: test ไฟล์ compile ผ่านทุกครั้งที่รัน (batchmode test runner ต้อง compile สำเร็จก่อนรัน)
+- Meta: GUID ถูกต้อง ไม่ซ้ำกับไฟล์อื่น
+- main checkout สะอาด — base = main `e2d7263` (รวม R43 Pocket Detection)
+- Docs อัปเดตครบ (TASK_PROGRESS + CUESTRIKE_MASTER + implementation plan)
+
+### ⏳ หมายเหตุ
+- Test นี้เป็น automation audit ถาวร — ต่อยอด R14R16R17 PlayMode tests ที่พี่เคยสั่ง (R16 frame rate + R17 scene refs)
+- CI จะรัน PlayMode tests ทุก PR — กัน regression ที่ AI ยิงพัง
+
+
+---
+
+## R43 (2026-08-12): Referee Mode Selector UI — merged PR #40
+
+Title lobby now provides Bo solo / Uncle solo / Duo selection through RefereeModeSwitcher and RefereeModeUI. CI passed and this PR is ready for protected-main merge.
