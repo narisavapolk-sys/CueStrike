@@ -1018,6 +1018,39 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 - **Bo เป็นกรรมการจริง**: ประกาศคะแนน/ฟาวล์/เริ่มเฟรมด้วยเสียงโบ (Random) + animation Speak/Celebrate/Disappointed — 3 ฉาก (Title/AAA_RoomDAY/Snooker_Demo) เป็น prefab instance → ได้ผลอัตโนมัติ
 - **ลุงเป็นกองเชียร์**: bridge disabled → ไม่ประกาศคะแนน — ยืนดูข้างสนาม (ยังมี idle animation)
 - ยังค้าง: Vision audit AI ยิงจริง (PlayMode test ซ้ำ) + pocket detection ใน AAA
-- R41: difficulty selector ใน UI (Snooker) / Multiplayer room (Normcore) / Snooker AI difficulty UI
+## 🎯 SNOOKER AI DIFFICULTY UI — Round 41 (2026-08-12, per implementation_plan_r41_snooker_difficulty_ui.md)
+
+**Goal (ตามคำสั่งพี่โม่ง):** เพิ่ม AI difficulty selector (Easy/Medium/Hard/Expert) ใน UI ของ Snooker — ผูกกับ `CueStrikeSnookerAIBridge.SetDifficulty`
+
+### 📋 Findings (กฎข้อ 1 — ตรวจของจริงก่อน)
+| รายการ | สถานะ |
+|--------|--------|
+| `CueStrikeSnookerAIBridge.SetDifficulty(SkillLevel)` | ✅ มี (line 98) — difficulty = level + log |
+| `SkillLevel` enum (`CueStrike.AI`) | ✅ มี |
+| `SnookerAI_Bridge` ใน Snooker_Demo | ✅ มี (R36) |
+| **Canvas ใน Snooker_Demo** | ❌ **ไม่มีเลย** — ต้องสร้าง UI ใหม่ทั้งหมด |
+| R34 pattern (ChinesePoolMatchSetupUI) | ✅ ลอกได้ (4 ปุ่ม diff + PlayerPrefs) |
+| หมายเหตุชื่อ R | พี่สั่ง "R38" แต่ R38 ถูกใช้แล้ว (BallSetup fix = PR #33) → งานนี้คือ **R41** |
+
+**ปัญหา:** Snooker AI เล่นได้ (R36) แต่เปลี่ยนระดับ AI ผ่าน UI ไม่ได้ — ต้องเข้า Inspector เอง
+
+### ✅ Files changed
+- **`SnookerDifficultyUI.cs`** (ใหม่, runtime): ลอก R34 pattern — สร้าง Canvas (ScreenSpaceOverlay) + panel + label + 4 ปุ่ม (Easy/Medium/Hard/Expert) — `OnDifficultySelected` → `bridge.SetDifficulty` + PlayerPrefs (`CueStrike_SnookerAIDifficulty`) + highlight ปุ่มที่เลือก + fail-safe retry bridge
+- **`SnookerDifficultyUISetup.cs`** (ใหม่, Editor): tool `Tools/CueStrike/AI/140. Setup Snooker Difficulty UI` — เพิ่ม component + assign bridge ref — idempotent + self-test 5/5 + batchmode
+- **`Snooker_Demo.unity`**: เพิ่ม SnookerDifficultyUI_Controller (`3711`) + `_bridge` ref (`2088933238`)
+
+### ✅ Verify
+- Compile gate batchmode: **0 errors** (Library อุ่นบน main)
+- Tool รันจริง: UI component + bridge ref wired — self-test **5/5 PASS**
+- **Idempotent**: รันซ้ำ skip (already present + PASS 5/5)
+- main checkout คืนสภาพสะอาด — base = main `5fb82e1` (รวม R40)
+- Docs อัปเดตครบ 3 ไฟล์ (TASK_PROGRESS + CUESTRIKE_MASTER + task.md)
+
+### ⏳ หมายเหตุ
+- ผู้เล่นเลือก Easy/Medium/Hard/Expert จากจอ Snooker ได้ → `bridge.SetDifficulty` ทันที + PlayerPrefs จำค่า
+- Highlight ปุ่มที่เลือก (เขียว) — เห็นระดับปัจจุบันชัดเจน
+- ยังค้าง: Vision audit Bo กรรมการเสียงจริง + pocket detection ใน AAA
+- R42: Multiplayer room (Normcore) / Snooker difficulty UI → ต่อ Snooker AI setup เต็ม
+
 
 
