@@ -1159,3 +1159,7 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 - Compile gate: **0 errors**.
 - Editor setup batchmode self-test: **PASS 5/5**.
 - Scene serialized refs ตรวจแล้ว.
+
+### R43 PlayMode regression coverage (added 2026-08-12)
+- `R43PocketTriggerPlayModeTests.cs`: creates a real Rigidbody ball and Pocket trigger in the loaded `AAA_RoomDAY` PlayMode scene, fires the ball into the trigger, and asserts `BallPottedTracker.OnBallPotted(ball=1)` before the ball is deactivated.
+- Evidence: `eventRaised=True eventBall=1 ballActive=False`; test runner exit code 0.
