@@ -98,6 +98,13 @@ namespace CueStrike.Gameplay
             InitializeBallTracking();
         }
 
+        /// <summary>R44 — explicit alias used by runtime setup event listeners.</summary>
+        public void RegisterSpawnedBalls(Transform[] transforms)
+        {
+            SetBallTransforms(transforms);
+            Debug.Log($"[BallPottedTracker] Registered {transforms?.Length ?? 0} spawned ball references.");
+        }
+
         public void SetPocketPositions(Vector3[] positions)
         {
             _pocketPositions = positions;

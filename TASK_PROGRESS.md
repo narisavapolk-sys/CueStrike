@@ -1174,3 +1174,26 @@ PocketGameLoopBridge now connects BallPottedTracker to ChinesePoolGameManager.Pr
 ## R45/R46 (2026-08-12): Bo Referee Voice Audit + Frame-Start Voice
 
 Permanent BoRefereeVoiceAuditTests cover AAA wiring, 14 clips, bridge subscription, and match-start/foul/pot voice and animation paths. Bo frame-start clips now reuse bo_turn_start_01/02; compile and self-tests passed.
+
+---
+
+## R47 (2026-08-12): Pocket Diagnostics & Dynamic Ball Binding
+
+### PR hygiene
+- PR #40 merged `a40ebcd` after CI success.
+- PR #41 merged `4ae5508` after CI success.
+- PR #42 merged `21d71da` after CI success.
+- main synced to origin; generated TestResults artifact removed. Ambiguous pre-existing untracked Unity artifacts remain untouched.
+
+### Implementation
+- `ChinesePoolBallSetup.BallsSpawned` emits runtime rack transforms immediately after spawn.
+- `BallPottedTracker.RegisterSpawnedBalls` provides explicit dynamic binding and duplicate-safe notification.
+- `PocketGameLoopBridge` subscribes to spawn event, retains fallback refresh, and sends potted balls to GameManager/Bo.
+- `Pocket` notifies tracker before deactivation.
+- `PocketPhysicsAuditor` validates AAA components/triggers/tags/layer prerequisites and repaired six Pocket tags.
+
+### Evidence
+- Compile gate: **0 errors**.
+- PocketPhysicsAuditor: **19 passed, 0 failed**.
+- R43PocketTriggerPlayModeTests: **PASS** (`OnBallPotted ball=1 player=0`, ball deactivated).
+- Real AAA trajectory audit remains **OPEN**: previous shot did not reach trigger (`eventRaised=False`, `ballActive=True`).
