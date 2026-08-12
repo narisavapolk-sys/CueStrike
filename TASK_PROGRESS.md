@@ -1156,3 +1156,9 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 - Test นี้เป็น automation audit ถาวร — ต่อยอด R14R16R17 PlayMode tests ที่พี่เคยสั่ง (R16 frame rate + R17 scene refs)
 - CI จะรัน PlayMode tests ทุก PR — กัน regression ที่ AI ยิงพัง
 
+
+---
+
+## R43 (2026-08-12): Referee Mode Selector UI — merged PR #40
+
+Title lobby now provides Bo solo / Uncle solo / Duo selection through RefereeModeSwitcher and RefereeModeUI. CI passed and this PR is ready for protected-main merge.
