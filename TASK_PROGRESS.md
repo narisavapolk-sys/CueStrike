@@ -924,4 +924,34 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 ### ⏳ หมายเหตุ
 - AI (Chinese Pool Practice) จะยิงได้จริงแล้ว: `isAiTurn` ทำงาน + DecideCallShot/DecideShotParameters ครบ
 - Vision audit: เปิด AAA_RoomDAY → เลือก Practice + ระดับ AI → สังเกต AI ยิง
-- R38: difficulty selector ใน UI (Snooker) / ผูกเสียงน้องโบ 14 คลิป (ตรวจแล้วยังไม่ผูก) / Multiplayer room (Normcore)
+- R38: BallSetup fix — AI ยิงได้จริง (ทำแล้ว — ดู section ด้านล่าง)
+
+## 🎯 BALLSETUP FIX (AI ยิงได้จริง — ต้นตอตัวจริง) — Round 38 (2026-08-12, per implementation_plan_r38_ballsetup_fix.md)
+
+**Goal (ตามคำสั่งพี่โม่ง):** Vision audit หลัง R37 — ตรวจว่า AI ยิงลูกจริง — เจอ blocker ตัวจริง: AAA_RoomDAY ไม่มี ChinesePoolBallSetup → เกมไม่เริ่มเฟรม → ไม่มีลูก → AI ยิงไม่ได้
+
+### 📋 Findings (Vision audit ผ่าน PlayMode test จริง)
+| รายการ | สถานะ |
+|--------|--------|
+| GameManager + AIModifier + refs (R37) | ✅ มีครบ |
+| **ChinesePoolBallSetup component ใน AAA** | ❌ **ไม่มีเลย** (grep=0) — และไม่มีฉากไหนเลยทั้งโปรเจกต์ |
+| หลักฐาน error จริง (PlayMode test) | ❌ `[CueStrike] Cannot start frame — ChinesePoolBallSetup is null!` |
+| prefab ลูก Pool_CueBall / Pool_Ball_01..15 | ✅ มีครบ |
+
+**ปัญหา:** BallSetup หาย → StartNewFrame error → 16 ลูกไม่ spawn → AI ไม่มีลูกให้ยิง
+
+### ✅ Files changed
+- **`ChinesePoolBallSetupFixer.cs`** (ใหม่, Editor): tool `Tools/CueStrike/AI/120. Fix ChinesePool BallSetup` — เพิ่ม component + assign prefabs (Pool_CueBall/01/08/09) + assign GameManager.ballSetup (SerializedObject) + idempotent + self-test + batchmode
+- **`AAA_RoomDAY.unity`**: เพิ่ม ChinesePoolBallSetup (fileID 1255384562) + prefabs 4 ตัว + GameManager.ballSetup assigned
+
+### ✅ Verify
+- Compile gate batchmode: **0 errors**
+- Tool รันจริง: BallSetup สร้าง + prefabs 4/4 + wired GameManager — self-test **6/6 PASS**
+- **Idempotent**: รันซ้ำ skip ทั้งหมด
+- main checkout คืนสภาพสะอาด — base = main `5053f17` (รวม R37)
+
+### ⏳ หมายเหตุ
+- เกมเริ่มเฟรมได้ → 16 ลูก spawn → AI มีลูกให้ยิงจริง
+- **ยังต้อง verify:** PlayMode test ซ้ำ (AI ยิงแล้วลูกขยับ) + Vision audit manual
+- backlog: pocket detection (BallPottedTracker) / ฟิสิกส์โต๊ะ อาจยังไม่ครบใน AAA
+- R39: difficulty selector ใน UI (Snooker) / ผูกเสียงน้องโบ 14 คลิป / Multiplayer room (Normcore)

@@ -1,4 +1,4 @@
-# Task: CueStrike VR — R37 ChinesePool AI Fix (Current) → R38+ Roadmap
+# Task: CueStrike VR — R38 BallSetup Fix (Current) → R39+ Roadmap
 
 **Current Objective (2026-08-12):** ต่อ AI opponent เข้ากับโหมด Practice — ลุงโน๊กเป็นคู่ซ้อม AI เลือกระดับ Easy/Medium/Hard/Expert จาก UI — ใช้ CueStrikeAIController ที่มีอยู่แล้ว
 
@@ -24,14 +24,20 @@
 - Editor tool `SnookerAISetup`: สร้างโต๊ะ + 6 หลุม + physics 22 ลูก + ผูก bridge (idempotent + self-test 6/6)
 - ✅ Verify: compile 0 errors, self-test 6/6 PASS, idempotent ผ่าน
 
-## 🎯 R37 — CHINESEPOOL AI FIX (Ready for PR)
+## ✅ R37 — CHINESEPOOL AI FIX (MERGED ✅ — PR #32)
 - เพิ่ม ChinesePoolAIModifier ลง AAA_RoomDAY + assign GameManager.aiModifier + bridge.aiModifier
 - Editor tool `ChinesePoolAIModifierSetup` (idempotent + self-test 3/3 + batchmode)
 - ✅ Verify: compile 0 errors, self-test 3/3 PASS, idempotent ผ่าน
 
-### ⏳ เหลือ (Vision audit / R38)
-- [ ] R38: ใส่ AI difficulty selector ใน UI (Snooker)
-- [ ] R38: ผูกเสียงน้องโบ 14 คลิปเข้า BoPanda_Prefab (ตรวจแล้ว: มีไฟล์แต่ยังไม่ผูก, BoPandaBanter ไม่มีระบบเสียง)
+## 🎯 R38 — BALLSETUP FIX (Ready for PR)
+- Vision audit เจอ blocker ตัวจริง: ไม่มี ChinesePoolBallSetup ใน AAA → เกมไม่เริ่มเฟรม → AI ยิงไม่ได้
+- Editor tool `ChinesePoolBallSetupFixer`: เพิ่ม component + prefabs (Pool_CueBall/01/08/09) + assign GameManager.ballSetup
+- ✅ Verify: compile 0 errors, self-test 6/6 PASS, idempotent ผ่าน
+
+### ⏳ เหลือ (Vision audit / R39)
+- [ ] R39: Vision audit ซ้ำ — AI ยิงแล้วลูกขยับจริง (PlayMode test + manual)
+- [ ] R39: pocket detection / ฟิสิกส์โต๊ะใน AAA
+- [ ] R39: difficulty selector ใน UI (Snooker) / ผูกเสียงน้องโบ 14 คลิป / Multiplayer room (Normcore)
 - [ ] R38: Multiplayer room (Normcore)
 
 ## ✅ R35 — BO COMEDY SCOREBOARD (MERGED ✅ — PR #30)
