@@ -1125,3 +1125,11 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 
 
 
+
+---
+
+## R45 (2026-08-12): Permanent Bo Referee Voice Audit
+
+- Added `BoRefereeVoiceAuditTests.cs` PlayMode automation for AAA_RoomDAY.
+- Checks BoReferee + bridge + AudioSource + 14 clips, bridge subscription, and match-start/foul/ball-potted voice + animation paths.
+- Verify: compile 0 errors; PlayMode exit 0; console evidence shows all three announcements and animation states true.
