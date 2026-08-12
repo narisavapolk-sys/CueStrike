@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections.Generic;
 
 namespace CueStrike.Gameplay.ChinesePool
@@ -61,6 +62,9 @@ namespace CueStrike.Gameplay.ChinesePool
 
         #region Public API
 
+        /// <summary>R44 — emitted immediately after a rack is spawned.</summary>
+        public event Action<Transform[]> BallsSpawned;
+
         /// <summary>
         /// Sets up a full Chinese 8-Ball rack (15 object balls + cue ball).
         /// Call this at the start of each frame.
@@ -70,6 +74,13 @@ namespace CueStrike.Gameplay.ChinesePool
             ClearRack();
             SpawnRack();
             PositionCueBall();
+            var transforms = new Transform[15];
+            for (int id = 1; id <= 15; id++)
+            {
+                var ball = GetBallById(id);
+                transforms[id - 1] = ball != null ? ball.transform : null;
+            }
+            BallsSpawned?.Invoke(transforms);
             Debug.Log("[CueStrike] ChinesePoolBallSetup: Rack created (stub).");
         }
 

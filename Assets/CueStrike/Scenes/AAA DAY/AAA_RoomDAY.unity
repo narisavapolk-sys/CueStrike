@@ -11586,7 +11586,7 @@ GameObject:
   - component: {fileID: 316398032}
   m_Layer: 0
   m_Name: Pocket_4
-  m_TagString: Untagged
+  m_TagString: Pocket
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -23659,7 +23659,7 @@ GameObject:
   - component: {fileID: 625703225}
   m_Layer: 0
   m_Name: Pocket_6
-  m_TagString: Untagged
+  m_TagString: Pocket
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -26484,7 +26484,7 @@ GameObject:
   - component: {fileID: 717220329}
   m_Layer: 0
   m_Name: Pocket_3
-  m_TagString: Untagged
+  m_TagString: Pocket
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -37653,7 +37653,7 @@ GameObject:
   - component: {fileID: 1050841455}
   m_Layer: 0
   m_Name: Pocket_5
-  m_TagString: Untagged
+  m_TagString: Pocket
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50378,7 +50378,7 @@ GameObject:
   - component: {fileID: 1413721928}
   m_Layer: 0
   m_Name: Pocket_2
-  m_TagString: Untagged
+  m_TagString: Pocket
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -74796,7 +74796,7 @@ GameObject:
   - component: {fileID: 2118153564}
   m_Layer: 0
   m_Name: Pocket_1
-  m_TagString: Untagged
+  m_TagString: Pocket
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

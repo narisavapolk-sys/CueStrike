@@ -16,6 +16,7 @@ namespace CueStrike.Gameplay
         [SerializeField] private BoReferee _boReferee;
         [SerializeField] private ChinesePoolBallSetup _ballSetup;
         private bool _subscribed;
+        private bool _ballSetupSubscribed;
         private bool _trackingStarted;
         private float _nextResolve;
 
@@ -23,6 +24,7 @@ namespace CueStrike.Gameplay
         {
             ResolveReferences();
             Subscribe();
+            SubscribeBallSetup();
             RefreshSpawnedBalls();
         }
 
@@ -33,6 +35,7 @@ namespace CueStrike.Gameplay
                 _nextResolve = Time.time + 0.5f;
                 ResolveReferences();
                 Subscribe();
+                SubscribeBallSetup();
                 RefreshSpawnedBalls();
             }
         }
@@ -51,6 +54,25 @@ namespace CueStrike.Gameplay
             _tracker.OnBallPotted += HandleBallPotted;
             _subscribed = true;
             Debug.Log("[PocketGameLoop] Subscribed BallPottedTracker -> GameManager.");
+        }
+
+        private void SubscribeBallSetup()
+        {
+            if (_ballSetupSubscribed || _ballSetup == null) return;
+            _ballSetup.BallsSpawned += HandleBallsSpawned;
+            _ballSetupSubscribed = true;
+            Debug.Log("[PocketGameLoop] Subscribed BallSetup.BallsSpawned -> tracker.");
+        }
+
+        private void HandleBallsSpawned(Transform[] transforms)
+        {
+            if (_tracker == null) return;
+            _tracker.RegisterSpawnedBalls(transforms);
+            if (!_trackingStarted)
+            {
+                _tracker.StartTracking();
+                _trackingStarted = true;
+            }
         }
 
         private void RefreshSpawnedBalls()
@@ -78,7 +100,9 @@ namespace CueStrike.Gameplay
         private void OnDestroy()
         {
             if (_subscribed && _tracker != null) _tracker.OnBallPotted -= HandleBallPotted;
+            if (_ballSetupSubscribed && _ballSetup != null) _ballSetup.BallsSpawned -= HandleBallsSpawned;
             _subscribed = false;
+            _ballSetupSubscribed = false;
         }
 
         public bool IsWired() => _tracker != null && _gameManager != null && _ballSetup != null && _subscribed;
