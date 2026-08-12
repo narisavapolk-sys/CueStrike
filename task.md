@@ -12,10 +12,24 @@
 - [x] วาง BoPanda ลง AAA_RoomDAY + Snooker_Demo
 - [x] Compile verify: batchmode **0 errors** + tool **2/2 ฉาก** + idempotent (รันซ้ำ skip) + self-test **4/4**
 
-### ⏳ เหลือ (R31/R34 กรรมการ + คู่ซ้อม AI)
-- [ ] ผูก UncleNokReferee กับ game events — ประกาศคะแนน/ฟาวล์จริง (R31 — PR #28 เปิดอยู่)
-- [ ] ต่อ AI opponent กับโหมด Practice (R34)
+### ⏳ เหลือ (R34 คู่ซ้อม AI / Vision audit)
+- [ ] ต่อ AI opponent กับโหมด Practice (R34) — ลุงโน๊กคู่ซ้อม AI
 - [ ] Vision audit: เปิด AAA_RoomDAY → เห็นลุงโน๊ก (0,0,-4.6) + โบ (0,0,4.6) ยืนคนละฝั่งโต๊ะ
+
+---
+
+## 🎯 R31 — REFEREE EVENT BRIDGE (MERGED ✅ — PR #28)
+
+### ✅ Done
+- [x] ตรวจของจริง: GameManager (`OnFrameWon`/`OnFoulCommitted`/`OnMatchOver`/`OnTurnChanged`/`OnPhaseChanged`) + WBPS (`OnBallPotted`/`OnFoulCommitted`/`OnFrameWon`) — มี Instance pattern ทั้งคู่; `UncleNokReferee` methods มีครบแต่ยังไม่มีใคร subscribe
+- [x] `UncleNokRefereeEventBridge.cs` — subscribe events → เรียก referee methods (OnMatchStart/OnFrameStart/OnBallPotted/OnFoulCommitted) + fail-safe retry
+- [x] Editor tool `RefereeEventBridgeSetup.cs` — `Tools/CueStrike/Mascots/80. Setup Referee Event Bridge` (PrefabUtility + idempotent + self-test + batchmode)
+- [x] ผูก bridge เข้า UncleNok_Prefab — ฉากไหนมีลุงโน๊กได้ผลอัตโนมัติ
+- [x] Compile verify: batchmode **0 errors** + self-test **5/5**
+
+### ⏳ เหลือ (R35 คู่ซ้อม AI / เสียงจริง)
+- [ ] หาเสียงกรรมการจริง (wav วางใน `Assets/CueStrike/Audio/Clips/`) — bridge พร้อมรับแล้ว ไม่ต้องแก้โค้ด
+- [ ] โหมด Practice (เล่นคนเดียว) — กรรมการเป็นคู่ซ้อม AI (R35)
 
 ---
 
