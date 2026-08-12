@@ -1084,7 +1084,43 @@ Key ที่ได้รับ = `sk-XnRw…` (ความยาว 51, prefix
 - เลือกได้จาก Inspector หรือ Editor tool — ต่อยอดเป็น UI ได้ภายหลัง
 - 🐛 **สำคัญ:** meta GUID fix นี้สำคัญมาก — เป็นการซ่อมบั๊กที่ทำให้ BoReferee/Bridge หายจาก prefab เมื่อคนอื่นโหลดโปรเจกต์ (CI compile ผ่านเพราะ Library cache แต่เกมจริงพัง)
 - ยังค้าง: Vision audit Bo กรรมการเสียงจริง
-- R43: Multiplayer room (Normcore) / Snooker difficulty UI → ต่อ Snooker AI setup เต็ม
+## 🎯 POCKET DETECTION (ลูกตกลงหลุมได้จริง) — Round 43 (2026-08-12, per implementation_plan_r43_pocket_detection.md)
+
+**Goal (ตามคำสั่งพี่โม่ง):** เพิ่ม pocket detection (BallPottedTracker) + ฟิสิกส์โต๊ะใน AAA_RoomDAY ให้ลูกตกลงหลุมได้จริง — ต่อยอดจาก BallSetup fix (R38)
+
+### 📋 Findings (กฎข้อ 1 — ตรวจของจริงก่อน)
+| รายการ | สถานะ |
+|--------|--------|
+| `BallPottedTracker.cs` | ✅ มี (OnBallPotted/OnBlackBallPotted/OnAllBallsPotted + SetPocketPositions/SetBallTransforms) |
+| `Pocket.cs` | ✅ มี (trigger + tag + rules/tracker + deactivate ball) |
+| ลูก spawn (R38) | ✅ Rigidbody + SphereCollider + ChinesePoolBallIdentifier |
+| **tags "Ball"/"Pocket" ใน TagManager** | ❌ **ว่างเปล่า (`tags: []`)** — Pocket.cs ใช้ CompareTag ทำงานไม่ได้ |
+| **Pocket component ใน AAA** | ❌ ไม่มี (โต๊ะมีแค่ BoxCollider — หลุมไม่มี trigger) |
+| **BallPottedTracker ใน AAA** | ❌ ไม่มี |
+| **tag "Ball" บนลูก spawn** | ❌ ไม่ได้ set |
+| หมายเหตุชื่อ R | พี่สั่ง "R39" แต่ R39 ถูกใช้แล้ว (Title scoreboard = PR #34) → งานนี้คือ **R43** |
+
+**ปัญหา:** ลูกมีฟิสิกส์ (R38) แต่ตกลงหลุมไม่ได้ — หลุมไม่มี trigger + ไม่มี tracker + tags หาย
+
+### ✅ Files changed
+- **`PocketPhysicsSetup.cs`** (ใหม่, Editor): tool `Tools/CueStrike/Gameplay/150. Setup AAA Pocket Detection` — เพิ่ม tags (Ball+Pocket) ใน TagManager (SerializedObject) + สร้าง pocket 6 จุด (SphereCollider trigger + Pocket.cs ที่มุม 4 + กลางขอบสั้น 2 บนโต๊ะ AAA) + เพิ่ม BallPottedTracker + assign pocket positions + ball transforms — idempotent + self-test 4/4 + batchmode
+- **`ChinesePoolBallSetup.cs`** (แก้): `SetupBallComponents` เพิ่ม `ball.tag = "Ball"` (Pocket.OnTriggerEnter ใช้ CompareTag)
+- **`AAA_RoomDAY.unity`**: Pocket ×6 (`Assembly-CSharp::Pocket`) + BallPottedTracker ×1
+- **`ProjectSettings/TagManager.asset`**: tags = [Ball, Pocket]
+
+### ✅ Verify
+- Compile gate batchmode: **0 errors** (Library อุ่นบน main)
+- Tool รันจริง: tags เพิ่ม + pocket 6 จุด + tracker — self-test **4/4 PASS**
+- **Idempotent**: รันซ้ำ skip ทั้งหมด (tags/pockets/tracker already present)
+- main checkout คืนสภาพสะอาด — base = main `bb227a1` (รวม R42)
+- Docs อัปเดตครบ 3 ไฟล์ (TASK_PROGRESS + CUESTRIKE_MASTER + task.md)
+
+### ⏳ หมายเหตุ
+- ลูกวิ่งถึงหลุม → Pocket.OnTriggerEnter → BallPottedTracker.OnBallPotted → สกอร์/อีเวนต์จริง + ลูกถูก deactivate
+- Pocket.cs อ้าง CueStrikeRulesManager (ไม่มีใน AAA) — null-guard ไม่ crash (main deliverable = BallPottedTracker event)
+- ยังค้าง: Vision audit Bo กรรมการเสียงจริง + สังเกตลูกตกหลุมในเกมจริง
+- R44: Multiplayer room (Normcore) / ต่อ Snooker AI setup เต็ม
+
 
 
 
