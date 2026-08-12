@@ -8,17 +8,18 @@ using CueStrike.MascotSystem;
 namespace CueStrike.EditorTools
 {
     /// <summary>
-    /// R29 — Editor tool: วาง UncleNok_Prefab ลงฉากจริง (Title + ห้องแข่งที่เล่นได้)
+    /// R29+R33 — Editor tool: วาง UncleNok + BoPanda ลงฉากจริง (Title + ห้องแข่งที่เล่นได้)
     ///
     /// - MenuItem: Tools/CueStrike/Mascots/50. Place Mascots in Scenes
     /// - Title_NoksGrandHall: ลบ `UncleNok_Placeholder` (cube) → วาง UncleNok_Prefab ที่ตำแหน่งเดิม
-    /// - AAA_RoomDAY + Snooker_Demo: วาง UncleNok_Prefab เป็น referee ริมโต๊ะ
+    /// - AAA_RoomDAY + Snooker_Demo: วาง UncleNok_Prefab เป็น referee ริมโต๊ะ (0, 0, -4.6) + BoPanda กองเชียร์ฝั่งตรงข้าม (0, 0, 4.6)
     /// - Idempotent: ถ้ามี prefab instance อยู่แล้ว → ข้าม (กัน duplicate)
     /// - ใช้ batchmode ได้: -executeMethod CueStrike.EditorTools.MascotScenePlacementSetup.PlaceMascots
     /// </summary>
     public static class MascotScenePlacementSetup
     {
         private const string UncleNokPrefabPath = "Assets/CueStrike/Characters/UncleNok/UncleNok_Prefab.prefab";
+        private const string BoPandaPrefabPath = "Assets/CueStrike/Characters/BoPanda/BoPanda_Prefab.prefab";
         private const string PlaceholderName = "UncleNok_Placeholder";
 
         // ฉากเป้าหมาย + ตำแหน่งวางลุงโน๊ก (จาก transform ที่ตรวจจริง)
@@ -32,6 +33,13 @@ namespace CueStrike.EditorTools
             ("Assets/CueStrike/Scenes/Snooker_Demo.unity", new Vector3(0f, 0f, -4.6f), new Vector3(0f, 0f, 0f)),
         };
 
+        // R33 — ตำแหน่งวาง BoPanda (กองเชียร์ ฝั่งตรงข้ามลุงโน๊ก) — เฉพาะห้องแข่ง
+        private static readonly (string ScenePath, Vector3 Position, Vector3 Rotation)[] BoPandaTargets =
+        {
+            ("Assets/CueStrike/Scenes/AAA DAY/AAA_RoomDAY.unity", new Vector3(0f, 0f, 4.6f), new Vector3(0f, 0f, 0f)),
+            ("Assets/CueStrike/Scenes/Snooker_Demo.unity", new Vector3(0f, 0f, 4.6f), new Vector3(0f, 0f, 0f)),
+        };
+
         [MenuItem("Tools/CueStrike/Mascots/50. Place Mascots in Scenes")]
         public static void PlaceMascotsMenu()
         {
@@ -42,10 +50,17 @@ namespace CueStrike.EditorTools
         /// <summary>entry สำหรับ batchmode (-executeMethod)</summary>
         public static void PlaceMascots()
         {
-            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(UncleNokPrefabPath);
-            if (prefab == null)
+            GameObject unclenokPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(UncleNokPrefabPath);
+            if (unclenokPrefab == null)
             {
-                Debug.LogError($"[MascotPlacement] Prefab not found: {UncleNokPrefabPath}");
+                Debug.LogError($"[MascotPlacement] UncleNok prefab not found: {UncleNokPrefabPath}");
+                return;
+            }
+
+            GameObject boPandaPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(BoPandaPrefabPath);
+            if (boPandaPrefab == null)
+            {
+                Debug.LogError($"[MascotPlacement] BoPanda prefab not found: {BoPandaPrefabPath}");
                 return;
             }
 
@@ -61,7 +76,8 @@ namespace CueStrike.EditorTools
                 Scene scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
                 if (!scene.IsValid()) continue;
 
-                bool changed = WireMascot(scene, prefab, pos, rot, ref skipped);
+                bool changed = WireMascot(scene, unclenokPrefab, pos, rot, "UncleNok", ref skipped);
+                changed |= WireMascot(scene, boPandaPrefab, BoPandaPosFor(scenePath), rot, "BoPanda", ref skipped);
 
                 if (changed && scene.isDirty)
                 {
@@ -69,28 +85,40 @@ namespace CueStrike.EditorTools
                 }
 
                 placed++;
-                Debug.Log($"[MascotPlacement] {scenePath} — mascot wired{(changed ? "" : " (already present)")}.");
+                Debug.Log($"[MascotPlacement] {scenePath} — mascots wired{(changed ? "" : " (already present)")}.");
             }
 
             Debug.Log($"[MascotPlacement] Done. Processed {placed} scenes ({skipped} already placed). Re-opening first scene...");
             EditorSceneManager.OpenScene(Targets[0].ScenePath, OpenSceneMode.Single);
         }
 
-        private static bool WireMascot(Scene scene, GameObject prefab, Vector3 position, Vector3 euler, ref int skipped)
+        /// <summary>ตำแหน่ง BoPanda ตามฉาก (เฉพาะห้องแข่ง — ฝั่งตรงข้ามลุงโน๊ก; Title ไม่วางเพราะมีอยู่แล้ว)</summary>
+        private static Vector3 BoPandaPosFor(string scenePath)
+        {
+            foreach (var (path, pos, _) in BoPandaTargets)
+            {
+                if (path == scenePath) return pos;
+            }
+            return Vector3.zero;
+        }
+
+        private static bool WireMascot(Scene scene, GameObject prefab, Vector3 position, Vector3 euler, string mascotName, ref int skipped)
         {
             bool changed = false;
 
-            // 1. ถ้ามี UncleNok_Prefab instance อยู่แล้ว → ข้าม (idempotent)
-            var existing = UnityEngine.Object.FindAnyObjectByType<UncleNokReferee>();
-            if (existing != null)
+            // 1. ถ้ามี instance อยู่แล้ว → ข้าม (idempotent) — ตรวจชื่อ GameObject มี mascotName
+            foreach (var root in scene.GetRootGameObjects())
             {
-                skipped++;
-                Debug.Log($"[MascotPlacement] UncleNokReferee already in '{scene.name}' — skipping (idempotent).");
-                return false;
+                if (root.name.Contains(mascotName))
+                {
+                    skipped++;
+                    Debug.Log($"[MascotPlacement] {mascotName} already in '{scene.name}' — skipping (idempotent).");
+                    return false;
+                }
             }
 
-            // 2. ลบ placeholder (cube) ถ้ามี — เฉพาะ Title
-            if (scene.name.Contains("Title"))
+            // 2. ลบ placeholder (cube) ถ้ามี — เฉพาะ Title + UncleNok
+            if (scene.name.Contains("Title") && mascotName == "UncleNok")
             {
                 GameObject placeholder = GameObject.Find(PlaceholderName);
                 if (placeholder != null)
@@ -109,12 +137,13 @@ namespace CueStrike.EditorTools
                 return changed;
             }
 
+            instance.name = mascotName == "UncleNok" ? "UncleNok_Prefab" : "BoPanda_Prefab";
             instance.transform.position = position;
             instance.transform.rotation = Quaternion.Euler(euler);
-            Undo.RegisterCreatedObjectUndo(instance, "Place UncleNok Mascot");
+            Undo.RegisterCreatedObjectUndo(instance, $"Place {mascotName} Mascot");
 
             changed = true;
-            Debug.Log($"[MascotPlacement] Placed UncleNok at {position} in '{scene.name}'.");
+            Debug.Log($"[MascotPlacement] Placed {mascotName} at {position} in '{scene.name}'.");
             return changed;
         }
 
@@ -170,8 +199,16 @@ namespace CueStrike.EditorTools
                 {
                     if (scene.path == scenePath)
                     {
-                        var mascot = UnityEngine.Object.FindAnyObjectByType<UncleNokReferee>();
-                        LogResult($"UncleNok in {scene.name}", mascot != null, ref pass, ref fail);
+                        var referee = UnityEngine.Object.FindAnyObjectByType<UncleNokReferee>();
+                        LogResult($"UncleNok in {scene.name}", referee != null, ref pass, ref fail);
+
+                        // R33 — BoPanda (เฉพาะห้องแข่ง)
+                        bool hasBo = false;
+                        foreach (var root in scene.GetRootGameObjects())
+                        {
+                            if (root.name.Contains("BoPanda")) { hasBo = true; break; }
+                        }
+                        LogResult($"BoPanda in {scene.name}", hasBo, ref pass, ref fail);
                         break;
                     }
                 }

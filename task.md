@@ -1,10 +1,24 @@
-# Task: CueStrike VR — R31 Referee Event Bridge (Current) → R33+ Roadmap
+# Task: CueStrike VR — R33 BoPanda ลงห้องแข่ง (Current) → R34+ Roadmap
 
-**Current Objective (2026-08-12):** ผูก UncleNokReferee กับ game events (OnFrameStart/OnBallPotted/OnFoulCommitted) — กรรมการประกาศคะแนน+ฟาวล์จริง
+**Current Objective (2026-08-12):** วาง BoPanda ลง AAA_RoomDAY + Snooker_Demo — ให้ห้องแข่งมีคู่พิธีกรครบ (ลุงโน๊ก referee + โบกองเชียร์)
 
 ---
 
-## 🎯 R31 — REFEREE EVENT BRIDGE (Ready for PR)
+## 🎯 R33 — BOPANDA ลงห้องแข่ง (Ready for PR)
+
+### ✅ Done
+- [x] ตรวจของจริง: BoPanda อยู่ในแค่ Title, tool R29 จัดการแค่ UncleNok
+- [x] ขยาย `MascotScenePlacementSetup.cs` — เพิ่ม BoPanda placement (ฝั่งตรงข้ามลุงโน๊ก 0,0,4.6) + idempotent ตรวจชื่อ + self-test
+- [x] วาง BoPanda ลง AAA_RoomDAY + Snooker_Demo
+- [x] Compile verify: batchmode **0 errors** + tool **2/2 ฉาก** + idempotent (รันซ้ำ skip) + self-test **4/4**
+
+### ⏳ เหลือ (R34 คู่ซ้อม AI / Vision audit)
+- [ ] ต่อ AI opponent กับโหมด Practice (R34) — ลุงโน๊กคู่ซ้อม AI
+- [ ] Vision audit: เปิด AAA_RoomDAY → เห็นลุงโน๊ก (0,0,-4.6) + โบ (0,0,4.6) ยืนคนละฝั่งโต๊ะ
+
+---
+
+## 🎯 R31 — REFEREE EVENT BRIDGE (MERGED ✅ — PR #28)
 
 ### ✅ Done
 - [x] ตรวจของจริง: GameManager (`OnFrameWon`/`OnFoulCommitted`/`OnMatchOver`/`OnTurnChanged`/`OnPhaseChanged`) + WBPS (`OnBallPotted`/`OnFoulCommitted`/`OnFrameWon`) — มี Instance pattern ทั้งคู่; `UncleNokReferee` methods มีครบแต่ยังไม่มีใคร subscribe
